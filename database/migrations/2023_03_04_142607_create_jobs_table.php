@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_departemen');
+            $table->string('nama_lowongan');
+            $table->text('deskripsi');
+            $table->timestamp('tanggal_dibuka')->nullable();
             $table->timestamps();
         });
     }

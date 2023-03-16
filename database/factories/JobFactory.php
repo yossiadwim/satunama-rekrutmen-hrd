@@ -17,7 +17,11 @@ class JobFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'id_departemen' => $this->faker->numberBetween(1, 5),
+            'nama_lowongan' => $this->faker->jobTitle(),
+            'deskripsi' => $this->faker->text(250),
+            'tanggal_dibuka' => $this->faker->date()
+
         ];
     }
 }

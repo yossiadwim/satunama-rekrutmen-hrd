@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,13 +16,18 @@ class LoginController extends Controller
     {
         $credential = $request->validate([
             'email' => 'required|email:dns',
-            'password' => 'required'
+            'password' => 'required|min:5',
         ]);
 
-        if(Auth::attempt($credential)){
+        if(Auth::attempt($credential) && auth()->user()->role === 'admin'){
             $request->session()->regenerate();
-            return redirect()->intended('/home');
+            return redirect()->intended('/admin-dashboard');
         }
+        else {
+            $request->session()->regenerate();
+            return redirect()->intended('/main');
+        }
+
 
         return back()->with('loginError', 'Login Gagal');
     }
@@ -35,6 +40,6 @@ class LoginController extends Controller
     
         $request->session()->regenerateToken();
     
-        return redirect('/home');
+        return redirect('/main');
     }
 }
