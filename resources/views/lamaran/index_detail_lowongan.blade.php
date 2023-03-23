@@ -20,10 +20,10 @@
     @include('partials.navbar')
 
     <div class="container">
-        <h2 class="mt-5 fw-bold">{{ $job_detail->nama_lowongan }}</h2>
+        <h2 class="mt-5 fw-bold">{{ $jobs->nama_lowongan }}</h2>
         <h5 class="mt-4">YAYASAN SATUNAMA</h5>
-        <h6 class="mt-4"><i class="bi bi-building"></i> {{ $departemen->nama_departemen }}</h6>
-        <h6 class="mt-4"><i class="bi bi-person-fill"></i> Karyawan Tetap</h6>
+        <h6 class="mt-4"><i class="bi bi-building"></i>Departemen {{ $departemen->nama_departemen }}</h6>
+        <h6 class="mt-4"><i class="bi bi-person-fill"></i> {{ $jobs->tipe_lowongan }}</h6>
 
         <div class="mt-4">
             <!-- Button trigger modal -->
@@ -59,7 +59,7 @@
 
         <div class="mt-4">
             <article class="justify-content-center">
-                {!! $job_detail->deskripsi !!}
+                {!! $jobs->deskripsi !!}
             </article>
     
         </div>

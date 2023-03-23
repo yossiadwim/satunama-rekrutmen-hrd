@@ -46,6 +46,8 @@ class RegisterController extends Controller
             $request->session()->flash('sukses', 'Registrasi Berhasil');
         }
 
+        
+
         return redirect('/login');
     }
 }

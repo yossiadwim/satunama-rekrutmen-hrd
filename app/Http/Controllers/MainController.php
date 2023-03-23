@@ -14,7 +14,6 @@ class MainController extends Controller
     {
         $jobs = Job::all();
         $departments = Department::all();
-        // dd(Auth::user()->role);
         return view('main.index')->with('departments', $departments)->with('jobs', $jobs);
     }
 }

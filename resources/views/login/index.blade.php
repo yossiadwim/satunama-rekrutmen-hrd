@@ -10,9 +10,11 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/login-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+
 </head>
 
-<body>
+<body style="font-family: Poppins">
 
     @include('partials.navbar')
 

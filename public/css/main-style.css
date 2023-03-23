@@ -5,7 +5,9 @@
 }
 
 .bg-card{
-    background: linear-gradient(116.62deg, #42E695 1.48%, #3BB2B8 96.99%);
+    /* background: linear-gradient(116.62deg, #42E695 1.48%, #3BB2B8 96.99%);
+     */
+     background: rgb(255, 255, 255);
     border: 0;
 }
 

@@ -26,7 +26,6 @@
                                  <input type="text" class="form-control" id="nomorTeleponPelamar" name="nomorTelepon"
                                      placeholder="Nomor telepon" aria-describedby="noHpHelp">
                                  <label for="nomorTeleponPelamar">Masukkan nomor telepon. Contoh +62812345678</label>
-                                 {{-- <div id="noHpHelp" class="form-text">Contoh. +62812345678</div> --}}
                              </div>
 
                          </div>
@@ -50,11 +49,7 @@
                          <div class="col">
 
                              <select name="kabupaten" id="kabupaten" class="form-select">
-
                                  <option disabled selected>Kabupaten/Kota</option>
-                                 {{-- @foreach ($kabupaten as $k)
-                              <option value="{{ $k->id_kabupaten }}">{{ $k->nama_kabupaten }}</option>
-                            @endforeach --}}
                              </select>
                          </div>
                      </div>

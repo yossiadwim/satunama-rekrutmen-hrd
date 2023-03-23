@@ -5,16 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class PelamarLowongan extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id_departemen'];
-
-    public function job()
-    {
-        return $this->hasMany(Job::class);
-
+    public function lowongan(){
+        return $this->hasOne(Job::class,'id_lowongan','id');
     }
-    
 }

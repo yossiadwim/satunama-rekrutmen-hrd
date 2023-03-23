@@ -45,11 +45,17 @@ class DetailLowonganController extends Controller
      * @param  \App\Models\Job  $job
      * @return \Illuminate\Http\Response
      */
-    public function show($job)
+    public function show(Job $job)
     {
-        $job_detail = Job::find($job);
-        $departemen = Department::find($job_detail->id_departemen);
-        return view('lamaran.index_detail_lowongan')->with('job_detail',$job_detail)->with('departemen',$departemen);
+        // $job_detail = Job::find($job);
+        
+        // return view('lamaran.index_detail_lowongan')->with('job_detail',$job_detail)->with('departemen',$departemen);;
+
+        return view('lamaran.index_detail_lowongan',[
+            "jobs" => $job,
+            "departemen" => Department::find($job->id_departemen),
+        ]);
+
     }
 
     /**
