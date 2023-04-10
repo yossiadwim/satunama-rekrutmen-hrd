@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -26,9 +27,7 @@ class RegisterController extends Controller
 
         // $validated_data['password'] = bcrypt($validated_data['password']);
         $validated_data['password'] = Hash::make($validated_data['password']);
-
     
-
         if (strpos($validated_data['email'], '@ti.ukdw.ac.id') !== false) {
             $validated_data['role'] = 'admin';
             User::create($validated_data);
@@ -41,8 +40,12 @@ class RegisterController extends Controller
         }
          else {
             $validated_data['role'] = 'user';
-            User::create($validated_data);
-
+            $user = User::create($validated_data);
+            Profil::create([
+                'user_id' => $user->id,
+                'nama' => $user->name,
+                'email' => $user->email
+            ]);
             $request->session()->flash('sukses', 'Registrasi Berhasil');
         }
 

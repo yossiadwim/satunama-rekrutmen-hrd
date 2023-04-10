@@ -23,30 +23,34 @@
     @include('partials.navbar')
 
     <div class="container mt-4 ">
-        <h3 class="fw-bold">Lowongan: {{ $job->nama_lowongan }}</h3>
+        <h3 class="fw-bold">Lowongan: {{ $jobs->nama_lowongan }}</h3>
     </div>
 
     <div class="container rounded mt-4 fw-bold" style="background-color: #EAEAEA">
-        <ul class="nav nav-pills mb-3 py-2 px-2 justify-content-center" id="pills-tab" role="tablist" >
+        <ul class="nav nav-pills mb-3 py-2 px-2 justify-content-center" id="pills-tab" role="tablist">
             <li class="nav-item px-4" role="presentation">
                 <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
-                    type="button" role="tab" aria-controls="pills-home" aria-selected="true" >Review</button>
+                    type="button" role="tab" aria-controls="pills-home" aria-selected="true">Review</button>
             </li>
             <li class="nav-item  px-4" role="presentation">
                 <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile"
-                    type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Seleksi Berkas</button>
+                    type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Seleksi
+                    Berkas</button>
             </li>
             <li class="nav-item  px-4" role="presentation">
                 <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact"
-                    type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Reference Check</button>
+                    type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Reference
+                    Check</button>
             </li>
             <li class="nav-item  px-4" role="presentation">
                 <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled"
-                    type="button" role="tab" aria-controls="pills-disabled" aria-selected="false">Tes Tertulis & Tes Wawancara</button>
+                    type="button" role="tab" aria-controls="pills-disabled" aria-selected="false">Tes Tertulis &
+                    Tes Wawancara</button>
             </li>
             <li class="nav-item  px-4" role="presentation">
                 <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled"
-                    type="button" role="tab" aria-controls="pills-disabled" aria-selected="false">Penawaran</button>
+                    type="button" role="tab" aria-controls="pills-disabled"
+                    aria-selected="false">Penawaran</button>
             </li>
             <li class="nav-item  px-4" role="presentation">
                 <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled"
@@ -98,15 +102,15 @@
                                         <li><a class="dropdown-item" href="#">Reference Check</a></li>
                                         <li><a class="dropdown-item" href="#">Tes Tertulis & Wawancara</a></li>
                                         <li><a class="dropdown-item" href="#">Penawaran</a></li>
-                                        <li><a class="dropdown-item" href="#">Rirekrut</a></li>
+                                        <li><a class="dropdown-item" href="#">Direkrut</a></li>
                                         <li><a class="dropdown-item" href="#">Ditolak</a></li>
                                     </ul>
                                 </div>
                                 <div class="container mt-4 " style="background: #F1EEEE">
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                data-bs-target="#home-tab-pane" type="button" role="tab"
+                                            <button class="nav-link active" id="resume-tab" data-bs-toggle="tab"
+                                                data-bs-target="#resume-tab-pane" type="button" role="tab"
                                                 aria-controls="home-tab-pane" aria-selected="true">Resume/CV</button>
                                         </li>
                                         <li class="nav-item" role="presentation">
@@ -117,7 +121,7 @@
                                         </li>
                                     </ul>
                                     <div class="tab-content" id="myTabContent">
-                                        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
+                                        <div class="tab-pane fade show active" id="resume-tab-pane" role="tabpanel"
                                             aria-labelledby="home-tab" tabindex="0">
                                             <embed src="{{ asset('storage/document/YossiaDwiMahardika-CV.pdf') }}"
                                                 type="application/pdf" width="100%" height="800px" />
@@ -205,12 +209,7 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
-
-
-
                     </div>
                 </div>
             </div>

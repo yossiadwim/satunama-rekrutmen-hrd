@@ -1,3 +1,12 @@
 .bg-btn{
     background-color: #F25700 !important;
  }
+
+ .btn-bg:hover{
+    background-color: #eaeaea;
+   
+ }
+/* #v-pills-aktif-tab:active{
+    background-color: #eaeaea;
+    color: #0000;
+} */

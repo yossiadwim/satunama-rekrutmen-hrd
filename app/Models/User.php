@@ -43,5 +43,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    
+    public function profil()
+    {
+        return $this->hasOne(Profil::class,'user_id','id');
+    }
+
+    public function PengalamanKerja(){
+        return $this->hasMany(PengalamanKerja::class);
+    }
+
+    public function dokumen(){
+        return $this->hasMany(User::class);
+    }
 }

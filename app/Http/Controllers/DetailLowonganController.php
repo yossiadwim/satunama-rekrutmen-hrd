@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Models\Job;
+use App\Models\User;
+use App\Models\Profil;
 use Illuminate\Http\Request;
 
 class DetailLowonganController extends Controller
@@ -51,9 +53,12 @@ class DetailLowonganController extends Controller
         
         // return view('lamaran.index_detail_lowongan')->with('job_detail',$job_detail)->with('departemen',$departemen);;
 
+    
         return view('lamaran.index_detail_lowongan',[
             "jobs" => $job,
             "departemen" => Department::find($job->id_departemen),
+            "profils" => Profil::where('user_id',auth()->user()->id)->get(),
+            "users" => User::where('id',auth()->user()->id)->get()
         ]);
 
     }

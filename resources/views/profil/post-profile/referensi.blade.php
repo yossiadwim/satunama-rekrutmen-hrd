@@ -17,34 +17,33 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" id="close"
                             aria-label="Close" onclick="hapusData()"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>Tambahkan referensi</p>
-                        <form action="" method="" id="formReferensi">
+                    <form action="/referensi" method="post" id="formReferensi">
+                        @csrf
+                        <div class="modal-body">
+                            <p>Tambahkan referensi</p>
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" id="namaReferensi" name="namaReferensi"
-                                        placeholder="Nama">
-                                </div>
+                            <div class="form-floating col-md-6">
+                                <input type="text" class="form-control" id="namaReferensi" name="nama"
+                                    placeholder="Nama">
+                                <label for="namaReferensi">Nama Referensi</label>
                             </div>
 
-                            <div class="row g-3 mb-4">
-                                <div class="mb-4 mt-4 col-md-5">
-                                    <input type="text" class="form-control" id="alamatLabel" name="alamat"
-                                        placeholder="Alamat">
-                                </div>
+                            <div class="form-floating mb-4 mt-4 col-md-6">
+                                <input type="text" class="form-control" id="alamatLabel" name="alamat"
+                                    placeholder="Alamat">
+                                <label for="namaReferensi">Alamat</label>
                             </div>
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" id="nomorTeleponLabel"
-                                        name="nomorTelepon" placeholder="Nomor telepon" aria-describedby="noHpHelp">
-                                    <div id="noHpHelp" class="form-text">Contoh. +62812345678</div>
-                                </div>
+                            <div class="form-floating col-md-6">
+                                <input type="text" class="form-control" id="nomorTeleponLabel" name="nomor_telepon"
+                                    placeholder="Nomor telepon" aria-describedby="noHpHelp">
+                                <label for="nomorTeleponLabel">Nomor Telepon</label>
+                                <div id="noHpHelp" class="form-text">Contoh. +62812345678</div>
                             </div>
+
 
                             <div class="mb-4">
-                                <div>
+                                <div class="mt-4">
                                     <p>Apakah dari SATUNAMA?</p>
                                 </div>
                                 <div class="form-check">
@@ -63,27 +62,29 @@
                                 </div>
                             </div>
 
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control " id="posisi" name="inputPosisi"
-                                        placeholder="Posisi" style="display: none">
-                                </div>
-                            </div>
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control " id="hubungan" name="inputHubungan"
-                                        placeholder="Hubungan">
-                                </div>
+
+                            <div class="form-floating col-md-6">
+                                <input type="text" class="form-control " id="posisi" name="inputPosisi"
+                                    placeholder="Posisi" style="display: none">
+                                <label for="posisi">Posisi</label>
                             </div>
 
 
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-batal" data-bs-dismiss="modal"
-                            onclick="hapusData()">Batal</button>
-                        <button type="button" class="btn btn-primary btn-simpan border-0">Simpan</button>
-                    </div>
+                            <div class="form-floating col-md-6">
+                                <input type="text" class="form-control " id="hubungan" name="hubungan"
+                                    placeholder="Hubungan">
+                                <label for="hubungan">Hubungan</label>
+                            </div>
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-batal" data-bs-dismiss="modal"
+                                onclick="hapusData()">Batal</button>
+                            <button type="button" class="btn btn-primary btn-simpan border-0">Simpan</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

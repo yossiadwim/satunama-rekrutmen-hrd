@@ -27,13 +27,13 @@
 
         <div class="mt-4">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal" data-bs-target="#button-lamar">
+            <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
+                data-bs-target="#button-lamar" {{ $jobs->closed == 'true' ? 'disabled' : '' }}>
                 Lamar
             </button>
 
             <!-- Modal -->
-            <div class="modal fade" id="button-lamar" tabindex="-1" aria-labelledby="modal-lamar"
-                aria-hidden="true">
+            <div class="modal fade" id="button-lamar" tabindex="-1" aria-labelledby="modal-lamar" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -41,30 +41,61 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            ...
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                        <form action="/dokumen" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <div class="modal-body">
+                                @foreach ($users as $user)
+                                    <div class=" mb-3" hidden>
+                                        <input type="text" class="form-control mb-4" name="user_id" id="user_id"
+                                            value="{{ $user->id }}">
+                                    </div>
+                                    <div class=" mb-3" hidden>
+                                        <input type="text" class="form-control mb-4" name="user_id" id="pelamar_id"
+                                            value="">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="inputGroupFile01">Surat Lamaran</label>
+                                        <input type="file" class="form-control" id="inputGroupFile01"
+                                            name="surat_lamaran">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="inputGroupFile02">CV</label>
+                                        <input type="file" class="form-control" id="inputGroupFile02" name="CV">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="inputGroupFile03">KTP (Kartu Identitas)</label>
+                                        <input type="file" class="form-control" id="inputGroupFile03" name="ktp">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="inputGroupFile04">Dokumen Lain</label>
+                                        <input type="file" class="form-control" id="inputGroupFile04"
+                                            name="dokumen_lain">
+                                    </div>
+                                @endforeach
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="mt-5">
-            <hr class="border-dark border-3" >
+            <hr class="border-dark border-3">
         </div>
 
         <div class="mt-4">
-            <article class="justify-content-center">
+            <article class="justify-content-center text-justify">
                 {!! $jobs->deskripsi !!}
             </article>
-    
+
         </div>
 
-        
+
 
     </div>
 
