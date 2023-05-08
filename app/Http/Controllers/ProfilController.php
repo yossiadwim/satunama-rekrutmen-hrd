@@ -5,16 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Profil;
 use App\Models\Provinsi;
 use App\Models\Kabupaten;
-use App\Http\Requests\StoreProfilRequest;
-use App\Http\Requests\UpdateProfilRequest;
+use App\Models\Pendidikan;
+use App\Models\PengalamanKerja;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 // use Umpirsky\CountryList\CountryList;
 
 use PragmaRX\Countries\Package\Countries;
 use PragmaRX\Countries\Package\Services\Config;
-
-
-
 
 class ProfilController extends Controller
 {
@@ -26,18 +24,7 @@ class ProfilController extends Controller
 
     public function index()
     {
-        $this->authorize('user');
-        $provinsi = Provinsi::all();
-        // $kab = Kabupaten::all();
-        $countries = new Countries(new Config());
-        $allCountries = $countries->all();
-
-
-        // dd($allCountries);
-        // $kabupaten = Kabupaten::where($kab->id_kabupaten,$provinsi->id_provinsi)->get();
-
-        return view('profil.index')->with('provinsi', $provinsi)->with('allCountries', $allCountries);
-
+        //
     }
 
     /**
@@ -47,7 +34,7 @@ class ProfilController extends Controller
      */
     public function create()
     {
-        //
+        // 
     }
 
     /**
@@ -56,9 +43,11 @@ class ProfilController extends Controller
      * @param  \App\Http\Requests\StoreProfilRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProfilRequest $request)
+    public function store(Request $request)
     {
-        //
+
+        // $this->authorize('user');
+
     }
 
     /**
@@ -69,6 +58,26 @@ class ProfilController extends Controller
      */
     public function show(Profil $profil)
     {
+
+        $countries = new Countries(new Config());
+
+        return view('profil.index', [
+            'profils' => Profil::leftJoin('provinsis', 'profils.provinsi', '=', 'provinsis.id_provinsi')
+                ->leftJoin('kabupatens', 'profils.kabupaten', '=', 'kabupatens.id_kabupaten')
+                ->select(DB::raw('id,user_id,nama, profils.email, profils.nomor_telepon,
+                        provinsis.nama_provinsi, kabupatens.nama_kabupaten, 
+                        usia, jenis_kelamin, kewarganegaraan, tentang_saya'))
+                ->where('user_id', '=', auth()->user()->id)
+                ->get(),
+            'pengalamanKerja' => PengalamanKerja::where('profil_id', '=', $profil->id)->orderBy('id','asc')->get(),
+            'pengalamanKerjaExists' => PengalamanKerja::where('profil_id', '=', $profil->id)->exists(),
+            'pendidikans' => Pendidikan::where('profil_id', '=', $profil->id)->orderBy('id','asc')->get(),
+            'pendidikanExists' => Pendidikan::where('profil_id', '=', $profil->id)->exists(),
+            'provinsi' => Provinsi::all(),
+            'allCountries' => $countries->all(),
+            'profil' => $profil
+
+        ]);
     }
 
     /**
@@ -80,6 +89,10 @@ class ProfilController extends Controller
     public function edit(Profil $profil)
     {
         //
+        return view('profil.post-profile.edit-profil', [
+            // 'checkUserId' => Profil::where('user_id', $profil->user_id)->exist()
+            'profil' => $profil
+        ]);
     }
 
     /**
@@ -89,10 +102,22 @@ class ProfilController extends Controller
      * @param  \App\Models\Profil  $profil
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProfilRequest $request, Profil $profil)
+    public function update(Request $request, Profil $profil)
     {
         //
-        
+        $validatedData = $request->validate([
+            'nama' => 'required',
+            'email' => 'required',
+            'nomor_telepon' => 'required|string|max:12',
+            'provinsi' => 'required',
+            'kabupaten' => 'required',
+            'usia' => 'required',
+            'jenis_kelamin' => 'required',
+            'kewarganegaraan' => 'required'
+        ]);
+
+        Profil::where('id', $profil->id)->update($validatedData);
+        return redirect('/profil/'.$profil->id)->with('success', 'Profil Berhasil Diedit');
     }
 
     /**
@@ -113,4 +138,19 @@ class ProfilController extends Controller
         $kabupaten = Kabupaten::where('id_provinsi', $id_provinsi)->get();
         return $kabupaten;
     }
+
+    public function description(Request $request, Profil $profil)
+    {
+
+        $rules = [
+            'tentang_saya' => 'nullable',
+        ];
+
+        $validatedData = $request->validate($rules);
+
+        Profil::where('id', $profil->id)->update($validatedData);
+
+        return redirect('/profil/'.$profil->id)->with('success add description', 'Berhasil mengubah deskripsi');
+    }
+
 }

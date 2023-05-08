@@ -23,8 +23,7 @@
         <h3 class="fw-bold">Buat Lowongan Kerja</h3>
     </div>
 
-    <form method="post" action="/admin-dashboard">
-
+    <form method="post" action="/admin-dashboard/jobs">
         @csrf
         <div class="container mt-5">
             <div class="col-md-12">
@@ -45,7 +44,13 @@
             <div class="col-md-12">
                 <div class="mb-3 col-md-6 mt-5">
                     <label for="slug" class="form-label">Slug</label>
-                    <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}" placeholder="Terisi otomatis">
+                    <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}"
+                        placeholder="Terisi otomatis">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="mb-3 col-md-6 mt-5">
+                    <input type="hidden" name="closed" value="false">
                 </div>
             </div>
             <div class="mb-3 col-md-6 mt-5">
@@ -88,7 +93,7 @@
                 @error('deskripsi_lowongan')
                     <p class="text-danger">{{ $message }}</p>
                 @enderror
-                <textarea class="ckeditor form-control" name="deskripsi" >{{ old('deskripsi') }}</textarea>
+                <textarea class="ckeditor form-control" name="deskripsi">{{ old('deskripsi') }}</textarea>
             </div>
             <div class="mb-5 col-md-12 mt-5 d-flex justify-content-center">
                 <button class="btn btn-primary border-0 " type="submit">Posting Lowongan</button>
@@ -121,9 +126,9 @@
     const nama_lowongan = document.querySelector('#nama_lowongan');
     const slug = document.querySelector('#slug');
 
-    nama_lowongan.addEventListener('change', function(){
+    nama_lowongan.addEventListener('change', function() {
         fetch('/admin-dashboard/createSlug?nama_lowongan=' + nama_lowongan.value)
-        .then(response => response.json())
-        .then(data => slug.value = data.slug)
+            .then(response => response.json())
+            .then(data => slug.value = data.slug)
     })
 </script>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +24,7 @@
         <h3 class="fw-bold">Edit Lowongan Kerja</h3>
     </div>
 
-    <form method="post" action="/admin-dashboard/{{ $job->slug }}">
+    <form method="post" action="/admin-dashboard/jobs/{{ $job->slug }}">
         @method('put')
         @csrf
         <div class="container mt-5">

@@ -21,10 +21,11 @@ return new class extends Migration
             $table->string('tipe_lowongan');
             $table->text('deskripsi');
             $table->timestamp('tanggal_dibuka')->nullable();
+            $table->boolean('closed')->default('false');
             $table->timestamps();
         });
     }
-
+                                                
     /**
      * Reverse the migrations.
      *

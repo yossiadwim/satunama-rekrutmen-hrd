@@ -17,6 +17,8 @@ class Job extends Model
     {
         return $this->belongsTo(Department::class,'id_departemen','id');
     }
+
+    
     public function sluggable(): array
     {
         return [
@@ -25,6 +27,14 @@ class Job extends Model
             ]
         ];
     }
+
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
 }
+
 
 ?>

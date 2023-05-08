@@ -23,7 +23,7 @@
                     <form action="/register" method="post" class="mt-5">
                         @csrf
                         <div class="form-floating">
-                            <input type="text" name="name"
+                            <input type="text" name="nama_pelamar"
                                 class="form-control rounded @error('name')
                       is-invalid
                     @enderror"

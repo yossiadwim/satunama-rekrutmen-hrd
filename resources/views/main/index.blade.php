@@ -1,3 +1,7 @@
+{{-- @dd($departemens) --}}
+{{-- @dd($jobs) --}}
+{{-- @dd($profils) --}}
+
 <!doctype html>
 <html lang="en">
 
@@ -18,25 +22,64 @@
 
     @include('partials.navbar')
 
-    @if (count($jobs) > 0 && count($departments) > 0)
+    <h1 class="mt-4 fs-1 fw-bold" style="text-align:center;">Lowongan Pekerjaan</h1>
+
+    <div class="container mt-5 col-4">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Cari lowongan..." name="search">
+            <button class="btn" type="button" id="button-addon2"
+                style="background-color: #379237; color: white">Cari</button>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <p class="text-center">
+            <button class="btn btn-primary border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"
+                style="background-color: #379237">
+                Filter Departemen <i class="bi bi-chevron-down"></i>
+            </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+            <div class="container border rounded shadow-sm" style="background-color: #ffff">
+                <div class="row mt-4">
+                    @foreach ($departemens as $departemen)
+                        <div class="col-6 mb-4">
+                            <button type="button" class="btn btn-primary text-dark border-secondary col-12"
+                                style="background-color:#eaeaea">
+                                {{ $departemen->nama_departemen }} <span
+                                    class="badge text-bg-secondary">{{ $departemen->total_lowongan }}</span>
+                            </button>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    @if (count($jobs) > 0)
         <div class="container">
             <div class="card card-container mt-4 border-0">
-                <h1 class="mt-4 fs-1 fw-bold" style="text-align:center;">Lowongan Pekerjaan</h1>
+                <h4>Lowongan yang masih dibuka</h4>
                 <div class="row mt-4 ">
-                    @foreach ($jobs->take(3) as $job)
+                    @foreach ($jobsOpen->take(3) as $job)
                         <div class="col-md-4 mb-5">
                             <div class="card bg-card shadow-sm border">
                                 <a href="/detail-lowongan/{{ $job->slug }}" class="text-decoration-none text-dark">
                                     <div class="card-body">
-                                        <p class="card-text fw-bold fs-5" style="color: #379237"><i class="bi bi-briefcase-fill"></i>
+                                        <p class="card-text fw-bold fs-5" style="color: #379237"><i
+                                                class="bi bi-briefcase-fill"></i>
                                             {{ $job->nama_lowongan }}
                                         </p>
                                         <p class="card-text"><i class="bi bi-building-fill"></i> Departemen
-                                            {{ $job->department->nama_departemen }}</p>
+                                            {{ $job->nama_departemen }}</p>
                                         <p class="card-text"><i class="bi bi-person-fill"></i> {{ $job->tipe_lowongan }}
                                         </p>
                                         <br>
-                                        <p class="card-text" style="font-size: 14px; color: #63686E"><i class="bi bi-clock"></i> Dibuka pada
+                                        <p class="card-text" style="font-size: 14px; color: #63686E"><i
+                                                class="bi bi-clock"></i> Dibuka pada
                                             {{ $job->created_at->toDateString() }},
                                             {{ $job->created_at->diffForHumans() }}</p>
                                         <p class="card-text"></p>
@@ -48,32 +91,39 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="container">
-            <div class="row mt-5">
-                @foreach ($departments as $department)
-                    <div class="col-md-4 mb-5">
-                        <a class="btn d-flex justify-content-between bg-button px-2 py-2" href="#" role="button" style="background: white">
-                            Departemen {{ $department->nama_departemen }} <i class="bi bi-chevron-right"></i></a>
-                    </div>
-                @endforeach
+        <div class="container">
+            <div class="card card-container mt-4 border-0">
+                <h4>Lowongan yang sudah ditutup</h4>
+                <div class="row mt-4 ">
+                    @foreach ($jobsClosed as $job)
+                        <div class="col-md-4 mb-5">
+                            <div class="card bg-card shadow-sm border">
+                                <a href="/detail-lowongan/{{ $job->slug }}" class="text-decoration-none text-dark">
+                                    <div class="card-body">
+                                        <p class="card-text fw-bold fs-5" style="color: #379237"><i
+                                                class="bi bi-briefcase-fill"></i>
+                                            {{ $job->nama_lowongan }}
+                                        </p>
+                                        <p class="card-text"><i class="bi bi-building-fill"></i> Departemen
+                                            {{ $job->nama_departemen }}</p>
+                                        <p class="card-text"><i class="bi bi-person-fill"></i>
+                                            {{ $job->tipe_lowongan }}
+                                        </p>
+                                        <br>
+                                        <p class="card-text" style="font-size: 14px; color: #63686E"><i
+                                                class="bi bi-clock"></i> Ditutup pada
+                                            {{ $job->created_at->toDateString() }},
+                                            {{ $job->created_at->diffForHumans() }}</p>
+                                        <p class="card-text"></p>
+                                    </div>
+                            </div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-
-        </div> --}}
-    @else
-        {{-- <div class="container">
-            <h1 class="mt-5">Belum ada lowongan</h1>
         </div>
-        <div class="container border border-1">
-            <div class="row mt-5">
-                @foreach ($departments as $department)
-                    <div class="col-4 mb-5">
-                        <a class="btn d-flex justify-content-between bg-button px-2 py-2" href="#" role="button">
-                            Departemen {{ $department->nama_departemen }} <i class="bi bi-chevron-right"></i></a>
-                    </div>
-                @endforeach
-            </div>
-
-        </div> --}}
+    @else
     @endif
 
 

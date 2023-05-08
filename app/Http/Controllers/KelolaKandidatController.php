@@ -15,7 +15,7 @@ class KelolaKandidatController extends Controller
 
       
         return view('admin.index_kelola_kandidat',[
-            'job' => $job
+            'jobs' => $job
         ]);
         
         

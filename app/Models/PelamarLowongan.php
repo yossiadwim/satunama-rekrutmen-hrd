@@ -12,4 +12,6 @@ class PelamarLowongan extends Model
     public function lowongan(){
         return $this->hasOne(Job::class,'id_lowongan','id');
     }
+
+
 }

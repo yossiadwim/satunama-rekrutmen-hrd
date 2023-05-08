@@ -24,79 +24,171 @@
 
 <body style="font-family: Poppins">
     @include('partials.navbar')
+    @if (session()->has('success'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success add description'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success add description') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success add work experience'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success add work experience') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success update work experience'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success update work experience') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success delete work experience'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success delete work experience') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success add education'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success add education') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success update education'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success update education') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success delete education'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success delete education') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    @endif
     <div class="container">
         <div class="row">
             <div class="col-md-3">
                 <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                     <img class="rounded-circle " width="150px"
                         src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                    {{-- <span class="font-weight-bold">{{ auth()->user()->name }}</span>
-                    <span class="text-black-50">{{ auth()->user()->email }}</span> --}}
                     <span> </span>
 
                     @include('profil.post-profile.edit-profil')
 
                 </div>
             </div>
-            <div class="col-md-5 border-right">
+            <div class="col-md-8">
                 <div class="p-3 py-5">
-                    <div class="row mt-2">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="text-right">Yossia Dwi Mahardika</h4>
+                    @foreach ($profils as $profil)
+                        <div class="row mt-2">
+                            @if ($profil->nama == null)
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="text-right fw-bold">{{ '-' }}</h4>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="text-right fw-bold">{{ $profil->nama }}</h4>
+                                </div>
+                            @endif
 
+                        </div>
 
+                        <div class="row mt-2">
+                            @if ($profil->nomor_telepon == null)
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Nomor Telepon</label>
+                                    <p>{{ '-' }}</p>
+                                </div>
+                            @else
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Nomor Telepon</label>
+                                    <p>{{ $profil->nomor_telepon }}</p>
+                                </div>
+                            @endif
+                            <div class="col-md-6">
+                                <label class="labels fw-bold">Email</label>
+                                <p>{{ $profil->email }}</p>
+                            </div>
                         </div>
-                    </div>
+                        <div class="row mt-2">
 
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <label class="labels fw-bold">Nomor Telepon</label>
-                            <p>+6281273422807</p>
-                            {{-- <input type="text" class="form-control" placeholder="first name" value=""> --}}
-                        </div>
-                        <div class="col-md-6">
-                            <label class="labels fw-bold">Email</label>
-                            <p>{{ auth()->user()->email }}</p>
-                            {{-- <input type="text" class="form-control" placeholder="first name" value=""> --}}
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <label class="labels fw-bold">Lokasi</label>
-                            <p>Yogyakarta, Indonesia</p>
-                            {{-- <input type="text" class="form-control" value="" placeholder="surname"> --}}
-                        </div>
-                        <div class="col-md-6">
-                            <label class="labels fw-bold">Usia, Jenis Kelamin</label>
-                            <p>21, Laki-laki</p>
-                            {{-- <input type="text" class="form-control" placeholder="first name" value=""> --}}
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-6">
-                            <label class="labels fw-bold">Status Kependudukan</label>
-                            <p>Pelajar/Mahasiswa</p>
-                            {{-- <input type="text" class="form-control" value="" placeholder="surname"> --}}
-                        </div>
-                        <div class="col-md-6">
-                            <label class="labels fw-bold">Kewarganegaraan</label>
-                            <p>Indonesia</p>
-                            {{-- <input type="text" class="form-control" placeholder="first name" value=""> --}}
-                        </div>
-                    </div>
+                            @if (
+                                $profil->nama_provinsi == null &&
+                                    $profil->nama_kabupaten == null &&
+                                    $profil->usia == null &&
+                                    $profil->jenis_kelamin == null)
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Lokasi</label>
+                                    <p>{{ '-' }}</p>
 
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Usia, Jenis Kelamin</label>
+                                    <p>{{ '-' }}</p>
+                                </div>
+                            @else
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Lokasi</label>
+                                    <p>{{ $profil->nama_provinsi }}, {{ $profil->nama_kabupaten }}</p>
 
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Usia, Jenis Kelamin</label>
+                                    <p>{{ \Carbon\Carbon::parse($profil->usia)->diffInYears(\Carbon\Carbon::now()) }},
+                                        {{ $profil->jenis_kelamin }}</p>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <label class="labels fw-bold">Status Kependudukan</label>
+                                <p>Pelajar/Mahasiswa</p>
+
+                            </div>
+                            @if ($profil->kewarganegaraan == null)
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Kewarganegaraan</label>
+                                    <p>{{ '-' }}</p>
+                                </div>
+                            @else
+                                <div class="col-md-6">
+                                    <label class="labels fw-bold">Kewarganegaraan</label>
+                                    <p>{{ $profil->kewarganegaraan }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
             </div>
-            <div class="container  mt-4">
 
+
+            <div class="container mt-4">
                 @include('profil.post-profile.deskripsi')
                 @include('profil.post-profile.pengalamanKerja')
                 @include('profil.post-profile.pendidikan')
                 @include('profil.post-profile.referensi')
-
-
-
             </div>
 
 
@@ -133,6 +225,17 @@
 
     }
 
+    // function clearInput() {
+    //     const editorElement = document.querySelector("trix-editor");
+
+    //     // Set the editor's HTML content to an empty string
+    //     editorElement.editor.loadHTML("");
+
+    //     // Clear the editor's input value
+    //     editorElement.editor.setSelectedRange([0, editorElement.editor.getDocument().getLength()]);
+    //     editorElement.editor.deleteInDirection("backward");
+    // }
+
     function limitYear() {
         var tahun = document.getElementById("tahunBerakhir").value
     }
@@ -160,6 +263,14 @@
 
 
     var confirm = document.getElementById("konfirmasi")
+
+    confirm.addEventListener("change", function() {
+        if (confirm.checked) {
+            confirm.value = "true"
+        } else {
+            confirm.value = "false"
+        }
+    })
 
     confirm.addEventListener("change", function() {
         console.log(confirm.checked)

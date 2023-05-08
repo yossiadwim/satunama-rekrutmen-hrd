@@ -41,19 +41,22 @@
                     <form action="/login" method="post">
                         @csrf
                         <div class="form-floating">
+                            
                             <input type="email" name="email"
-                                class="form-control rounded @error('email')
-                  is-invalid
-                @enderror"
+                                class="form-control rounded @error('email') is-invalid @enderror"
                                 id="email" placeholder="name@example.com" autofocus required
                                 value="{{ old('email') }}">
                             <label for="email">Email</label>
+
                             @error('email')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
                             @enderror
+
                         </div>
+
+
                         <div class="form-floating">
                             <input type="password" name="password" class="form-control rounded mt-4" id="password"
                                 placeholder="Password" required>
