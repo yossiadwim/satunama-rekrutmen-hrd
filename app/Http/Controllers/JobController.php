@@ -15,7 +15,8 @@ class JobController extends Controller
      */
     public function index()
     {
-        //
+        // $jobs = Job::all();
+        // return view('main.index')->with('jobs',$jobs);
     }
 
     /**
@@ -83,4 +84,5 @@ class JobController extends Controller
     {
         //
     }
+
 }
