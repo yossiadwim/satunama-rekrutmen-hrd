@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pendidikan;
-use App\Http\Requests\StorePendidikanRequest;
-use App\Http\Requests\UpdatePendidikanRequest;
-use App\Models\Profil;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
+use App\Models\Pendidikan;
+use App\Models\User;
 
 class PendidikanController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -23,8 +18,6 @@ class PendidikanController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -33,34 +26,27 @@ class PendidikanController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StorePendidikanRequest  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
-   
+        $user = User::where('id', auth()->user()->id)->get();
+        $user_slug = $user->pluck('slug');
+
         $validatedData = $request->validate(
             [
-                'user_id' => 'required',
-                'profil_id' => 'required',
                 'jenjang_pendidikan' => 'required',
-                'nama_instansi' => 'required',
-                'tahun_selesai' => 'required',
+                'jurusan' => 'required',
+                'ipk' => 'required',
+                'id_pelamar' => 'required'
             ]
         );
 
         Pendidikan::create($validatedData);
-        return redirect('/profil/'.$validatedData['profil_id'])->with('success add education', 'Berhasil menambah informasi pendidikan');
-
+        return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success add education', 'Berhasil menambah informasi pendidikan');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Pendidikan  $pendidikan
-     * @return \Illuminate\Http\Response
      */
     public function show(Pendidikan $pendidikan)
     {
@@ -69,9 +55,6 @@ class PendidikanController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Pendidikan  $pendidikan
-     * @return \Illuminate\Http\Response
      */
     public function edit(Pendidikan $pendidikan)
     {
@@ -80,36 +63,33 @@ class PendidikanController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdatePendidikanRequest  $request
-     * @param  \App\Models\Pendidikan  $pendidikan
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Pendidikan $pendidikan)
     {
+        $user = User::where('id', auth()->user()->id)->get();
+        $user_slug = $user->pluck('slug');
+
         $validatedData = $request->validate(
             [
-                'user_id' => 'required',
-                'profil_id' => 'required',
                 'jenjang_pendidikan' => 'required',
-                'nama_instansi' => 'required',
-                'tahun_selesai' => 'required',
+                'jurusan' => 'required',
+                'ipk' => 'required',
+                'id_pelamar' => 'required'
             ]
         );
-        Pendidikan::where('id',$pendidikan->id)->update($validatedData);
-        return redirect('/profil/'.$validatedData['profil_id'])->with('success update education', 'Berhasil mengubah informasi pendidikan');
-
+        Pendidikan::where('id', $pendidikan->id)->update($validatedData);
+        return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success update education', 'Berhasil mengubah informasi pendidikan');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Pendidikan  $pendidikan
-     * @return \Illuminate\Http\Response
      */
     public function destroy(Pendidikan $pendidikan)
     {
-        Pendidikan::destroy($pendidikan->id);
-        return redirect('/profil/'.$pendidikan->profil_id)->with('success delete education', 'Berhasil menghapus pengalaman kerja');
+        $user = User::where('id', auth()->user()->id)->get();
+        $user_slug = $user->pluck('slug');
+        
+        Pendidikan::destroy($pendidikan->id_pendidikan);
+        return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success delete education', 'Berhasil menghapus pengalaman kerja');
     }
 }

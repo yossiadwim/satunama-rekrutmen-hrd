@@ -8,10 +8,11 @@
          data-bs-target="#editProfil"></i>
          Edit Profil</a> --}}
  {{-- @else --}}
- <a href="/profil/{{ $profil->id }}/edit" class="btn btn-primary border-0" data-bs-toggle="modal"
+
+ <a href="/profil-kandidat/users/{{ $user->slug }}/edit" class="btn btn-primary border-0" data-bs-toggle="modal"
      data-bs-target="#editProfil"></i>
      Edit Profil</a>
- {{-- @endif --}}
+
 
  <!-- Modal -->
  <div class="modal fade" id="editProfil" tabindex="-1" aria-labelledby="profilLabel" aria-hidden="true">
@@ -22,15 +23,21 @@
                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                      onclick="hapusData()"></button>
              </div>
-             <form action="/profil/{{ $profil->id }}" method="POST" id="formEditProfil"
+             <form action="/profil-kandidat/users/{{ $user->slug }}" method="POST" id="formEditProfil"
                  enctype="multipart/form-data">
                  @method('put')
                  <div class="modal-body">
                      @csrf
                      <div class="form-floating">
-                         <input type="text" class="form-control mb-4" name="nama" id="namaPelamar"
-                             placeholder="Nama Anda" value="{{ old('nama', $profil->nama) }}" required>
+                         <input type="text" class="form-control mb-4" name="nama_pelamar" id="namaPelamar"
+                             placeholder="Nama Anda" value="{{ $user->pelamar->nama_pelamar }}" required>
                          <label for="namaPelamar">Nama Anda</label>
+                     </div>
+
+                     <div class="form-floating mb-3">
+                         <input type="email" class="form-control" id="email" name="email"
+                             placeholder="Masukkan email Anda" value="{{ $user->pelamar->email }}" required>
+                         <label for="email">Masukkan email Anda</label>
                      </div>
 
                      <div class="row g-3 mb-4">
@@ -40,9 +47,8 @@
                                      class="form-control @error('nomor_telepon')
                                      is-invalid
                                  @enderror"
-                                     id="nomorTeleponPelamar" name="nomor_telepon" placeholder="Nomor telepon"
-                                     aria-describedby="noHpHelp"
-                                     value="{{ old('nomor_telepon', $profil->nomor_telepon) }}" required>
+                                     id="nomorTeleponPelamar" name="telepon_rumah" placeholder="Nomor telepon"
+                                     aria-describedby="noHpHelp" value="{{ $user->pelamar->telepon_rumah }}" required>
                                  @error('nomor_telepon')
                                      <div class="invalid-feedback">
                                          {{ $message }}
@@ -53,58 +59,22 @@
 
                          </div>
                      </div>
+
+
                      <div class="form-floating mb-3">
-                         <input type="email" class="form-control" id="email" name="email"
-                             placeholder="Masukkan email Anda" value="{{ old('email', $profil->email) }}" required>
-                         <label for="email">Masukkan email Anda</label>
-                     </div>
-
-                     <div class="row g-3 mb-4 mt-3">
-                         <div class="col">
-                             <label for="provinsi">Provinsi</label>
-                             <select name="provinsi"
-                                 class="form-select @error('provinsi')
-                                 is-invalid
-                             @enderror"
-                                 id="provinsi">
-
-                                 @foreach ($provinsi as $p)
-                                     @if (old('provinsi', $profil->provinsi) == $p->id_provinsi)
-                                         <option value="{{ $p->id_provinsi }}" selected>{{ $p->nama_provinsi }}</option>
-                                     @else
-                                         <option value="{{ $p->id_provinsi }}">{{ $p->nama_provinsi }}</option>
-                                     @endif
-                                 @endforeach
-                             </select>
-                             @error('provinsi')
-                                 <div class="invalid-feedback">
-                                     {{ $message }}
-                                 </div>
-                             @enderror
-                         </div>
-                         <div class="col">
-                             <label for="kabupaten">Kabupaten</label>
-                             <select name="kabupaten" id="kabupaten"
-                                 class="form-select @error('kabupaten')
-                                 is-invalid
-                             @enderror">
-                                 <option disabled selected>Kabupaten/Kota</option>
-                             </select>
-                             @error('kabupaten')
-                                 <div class="invalid-feedback">
-                                     {{ $message }}
-                                 </div>
-                             @enderror
-                         </div>
+                         <input type="text" class="form-control" id="alamat" name="alamat"
+                             placeholder="Masukkan alamat anda" value="{{ $user->pelamar->alamat }}" required>
+                         <label for="alamat">Masukkan alamat Anda</label>
                      </div>
 
                      <div class="d-flex mt-3 mb-2">
                          <label for="date" class="px-2">Masukkan tanggal lahir </label>
                          <input type="date"
-                             class="@error('usia')
+                             class="@error('tanggal_lahir')
                              is-invalid
                          @enderror"
-                             id="usia" name="usia" value="{{ old('usia', $profil->usia) }}" required>
+                             id="tanggal_lahir" name="tanggal_lahir" value="{{ $user->pelamar->tanggal_lahir }}"
+                             required>
                          @error('usia')
                              <div class="invalid-feedback">
                                  {{ $message }}
@@ -113,43 +83,52 @@
                      </div>
 
 
-                     <div class="col-md-5 mt-3">
+                     <div class="d-flex mt-3 mb-2">
                          <label for="jenisKelamin">Jenis Kelamin</label>
                          <select
                              class="form-select mt-3 @error('jenis_kelamin')
                              is-invalid
                          @enderror"
                              id="jenisKelamin" aria-label="Default select example" name="jenis_kelamin">
-                             @if (old('jenis_kelamin', $profil->jenis_kelamin) == 'laki-laki')
-                                 <option value="laki-laki">Laki-laki</option>
-                             @elseif(old('jenis_kelamin', $profil->jenis_kelamin) == 'perempuan')
-                                 <option value="perempuan">Perempuan</option>
+                             @if (old('jenis_kelamin', $user->pelamar->jenis_kelamin) == 'laki-laki')
+                                 <option value="laki-laki" selected>Laki-laki</option>
+                             @elseif(old('jenis_kelamin', $user->pelamar->jenis_kelamin) == 'perempuan')
+                                 <option value="perempuan" selected>Perempuan</option>
+                             @else
+                                 <option value="Pria">Pria</option>
+                                 <option value="Wanita">Wanita</option>
                              @endif
                          </select>
-                         @error('jenis_kelamina')
+                         @error('jenis_kelamin')
                              <div class="invalid-feedback">
                                  {{ $message }}
                              </div>
                          @enderror
                      </div>
                      <div class="mt-4">
-                         <label for="kewarganegaraan">Kewarganegaraan</label>
+
                          <input
                              class="form-control @error('kewarganegaraan')
                              is-invalid
                          @enderror"
-                             list="negara" id="exampleDataList" placeholder="Pilih kewarganegaraan..."
-                             name="kewarganegaraan" id="kewarganegaraan" required>
+                             list="negara" id="exampleDataList" placeholder="Ketik untuk pilih kewarganegaraan..."
+                             name="kebangsaan" id="kebangsaan" required>
                          <datalist id="negara">
-                             @foreach ($allCountries as $country)
-                                 <option value="{{ $country->name->common }}">
+                             @foreach ($countries as $country)
+                                 @if (old('kebangsaan', $country) == $user->pelamar->kebangsaan)
+                                     <option value="{{ $user->pelamar->kebangsaan }}">{{ $user->pelamar->kebangsaan }}
+                                     </option>
+                                 @else
+                                     <option value="{{ $country }}">{{ $country }}</option>
+                                 @endif
                              @endforeach
                          </datalist>
-                         @error('kewarganegaraan')
+                         @error('kebangsaan')
                              <div class="invalid-feedback">
                                  {{ $message }}
                              </div>
                          @enderror
+
                      </div>
                  </div>
                  <div class="modal-footer">

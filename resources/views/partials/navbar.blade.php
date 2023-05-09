@@ -11,16 +11,16 @@
             @can('admin')
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" href="/admin-dashboard/jobs">Dashboard</a>
+                        <a class="nav-link fw-bold" href="/admin-dashboard/lowongan">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" href="/admin-kelola-kandidat">Kelola kandidat</a>
+                        <a class="nav-link fw-bold" href="/admin-dashboard/">Kelola kandidat</a>
                     </li>
                 </ul>
             @elsecan('user')
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link fw-bold" href="/main">Lowongan Kerja</a>
+                        <a class="nav-link fw-bold" href="/lowongan-kerja">Lowongan Kerja</a>
                     </li>
                 </ul>
             @endcan
@@ -31,14 +31,13 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle fw-bold" href="#" id="navbarDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ auth()->user()->name }}
+                                {{ auth()->user()->username }}
                             </a>
-
 
                             @can('user')
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    @foreach ($profils as $profil)
-                                        <li><a class="dropdown-item mb-2" href="/profil/{{ $profil->id }}"><i
+                                    @foreach ($users as $user)
+                                        <li><a class="dropdown-item mb-2" href="/profil-kandidat/users/{{ $user->slug }}"><i
                                                     class="bi bi-person-circle"></i>
                                                 Profil</a></li>
                                         <li><a class="dropdown-item mb-2" href="/lamaran_saya"><i
@@ -49,16 +48,15 @@
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        @endforeach
-                                        <li>
-                                            <form action="/logout" method="post">
-                                                @csrf
-                                                <button type="submit" class="dropdown-item"><i
-                                                        class="bi bi-box-arrow-right"></i>
-                                                    Keluar</button>
-                                            </form>
+                                    @endforeach
+                                    <li>
+                                        <form action="/logout" method="post">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i>
+                                                Keluar</button>
+                                        </form>
 
-                                        </li>
+                                    </li>
                                 </ul>
                             @elsecan('admin')
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">

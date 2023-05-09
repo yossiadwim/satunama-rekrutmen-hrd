@@ -108,7 +108,7 @@ return [
     |
     */
 
-    'faker_locale' => env('FAKER_LOCALE','en_US','fr_FR'),
+    'faker_locale' => 'en_US',
 
     /*
     |--------------------------------------------------------------------------
@@ -182,7 +182,6 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-
         /*
          * Package Service Providers...
          */
@@ -195,6 +194,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Monarobase\CountryList\CountryListServiceProvider::class,
 
     ],
 
@@ -211,6 +211,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
+        'Countries' => Monarobase\CountryList\CountryListFacade::class,
     ])->toArray(),
 
 ];

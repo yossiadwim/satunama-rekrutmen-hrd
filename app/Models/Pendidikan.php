@@ -10,8 +10,11 @@ class Pendidikan extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $table = 'pendidikan_karyawan';
+    public $timestamps = false;
+    protected $primaryKey = 'id_pendidikan';
 
-    public function profil(){
-        return $this->belongsTo(Profil::class);
+    public function pelamar(){
+        return $this->belongsTo(Pelamar::class,'id_pelamar','id');
     }
 }

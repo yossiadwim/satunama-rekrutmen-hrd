@@ -5,8 +5,9 @@
         </div>
         @if ($pengalamanKerjaExists)
             <div class="col-4 text-align-right">
-                <a href="/profil/{{ $profil->id }}/work-experience" class="btn btn-primary bg-btn border-0"
-                    data-bs-toggle="modal" data-bs-target="#pengalamanKerja"><i class="bi bi-plus-circle-fill"></i>
+                <a href="/profil-kandidat/users/{{ $user->slug }}/work-experience"
+                    class="btn btn-primary bg-btn border-0" data-bs-toggle="modal" data-bs-target="#pengalamanKerja"><i
+                        class="bi bi-plus-circle-fill"></i>
                     Tambahkan pengalaman kerja</a>
             </div>
             <div class="modal fade " id="pengalamanKerja" tabindex="-1" aria-labelledby="pengalamanKerjaLabel"
@@ -23,18 +24,8 @@
                             <div class="modal-body">
                                 <p>Tambahkan pengalaman kerja yang Anda miliki</p>
 
-                                <div class=" mb-3" hidden>
-                                    <input type="text" class="form-control mb-4" name="user_id" id="user_id"
-                                        value="{{ $profil->user_id }}">
-                                </div>
-
                                 <div class="mb-3" hidden>
-                                    <input type="text" class="form-control mb-4" name="profil_id" id="profil_id"
-                                        value="{{ $profil->id }}">
-                                </div>
-
-                                <div class="mb-3" hidden>
-                                    <input type="text" class="form-control mb-4" name="pelamar_id" id="pelamar_id"
+                                    <input type="text" class="form-control mb-4" name="id_pelamar" id="id_pelamar"
                                         value="">
                                 </div>
 
@@ -44,59 +35,18 @@
                                     <label for="namaPerusahaan">Nama perusahaan</label>
                                 </div>
 
-                                <div class="form-floating">
+                                <div class="form-floating mb-3">
                                     <input type="text" class="form-control mb-4" name="jabatan" id="posisijabatan"
                                         placeholder="Posisi / jabatan">
                                     <label for="posisijabatan">Posisi / Jabatan</label>
                                 </div>
 
-                                <div class="row g-3 mb-4">
-                                    <div class="col">
-                                        <label for="bulanMulai">Bulan Mulai</label>
-                                        <select name="bulan_mulai" class="form-select" id="bulanMulai">
-                                            <option disabled selected>Bulan Mulai</option>
-
-                                            @foreach (range(1, 12) as $month)
-                                                <option value="{{ $month }}">
-                                                    {{ \Carbon\Carbon::create(2000, $month, 1)->translatedFormat('F') }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label for="tahunMulai">Tahun Mulai</label>
-                                        <select name="tahun_mulai" id="tahunMulai" class="form-select">
-                                            <option disabled selected>Tahun Mulai</option>
-                                            @foreach (range(date('Y') - 123, date('Y')) as $year)
-                                                <option value="{{ $year }}">{{ $year }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control mb-4" name="periode" id="periode"
+                                        placeholder="periode">
+                                    <label for="periode">Periode. Contoh: 2020 - 2021</label>
                                 </div>
-                                <div class="row g-3 mb-4">
-                                    <div class="col">
-                                        <label for="bulanBerakhir">Bulan Berakhir</label>
-                                        <select name="bulan_berakhir" class="form-select" id="bulanBerakhir">
-                                            <option disabled selected>Bulan Berakhir</option>
-                                            @foreach (range(1, 12) as $month)
-                                                <option value="{{ $month }}">
-                                                    {{ \Carbon\Carbon::createFromDate(null, $month, 1)->translatedFormat('F') }}
-                                                </option>
-                                            @endforeach
-                                        </select>
 
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="tahunBerakhir">Tahun Berakhir</label>
-                                        <select name="tahun_berakhir" id="tahunBerakhir" class="form-select">
-                                            <option disabled selected>Tahun Berakhir</option>
-                                            @foreach (range(date('Y') - 123, date('Y')) as $year)
-                                                <option value="{{ $year }}">{{ $year }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
                                 <div class="form-check mb-4">
                                     <input class="form-check-input" type="checkbox" value="false" id="konfirmasi"
                                         name="masih_bekerja">
@@ -112,10 +62,17 @@
 
                                 </div>
                                 <div class="form-floating">
-                                    <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
-                                        name="alasan_mengundurkan_diri" style="height: 200px"></textarea>
+                                    <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="alasan_mengundurkan_diri"
+                                        style="height: 200px"></textarea>
                                     <label for="floatingTextarea2">Alasan mengundurkan diri</label>
                                 </div>
+                                <div class="form-floating" hidden>
+                                    <input type="text" class="form-control mb-4" name="id_pelamar" id="id_pelamar"
+                                        placeholder="id_pelamar" value="{{ $user->pelamar->id }}">
+                                    <label for="id_pelamar">id_pelamar</label>
+
+                                </div>
+
 
                             </div>
                             <div class="modal-footer">
@@ -134,8 +91,9 @@
     <div class="col-md-12 mt-5 mb-1 d-flex justify-content-center">
 
         @if (!$pengalamanKerjaExists)
-            <a href="/profil/{{ $profil->id }}/work-experience" class="btn btn-primary border-0 mt-5 mb-5"
-                data-bs-toggle="modal" data-bs-target="#pengalamanKerja"><i class="bi bi-plus-circle-fill"></i>
+            <a href="/profil-kandidat/users/{{ $user->slug }}/work-experience"
+                class="btn btn-primary border-0 mt-5 mb-5" data-bs-toggle="modal" data-bs-target="#pengalamanKerja"><i
+                    class="bi bi-plus-circle-fill"></i>
                 Tambahkan pengalaman kerja</a>
 
             <!-- Modal -->
@@ -153,19 +111,9 @@
                             <div class="modal-body">
                                 <p>Tambahkan pengalaman kerja yang Anda miliki</p>
 
-                                <div class=" mb-3" hidden>
-                                    <input type="text" class="form-control mb-4" name="user_id" id="user_id"
-                                        value="{{ $profil->user_id }}">
-                                </div>
-
                                 <div class="mb-3" hidden>
-                                    <input type="text" class="form-control mb-4" name="profil_id" id="profil_id"
-                                        value="{{ $profil->id }}">
-                                </div>
-
-                                <div class="mb-3" hidden>
-                                    <input type="text" class="form-control mb-4" name="pelamar_id"
-                                        id="pelamar_id" value="">
+                                    <input type="text" class="form-control mb-4" name="id_pelamar"
+                                        id="id_pelamar" value="">
                                 </div>
 
                                 <div class="form-floating mb-3">
@@ -174,58 +122,18 @@
                                     <label for="namaPerusahaan">Nama perusahaan</label>
                                 </div>
 
-                                <div class="form-floating">
+                                <div class="form-floating mb-3">
                                     <input type="text" class="form-control mb-4" name="jabatan"
                                         id="posisijabatan" placeholder="Posisi / jabatan">
                                     <label for="posisijabatan">Posisi / Jabatan</label>
                                 </div>
 
-                                <div class="row g-3 mb-4">
-                                    <div class="col">
-                                        <label for="bulanMulai">Bulan Mulai</label>
-                                        <select name="bulan_mulai" class="form-select" id="bulanMulai">
-                                            <option disabled selected>Bulan Mulai</option>
-                                            @foreach (range(1, 12) as $month)
-                                                <option value="{{ $month }}">
-                                                    {{ \Carbon\Carbon::create(2000, $month, 1)->translatedFormat('F') }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col">
-                                        <label for="tahunMulai">Tahun Mulai</label>
-                                        <select name="tahun_mulai" id="tahunMulai" class="form-select">
-                                            <option disabled selected>Tahun Mulai</option>
-                                            @foreach (range(date('Y') - 123, date('Y')) as $year)
-                                                <option value="{{ $year }}">{{ $year }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control mb-4" name="periode" id="periode"
+                                        placeholder="periode">
+                                    <label for="periode">Periode. Contoh: 2020 - 2021</label>
                                 </div>
-                                <div class="row g-3 mb-4">
-                                    <div class="col">
-                                        <label for="bulanBerakhir">Bulan Berakhir</label>
-                                        <select name="bulan_berakhir" class="form-select" id="bulanBerakhir">
-                                            <option disabled selected>Bulan Berakhir</option>
-                                            @foreach (range(1, 12) as $month)
-                                                <option value="{{ $month }}">
-                                                    {{ \Carbon\Carbon::createFromDate(null, $month, 1)->translatedFormat('F') }}
-                                                </option>
-                                            @endforeach
-                                        </select>
 
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="tahunBerakhir">Tahun Berakhir</label>
-                                        <select name="tahun_berakhir" id="tahunBerakhir" class="form-select">
-                                            <option disabled selected>Tahun Berakhir</option>
-                                            @foreach (range(date('Y') - 123, date('Y')) as $year)
-                                                <option value="{{ $year }}">{{ $year }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
                                 <div class="form-check mb-4">
                                     <input class="form-check-input" type="checkbox" value="false" id="konfirmasi"
                                         name="masih_bekerja">
@@ -245,6 +153,13 @@
                                         name="alasan_mengundurkan_diri" style="height: 200px"></textarea>
                                     <label for="floatingTextarea2">Alasan mengundurkan diri</label>
                                 </div>
+                                <div class="form-floating" hidden>
+                                    <input type="text" class="form-control mb-4" name="id_pelamar"
+                                        id="id_pelamar" placeholder="id_pelamar" value="{{ $user->pelamar->id }}">
+                                    <label for="id_pelamar">id_pelamar</label>
+
+                                </div>
+
 
                             </div>
                             <div class="modal-footer">
@@ -263,10 +178,7 @@
                         <div class="col">
                             <p class="fs-4 fw-bold">{{ $pk->nama_perusahaan }}</p>
                             <p>{{ $pk->jabatan }}</p>
-                            <p>{{ \Carbon\Carbon::createFromDate(null, $pk->bulan_mulai, 1)->translatedFormat('F') }}
-                                {{ $pk->tahun_mulai }} -
-                                {{ \Carbon\Carbon::createFromDate(null, $pk->bulan_berakhir, 1)->translatedFormat('F') }}
-                                {{ $pk->tahun_berakhir }}</p>
+                            <p>{{ $pk->periode }}</p>
                         </div>
                         <div class="col">
                             <div>
@@ -292,117 +204,33 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 ID="close" aria-label="Close" onclick="hapusData()"></button>
                                         </div>
-                                        <form method="post" action="/pengalamanKerja/{{ $pk->id }}"
+                                        <form method="post"
+                                            action="/pengalamanKerja/{{ $pk->id }}"
                                             id="formPengalamanKerja">
                                             @method('put')
                                             @csrf
                                             <div class="modal-body">
                                                 <p>Tambahkan pengalaman kerja yang Anda miliki</p>
 
-                                                <div class=" mb-3" hidden>
-                                                    <input type="text" class="form-control mb-4" name="user_id"
-                                                        id="user_id" value="{{ $profil->user_id }}">
-                                                </div>
-
-                                                <div class="mb-3" hidden>
-                                                    <input type="text" class="form-control mb-4" name="profil_id"
-                                                        id="profil_id" value="{{ $profil->id }}">
-                                                </div>
-
-                                                <div class="mb-3" hidden>
-                                                    <input type="text" class="form-control mb-4" name="pelamar_id"
-                                                        id="pelamar_id" value="">
-                                                </div>
-
                                                 <div class="form-floating mb-3">
                                                     <input type="text" class="form-control mb-4"
                                                         name="nama_perusahaan" id="namaPerusahaan"
-                                                        placeholder="Nama perusahaan"
-                                                        value="{{ old('nama_perusahaan', $pk->nama_perusahaan) }}">
+                                                        placeholder="Nama perusahaan" value="{{ $pk->nama_perusahaan }}">
                                                     <label for="namaPerusahaan">Nama perusahaan</label>
                                                 </div>
 
-                                                <div class="form-floating">
+                                                <div class="form-floating mb-3">
                                                     <input type="text" class="form-control mb-4" name="jabatan"
-                                                        id="posisijabatan" placeholder="Posisi / jabatan"
-                                                        value="{{ old('jabatan', $pk->jabatan) }}">
+                                                        id="posisijabatan" placeholder="Posisi / jabatan" value="{{ $pk->jabatan }}">
                                                     <label for="posisijabatan">Posisi / Jabatan</label>
                                                 </div>
 
-                                                <div class="row g-3 mb-4">
-                                                    <div class="col">
-                                                        <label for="bulanMulai">Bulan Mulai</label>
-                                                        <select name="bulan_mulai" class="form-select"
-                                                            id="bulanMulai">
-                                                            @foreach (range(1, 12) as $month)
-                                                                @if (old('bulan_mulai', $month) == $pk->bulan_mulai)
-                                                                    <option value="{{ $pk->bulan_mulai }}" selected>
-                                                                        {{ \Carbon\Carbon::create(2000, $month, 1)->translatedFormat('F') }}
-                                                                    </option>
-                                                                @else
-                                                                    <option value="{{ $month }}">
-                                                                        {{ \Carbon\Carbon::create(2000, $month, 1)->translatedFormat('F') }}
-                                                                    </option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="tahun_mulai">Tahun Mulai</label>
-                                                        <select name="tahun_mulai" id="tahunMulai"
-                                                            class="form-select">
-
-                                                            @foreach (range(date('Y') - 100, date('Y')) as $year)
-                                                                @if (old('tahun_mulai', $year) == $pk->tahun_mulai)
-                                                                    <option value="{{ $pk->tahun_mulai }}" selected>
-                                                                        {{ $year }}</option>
-                                                                @else
-                                                                    <option value="{{ $year }}">
-                                                                        {{ $year }}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control mb-4" name="periode"
+                                                        id="periode" placeholder="periode" value="{{ $pk->periode }}">
+                                                    <label for="periode">Periode. Contoh: 2020 - 2021</label>
                                                 </div>
-                                                <div class="row g-3 mb-4">
-                                                    <div class="col">
-                                                        <label for="bulan_berakhir">Bulan Berakhir</label>
-                                                        <select name="bulan_berakhir" class="form-select"
-                                                            id="bulanBerakhir">
-                                                            @foreach (range(1, 12) as $month)
-                                                                @if (old('bulan_berakhir', $month) == $pk->bulan_berakhir)
-                                                                    <option value="{{ $pk->bulan_berakhir }}"
-                                                                        selected>
-                                                                        {{ \Carbon\Carbon::create(2000, $month, 1)->translatedFormat('F') }}
-                                                                    </option>
-                                                                @else
-                                                                    <option value="{{ $month }}">
-                                                                        {{ \Carbon\Carbon::create(2000, $month, 1)->translatedFormat('F') }}
-                                                                    </option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
 
-                                                    </div>
-
-                                                    <div class="col">
-                                                        <label for="tahun_berakhir">Tahun Berakhir</label>
-                                                        <select name="tahun_berakhir" id="tahunBerakhir"
-                                                            class="form-select">
-                                                            @foreach (range(date('Y') - 100, date('Y')) as $year)
-                                                                @if (old('tahun_mulai', $year) == $pk->tahun_berakhir)
-                                                                    <option value="{{ $pk->tahun_berakhir }}"
-                                                                        selected>
-                                                                        {{ $year }}</option>
-                                                                @else
-                                                                    <option value="{{ $year }}">
-                                                                        {{ $year }}</option>
-                                                                @endif
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
                                                 <div class="form-check mb-4">
                                                     <input class="form-check-input" type="checkbox" value="false"
                                                         id="konfirmasi" name="masih_bekerja">
@@ -413,18 +241,23 @@
 
                                                 <div class="form-floating">
                                                     <input type="text" class="form-control mb-4" name="gaji"
-                                                        id="gaji" placeholder="Gaji"
-                                                        value="{{ $pk->gaji }}">
+                                                        id="gaji" placeholder="Gaji" value="{{ $pk->gaji }}">
                                                     <label for="gaji">Gaji</label>
 
                                                 </div>
-
-
                                                 <div class="form-floating">
                                                     <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
                                                         name="alasan_mengundurkan_diri" style="height: 200px">{{ $pk->alasan_mengundurkan_diri }}</textarea>
                                                     <label for="floatingTextarea2">Alasan mengundurkan diri</label>
                                                 </div>
+                                                <div class="form-floating" hidden>
+                                                    <input type="text" class="form-control mb-4" name="id_pelamar"
+                                                        id="id_pelamar" placeholder="id_pelamar"
+                                                        value="{{ $user->pelamar->id }}">
+                                                    <label for="id_pelamar">id_pelamar</label>
+
+                                                </div>
+
 
                                             </div>
                                             <div class="modal-footer">

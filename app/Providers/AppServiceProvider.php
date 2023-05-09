@@ -1,38 +1,48 @@
 <?php
 
 namespace App\Providers;
-
 use App\Models\User;
-// use Illuminate\Auth\Access\Gate;
-use Illuminate\Support\ServiceProvider;
+use App\Models\UserRole;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        //
         Gate::define('user', function(User $user){
-            return $user->role === 'user';
+            $role_name = UserRole::join('users', 'user_role.id_user', '=', 'users.id')
+            ->join('role', 'user_role.id_role', '=', 'role.id_role')
+            ->select(DB::raw('users.username, users.email, role.nama_role as role'))
+            ->where('email', $user->email) 
+            ->get()
+            ->toArray();
+
+            return $role_name[0]['role'] == 'user';
         });
 
         Gate::define('admin', function(User $user){
-            return $user->role === 'admin';
+
+            $role_name = UserRole::join('users', 'user_role.id_user', '=', 'users.id')
+            ->join('role', 'user_role.id_role', '=', 'role.id_role')
+            ->select(DB::raw('users.username, users.email, role.nama_role as role'))
+            ->where('email', $user->email) 
+            ->get()
+            ->toArray();
+
+            return $role_name[0]['role'] == 'admin';
         });
     }
 }

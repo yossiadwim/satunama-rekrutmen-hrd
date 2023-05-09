@@ -10,13 +10,11 @@ class PengalamanKerja extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $table = 'pengalaman_kerja';
+    public $timestamps = false;
 
-    public function user(){
-        return $this->hasOne(User::class,'user_id','user_id');
+
+    public function pelamar(){
+        return $this->belongsTo(Pelamar::class,'id_pelamar','id');
     }
-
-    public function profil(){
-        return $this->hasOne(Profil::class,'profil_id','id');
-    }
-
 }

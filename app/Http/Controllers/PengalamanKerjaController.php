@@ -3,18 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\PengalamanKerja;
-use App\Models\Profil;
-
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Requests\StorePengalamanKerjaRequest;
-use App\Http\Requests\UpdatePengalamanKerjaRequest;
+use Illuminate\Support\Facades\Auth;
 
 class PengalamanKerjaController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
@@ -23,8 +19,6 @@ class PengalamanKerjaController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
@@ -33,41 +27,29 @@ class PengalamanKerjaController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StorePengalamanKerjaRequest  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $user = User::where('id', auth()->user()->id)->get();
+        $user_slug = $user->pluck('slug');
 
         $validatedData = $request->validate(
             [
-                'user_id' => 'required',
-                'profil_id' => 'required',
                 'nama_perusahaan' => 'required',
                 'jabatan' => 'required',
-                'bulan_mulai' => 'required',
-                'tahun_mulai' => 'required',
-                'bulan_berakhir' => 'required',
-                'tahun_berakhir' => 'required',
-                'masih_bekerja' => 'nullable',
+                'periode' => 'required',
                 'gaji' => 'required',
-                'alasan_mengundurkan_diri' => 'required'
+                'alasan_mengundurkan_diri' => 'required',
+                'id_pelamar' => 'required',
             ]
         );
-
-        PengalamanKerja::create($validatedData);
-        return redirect('/profil/'.$validatedData['profil_id'])->with('success add work experience', 'Berhasil menambah pengalaman kerja');
-
-        
+    PengalamanKerja::create($validatedData);
+   
+        return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success add work experience', 'Berhasil menambah pengalaman kerja');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\PengalamanKerja  $pengalamanKerja
-     * @return \Illuminate\Http\Response
      */
     public function show(PengalamanKerja $pengalamanKerja)
     {
@@ -76,9 +58,6 @@ class PengalamanKerjaController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\PengalamanKerja  $pengalamanKerja
-     * @return \Illuminate\Http\Response
      */
     public function edit(PengalamanKerja $pengalamanKerja)
     {
@@ -87,24 +66,18 @@ class PengalamanKerjaController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdatePengalamanKerjaRequest  $request
-     * @param  \App\Models\PengalamanKerja  $pengalamanKerja
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, PengalamanKerja $pengalamanKerja)
     {
-        //
+        $user = User::where('id', auth()->user()->id)->get();
+        $user_slug = $user->pluck('slug');
+
         $validatedData = $request->validate(
             [
-                'user_id' => 'required',
-                'profil_id' => 'required',
+
                 'nama_perusahaan' => 'required',
                 'jabatan' => 'required',
-                'bulan_mulai' => 'required',
-                'tahun_mulai' => 'required',
-                'bulan_berakhir' => 'required',
-                'tahun_berakhir' => 'required',
+                'periode' => 'required',
                 'masih_bekerja' => 'nullable',
                 'gaji' => 'required',
                 'alasan_mengundurkan_diri' => 'required'
@@ -112,7 +85,8 @@ class PengalamanKerjaController extends Controller
         );
 
         PengalamanKerja::where('id', '=', $pengalamanKerja->id)->update($validatedData);
-        return redirect('/profil/'.$validatedData['profil_id'])->with('success update work experience', 'Berhasil mengubah pengalaman kerja');
+       
+        return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success update work experience', 'Berhasil mengubah pengalaman kerja');
     }
 
     /**
@@ -123,7 +97,12 @@ class PengalamanKerjaController extends Controller
      */
     public function destroy(PengalamanKerja $pengalamanKerja)
     {
+
+        $user = User::where('id', auth()->user()->id)->get();
+        $user_slug = $user->pluck('slug');
+
         PengalamanKerja::destroy($pengalamanKerja->id);
-        return redirect('/profil/'.$pengalamanKerja->profil_id)->with('success delete work experience', 'Berhasil menghapus pengalaman kerja');
+
+        return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success delete work experience', 'Berhasil menghapus pengalaman kerja');
     }
 }

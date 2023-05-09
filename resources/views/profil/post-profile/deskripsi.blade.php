@@ -4,8 +4,8 @@
     <hr class="border border-secondary">
     <div class="col-md-12 mt-5 mb-5 d-flex justify-content-center">
         <!-- Button trigger modal -->
-        @if ($profil->tentang_saya == null)
-            <a href="/profil/{{ $profil->id }}/description" class="btn btn-primary border-0 mt-5 mb-5"
+        @if ($user->pelamar->deskripsi == null)
+            <a href="/profil-kandidat/users/{{ $user->slug }}/description" class="btn btn-primary border-0 mt-5 mb-5"
                 data-bs-toggle="modal" data-bs-target="#deskripsiModal"><i class="bi bi-plus-circle-fill"></i>
                 Tambahkan deskripsi tentang Anda</a>
 
@@ -19,11 +19,11 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="close"
                                 aria-label="Close" onclick="hapusData()"></button>
                         </div>
-                        <form action="/profil/{{ $profil->id }}/description" method="post" id="formDeskripsiDiri">
+                        <form action="/profil-kandidat/users/{{ $user->slug }}/description" method="post" id="formDeskripsiDiri">
                             @csrf
                             <div class="modal-body">
                                 <p>Beritahu tentang diri Anda </p>
-                                <input id="deskripsi" type="hidden" name="tentang_saya">
+                                <input id="deskripsi" type="hidden" name="deskripsi">
                                 <trix-editor input="deskripsi"></trix-editor>
                             </div>
                             <div class="modal-footer">
@@ -39,11 +39,11 @@
             <div class="row g-3">
                 <div class="col-11">
                     <article style="text-align: justify">
-                        {!! $profil->tentang_saya !!}
+                        {!! $user->pelamar->deskripsi !!}
                     </article>
                 </div>
                 <div class="col">
-                    <a href="/profil/{{ $profil->id }}/description" class="btn btn-primary border-0 mt-5 mb-5"
+                    <a href="/profil-kandidat/users/{{ $user->slug }}/description" class="btn btn-primary border-0 mt-5 mb-5"
                         data-bs-toggle="modal" data-bs-target="#deskripsiModal"><i class="bi bi-pencil-fill"></i>
                         Edit</a>
 
@@ -57,13 +57,13 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" id="close"
                                         aria-label="Close" onclick="hapusData()"></button>
                                 </div>
-                                <form action="/profil/{{ $profil->id }}/description" method="post"
+                                <form action="/profil-kandidat/users/{{ $user->slug }}/description" method="post"
                                     id="formDeskripsiDiri">
                                     @csrf
                                     <div class="modal-body">
                                         <p>Beritahu tentang diri Anda </p>
-                                        <input id="deskripsi" type="hidden" name="tentang_saya">
-                                        <trix-editor input="deskripsi">{!! $profil->tentang_saya !!}</trix-editor>
+                                        <input id="deskripsi" type="hidden" name="deskripsi">
+                                        <trix-editor input="deskripsi">{!! $user->pelamar->deskripsi !!}</trix-editor>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-danger" >Hapus</button>

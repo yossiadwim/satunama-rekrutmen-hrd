@@ -2,120 +2,99 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
-use App\Models\Job;
+use App\Models\Departemen;
+use App\Models\User;
+use App\Models\Lowongan;
+use App\Models\Pelamar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class AdminDashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
-        $this->authorize('admin');
-        return view('main.index_admin', [
+        return view('dashboard.admin_dashboard', [
 
-            'jobsOpen' => Job::join('departments', 'jobs.id_departemen', '=', 'departments.id')
-                ->select(DB::raw('jobs.id as job_id, id_departemen, departments.nama_departemen, nama_lowongan as nama_lowongan, slug, tipe_lowongan, deskripsi, jobs.created_at, jobs.updated_at'))
+            'jobsOpen' => Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
+                ->select(DB::raw('lowongan.id as id_lowongan, lowongan.id_departemen, departemen.nama_departemen, nama_lowongan as nama_lowongan, slug, tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
                 ->where('closed', '=', 'false')
-                ->groupBy('departments.nama_departemen','jobs.id')
+                ->groupBy('departemen.nama_departemen', 'lowongan.id')
                 ->get()
                 ->sortDesc(),
 
-            'jobsClose' => Job::join('departments', 'jobs.id_departemen', '=', 'departments.id')
-                ->select(DB::raw('jobs.id as job_id, id_departemen, departments.nama_departemen, nama_lowongan, slug, tipe_lowongan, deskripsi, jobs.created_at, jobs.updated_at'))
+            'jobsClose' => Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
+                ->select(DB::raw('lowongan.id as job_id, lowongan.id_departemen, departemen.nama_departemen, nama_lowongan, slug, tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
                 ->where('closed', '=', 'true')
-                ->groupBy('departments.nama_departemen','jobs.id')
+                ->groupBy('departemen.nama_departemen', 'lowongan.id')
                 ->get()
                 ->sortDesc(),
         ]);
-        // 
-
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function create()
     {
-
-        //
-        $this->authorize('admin');
-
-        return view('admin.index_create_lowongan', [
-            'departements' => Department::all()
+        return view('crud_lowongan.create_lowongan', [
+            'departemen' => Departemen::all(),
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
         $validatedData = $request->validate([
-            'nama_lowongan' => 'required|string',
-            'slug' => 'required|unique:jobs',
-            'closed' => 'required',
             'id_departemen' => 'required',
+            'nama_lowongan' => 'required',
+            'slug' => 'required',
             'tipe_lowongan' => 'required',
-            'deskripsi' => 'required|string'
+            'deskripsi' => 'required',
+            'closed' => 'required',
+
         ]);
 
-        Job::create($validatedData);
-
-
-        return redirect('/admin-dashboard/jobs')->with('success', 'Lowongan Berhasil Dibuat');
+        Lowongan::create($validatedData);
+        return redirect('/admin-dashboard/lowongan')->with('success add', 'Lowongan Berhasil Dibuat');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Job  $job
-     * @return \Illuminate\Http\Response
      */
-    public function show(Job $job)
+    public function show(Lowongan $lowongan)
     {
-        //
+
+        return view('dashboard.kelola_kandidat', [
+            'lowongan' => $lowongan,
+            'datas' =>  $lowongan->pelamarLowongan->load('pelamar.user', 'pelamar.pendidikan', 'pelamar.pengalamanKerja', 'dokumenPelamarLowongan.dokumenPelamar', 'statusLamaran.status')
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Job  $job
-     * @return \Illuminate\Http\Response
      */
-    public function edit(Job $job)
+    public function edit(Lowongan $lowongan)
     {
 
-        return view('admin.index_edit_lowongan', [
-            'job' => $job,
-            'departements' => Department::all()
-
+        return view('crud_lowongan.edit_lowongan', [
+            'lowongan' => $lowongan,
+            'departemen' => Departemen::all()
         ]);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Job  $job
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Job $job)
+    public function update(Request $request, Lowongan $lowongan)
     {
-        //
         $rules = [
             'nama_lowongan' => 'required|string',
             'id_departemen' => 'required',
@@ -123,35 +102,32 @@ class AdminDashboardController extends Controller
             'deskripsi' => 'required|string'
         ];
 
-        if ($request->slug != $job->slug) {
-            $rules['slug'] = 'required|unique:jobs';
+        if ($request->slug != $lowongan->slug) {
+            $rules['slug'] = 'required|unique:lowongan';
         }
 
         $validatedData = $request->validate($rules);
-        Job::where('id', $job->id)->update($validatedData);
+        Lowongan::where('id', $lowongan->id)->update($validatedData);
 
-        return redirect('/admin-dashboard/jobs')->with('success', 'Lowongan Berhasil Diedit');
+        return redirect('/admin-dashboard/lowongan')->with('success edit', 'Lowongan Berhasil Diedit');
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Job  $job
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Job $job)
+    public function destroy(Lowongan $lowongan)
     {
-        //
     }
 
     public function checkSlug(Request $request)
     {
-        $slug = SlugService::createSlug(Job::class, 'slug', $request->nama_lowongan);
+
+        $slug = SlugService::createSlug(Lowongan::class, 'slug', $request->nama_lowongan);
 
         return response()->json(['slug' => $slug]);
     }
 
-    public function closeJobs(Request $request, Job $job)
+    public function closeJobs(Request $request, Lowongan $lowongan)
     {
 
         $rules = [
@@ -160,8 +136,12 @@ class AdminDashboardController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        Job::where('id', $job->id)->update($validatedData);
+        Lowongan::where('id', $lowongan->id)->update($validatedData);
 
-        return redirect('/admin-dashboard/jobs')->with('success closed', 'Lowongan Berhasil Ditutup');
+        return redirect('/admin-dashboard/lowongan')->with('success closed', 'Lowongan Berhasil Ditutup');
+    }
+
+    public function chengePosition(Request $request)
+    {
     }
 }
