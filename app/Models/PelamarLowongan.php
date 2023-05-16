@@ -15,22 +15,40 @@ class PelamarLowongan extends Model
     protected $primaryKey = 'id_pelamar_lowongan';
     protected $casts = [
         'tanggal_melamar' => 'datetime',
-      ];
+    ];
 
-    public function dokumenPelamarLowongan(){
-        return $this->hasMany(DokumenPelamarLowongan::class,'id_pelamar_lowongan','id_pelamar_lowongan');
+    public function dokumenPelamarLowongan()
+    {
+        return $this->hasMany(DokumenPelamarLowongan::class, 'id_pelamar_lowongan', 'id_pelamar_lowongan');
     }
 
-    public function pelamar(){
-        return $this->belongsTo(Pelamar::class,'id_pelamar','id');
-    }
-    
-    public function lowongan(){
-        return $this->belongsTo(Lowongan::class,'id_lowongan','id');
+
+    public function pelamar()
+    {
+        return $this->belongsTo(Pelamar::class, 'id_pelamar', 'id');
     }
 
-    public function statusLamaran(){
-        return $this->hasMany(StatusLamaran::class, 'id_pelamar_lowongan','id_pelamar_lowongan');
+    public function lowongan()
+    {
+        return $this->belongsTo(Lowongan::class, 'id_lowongan', 'id');
     }
 
+    public function statusLamaran()
+    {
+        return $this->hasMany(StatusLamaran::class, 'id_pelamar_lowongan', 'id_pelamar_lowongan');
+    }
+
+    public function tesTertulis()
+    {
+        return $this->belongsTo(TesTertulis::class, 'id_pelamar_lowongan', 'id_pelamar_lowongan');
+    }
+
+    public function timSeleksi()
+    {
+        return $this->hasMany(TimSeleksi::class, 'id_karyawan', 'id_karyawan');
+    }
+
+    public function activityLog(){
+        return $this->hasMany(ActivityLog::class, 'id_pelamar_lowongan','id_pelamar_lowongan');
+    }
 }

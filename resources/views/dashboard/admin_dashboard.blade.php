@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 
@@ -55,7 +54,7 @@
 
     <div class="container">
         <div class="row mt-4">
-            <div class="col-2 border-end border-secondary">
+            <div class="col-1 border-end border-secondary">
                 <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     <button class="nav-link btn-bg active mb-3" id="v-pills-aktif-tab" data-bs-toggle="pill"
                         data-bs-target="#v-pills-aktif" type="button" role="tab" aria-controls="v-pills-home"
@@ -65,7 +64,7 @@
                         aria-selected="false">Tutup</button>
                 </div>
             </div>
-            <div class="col-10 justify-content-center">
+            <div class="col-11 justify-content-center">
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade show active" id="v-pills-aktif" role="tabpanel"
                         aria-labelledby="v-pills-home-tab" tabindex="0">
@@ -80,7 +79,8 @@
                                             <div class="card shadow-sm mb-4">
                                                 <div class="card-body">
                                                     <h5 class="card-text">
-                                                        {{ $job->nama_lowongan }}
+                                                        {{ $job->nama_lowongan }} <span
+                                                            class="badge rounded-pill text-bg-success">Aktif</span>
                                                     </h5>
                                                     <div class="row mt-4">
                                                         <div class="col-md-6">
@@ -100,29 +100,27 @@
                                                             Dibuat pada {{ $job->created_at->toDateString() }}
                                                         </p>
                                                     </div>
-                                                    <div class="row mt-4">
-                                                        <div class="col border-end border-secondary">
-                                                            <p>Dilihat oleh 0</p>
+                                                    <div class=" row mt-4 mb-3 text-center">
+                                                        <div class="col-3">
+                                                            {{-- <span class="badge text-bg-primary fs-6">Dilihat oleh 0</span> --}}
+                                                        </div>
 
-                                                        </div>
-                                                        <div class="col border-end border-secondary">
-                                                            <p>Pending 0</p>
-                                                        </div>
-                                                        <div class="col border-end border-secondary">
-                                                            <p>Terpilih 0</p>
-                                                        </div>
-                                                        <div class="col border-end border-secondary">
-                                                            <p>Wawancara 0</p>
-                                                        </div>
-                                                        <div class="col border-end border-secondary">
-                                                            <p>Penawaran 0</p>
-                                                        </div>
-                                                        <div class="col">
-                                                            <p>Diterima 0</p>
-                                                        </div>
+                                                        {{-- <div class="col-3 ">
+                                                                    <p>Dilihat oleh <i class="bi bi-0-circle-fill"></i>
+                                                                    </p>
+                                                                </div>
+                                                                <div class="col-3 ">
+                                                                    <p>Diproses 0</p>
+                                                                </div>
+                                                                <div class="col-3 ">
+                                                                    <p>Direkrut 0</p>
+                                                                </div>
+                                                                <div class="col-3  ">
+                                                                    <p>Ditolak 0</p>
+                                                                </div> --}}
                                                     </div>
 
-                                                    <div class="row mt-4">
+                                                    <div class="row mt-3">
                                                         <div class="btn-group col-md-3" role="group">
                                                             <button type="button"
                                                                 class="btn btn-secondary dropdown-toggle"
@@ -188,9 +186,10 @@
                                                     </div>
 
                                                     <div class="mt-4">
-                                                        <p class="card-text"><i class="bi bi-clock"></i>
+                                                        {{-- <i class="bi bi-clock"></i> --}}
+                                                        <p class="card-text">Dibuat
                                                             {{ $job->created_at->diffForHumans() }},
-                                                            Diperbarui {{ $job->updated_at->diffForHumans() }}</p>
+                                                            diperbarui {{ $job->updated_at->diffForHumans() }}</p>
                                                         <p class="card-text"></p>
                                                     </div>
                                                 </div>
@@ -221,7 +220,8 @@
                                             <div class="card shadow-sm mb-4">
                                                 <div class="card-body">
                                                     <h5 class="card-text">
-                                                        {{ $job->nama_lowongan }}
+                                                        {{ $job->nama_lowongan }} <span
+                                                            class="badge rounded-pill text-bg-danger">Ditutup</span>
                                                     </h5>
                                                     <div class="row mt-4">
                                                         <div class="col-md-6">

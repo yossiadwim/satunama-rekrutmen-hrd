@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('referensis', function (Blueprint $table) {
-            $table->id();
+        Schema::create('activity_log', function (Blueprint $table) {
+            $table->id('id_activity_log');
+            $table->unsignedBigInteger('id_status_lamaran');
+            $table->foreign('id_status_lamaran')->references('id_status_lamaran')->on('status_lamaran');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('referensis');
+        Schema::dropIfExists('activity_log');
     }
 };

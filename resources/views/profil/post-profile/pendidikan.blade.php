@@ -205,12 +205,13 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 id="close" aria-label="Close" onclick="hapusData()"></button>
                                         </div>
-                                        <form action="/pendidikan/{{ $pendidikan->id }}" method="post"
+                                        <form action="/pendidikan/{{ $pendidikan->id_pendidikan }}" method="POST"
                                             id="formPendidikan" enctype="multipart/form-data">
+                                            @csrf
+                                            @method('PUT')
                                             <div class="modal-body">
                                                 <p>Beritahu kami pendidikan yang pernah Anda tempuh</p>
-                                                @method('put')
-                                                @csrf
+                                                
 
                                                 <div class="row g-3 mb-4">
                                                     <div class="col-md-6">

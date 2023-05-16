@@ -83,11 +83,11 @@
         </div>
     @endif
 
-    @if ($errors->any())
+    {{-- @if ($errors->any())
         @foreach ($errors->all() as $error)
             <div>{{ $error }}</div>
         @endforeach
-    @endif
+    @endif --}}
     <div class="container">
         <div class="row">
             <div class="col-md-3">

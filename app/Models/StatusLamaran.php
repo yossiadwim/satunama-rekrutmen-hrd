@@ -21,4 +21,12 @@ class StatusLamaran extends Model
         return $this->belongsTo(PelamarLowongan::class,'id_pelamar_lowongan','id_pelamar_lowongan');
     }
 
+    public function ActivityLog(){
+        return $this->hasMany(ActivityLog::class,'id_status_lamaran','id_status_lamaran');
+    }
+
+    public function karyawan(){
+        return $this->belongsTo(Karyawan::class,'approved_by','id_karyawan');
+    }
+
 }

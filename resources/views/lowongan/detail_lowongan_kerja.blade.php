@@ -118,10 +118,9 @@
         </div>
 
         <div class="mt-4">
-            <article class="justify-content-center text-justify">
+            <article class="justify-content-center text-justify col-9">
                 {!! $lowongan->deskripsi !!}
             </article>
-
         </div>
 
 
