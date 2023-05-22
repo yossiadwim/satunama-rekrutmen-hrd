@@ -81,6 +81,27 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
+    @elseif (session()->has('success add reference'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success add reference') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success update reference'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success delete reference') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    @elseif (session()->has('success delete reference'))
+        <div class="container justify-content-center col-8">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" style="text-align: center">
+                {{ session('success delete reference') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     @endif
 
     {{-- @if ($errors->any())
@@ -91,7 +112,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-                <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                <div class="d-flex flex-column align-items-center  p-3 py-5">
                     <img class="rounded-circle " width="150px"
                         src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
                     <span> </span>
@@ -182,7 +203,7 @@
                 @include('profil.post-profile.deskripsi')
                 @include('profil.post-profile.pengalamanKerja')
                 @include('profil.post-profile.pendidikan')
-                {{-- @include('profil.post-profile.referensi') --}}
+                @include('profil.post-profile.referensi')
             </div>
 
 
@@ -255,15 +276,26 @@
         }
     })
 
-    confirm.addEventListener("change", function() {
-        console.log(confirm.checked)
-        if (confirm.checked) {
-            document.getElementById("tahun_selesai").disabled = true;
-            document.getElementById("tahun_selesai").value = ""
-        } else {
-            document.getElementById("tahun_selesai").disabled = false;
+    var button_check_reference = document.getElementById('button-check-reference');
+
+    button_check_reference.addEventListener("click", function(){
+        if(button_check_reference.checked){
+            document.getElementById('div-posisi').hidden = false;
+        
+        }
+        else{
+            document.getElementById('div-posisi').hidden = true;
         }
     })
+    // confirm.addEventListener("change", function() {
+        
+    //     if (confirm.checked) {
+    //         document.getElementById("tahun_selesai").disabled = true;
+    //         document.getElementById("tahun_selesai").value = ""
+    //     } else {
+    //         document.getElementById("tahun_selesai").disabled = false;
+    //     }
+    // })
 
     var jenjang_pendidikan = document.getElementById('jenjangPendidikan')
     jenjang_pendidikan.addEventListener("click", function(){

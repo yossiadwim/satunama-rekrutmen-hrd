@@ -30,4 +30,8 @@ class Pelamar extends Model
     public function pelamarLowongan(){
         return $this->hasMany(PelamarLowongan::class,'id_pelamar','id');
     }
+
+    public function referensi(){
+        return $this->hasMany(Referensi::class,'id_pelamar','id');
+    }
 }

@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ActivityLog;
+use App\Models\Status;
 use App\Models\Lowongan;
 use App\Models\Departemen;
-use App\Models\PelamarLowongan;
-use App\Models\Status;
-use App\Models\StatusLamaran;
+use App\Models\ActivityLog;
 use App\Models\TesTertulis;
 use Illuminate\Http\Request;
+use App\Models\StatusLamaran;
+use App\Models\PelamarLowongan;
 use Illuminate\Support\Facades\DB;
 use Cviebrock\EloquentSluggable\Services\SlugService;
-use Illuminate\Database\Eloquent\Builder;
+
 
 class AdminDashboardController extends Controller
 {
@@ -81,6 +81,7 @@ class AdminDashboardController extends Controller
                 'pelamar.user',
                 'pelamar.pendidikan',
                 'pelamar.pengalamanKerja',
+                'pelamar.referensi',
                 'dokumenPelamarLowongan.dokumenPelamar',
                 'statusLamaran.status',
                 'activityLog',
@@ -157,6 +158,18 @@ class AdminDashboardController extends Controller
     public function changePosition(Request $request, StatusLamaran $statusLamaran)
     {
         // dd($request);
+        // if ($request->method() === 'GET') {
+
+        //     if ($request->id_status == 3) {
+        //         return view('dashboard.kelola_kandidat.reference_check_kandidat', [
+
+        //             'datas' => PelamarLowongan::with(['pelamar' => function (Builder $query) use ($request) {
+        //                 $query->where('id_pelamar_lowongan', $request->id_pelamar_lowongan);
+        //             }])
+
+        //         ]);
+        //     }
+        // } else {
         $validatedData = $request->validate([
             'tanggal' => 'required',
             'approved_by' => 'required',
@@ -174,12 +187,10 @@ class AdminDashboardController extends Controller
         ActivityLog::create($data_activity);
 
         $slug_lowongan = PelamarLowongan::join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
-        ->select(DB::raw('slug'))
-        ->get();
+            ->select(DB::raw('slug'))
+            ->get();
 
         return redirect('/admin-dashboard/lowongan/' . $slug_lowongan[0]->slug . '/kelola-kandidat');
-
-
     }
 
     public function addScheduleTest(Request $request)
@@ -231,21 +242,38 @@ class AdminDashboardController extends Controller
         return redirect('admin-dashboard/lowongan/' . $slug_lowongan[0]->slug . '/kelola-kandidat')->with('success edit schedule', 'Berhasil Mengubah Data Jadwal');
     }
 
-    public function detailCandidate(string $id)
+    public function referenceCheck(PelamarLowongan $pelamarLowongan)
     {
+        // dd($pelamarLowongan);
+        return view('dashboard.kelola_kandidat.reference_check_kandidat', [
+            'datas' => $pelamarLowongan->load(
+                'pelamar.user',
+                'pelamar.pendidikan',
+                'pelamar.pengalamanKerja',
+                'pelamar.referensi',
+                'dokumenPelamarLowongan.dokumenPelamar',
+                'statusLamaran.status',
+                'lowongan',
+                'activityLog',
+                'tesTertulis',
+            )
+        ]);
+    }
 
-        
-
-        $pelamar_lowongan = PelamarLowongan::with(['pelamar.pendidikan', 'pelamar.pengalamanKerja' => function (Builder $query) {
-            $query->where('id_pelamar_lowongan');
-        }]);
-
-
-        return view('dashboard.detail_kandidat', [
-
-            'datas' => $pelamar_lowongan,
-
-
+    public function assesment(PelamarLowongan $pelamarLowongan)
+    {
+        return view('dashboard.kelola_kandidat.assesment_kandidat', [
+            'datas' => $pelamarLowongan->load(
+                'pelamar.user',
+                'pelamar.pendidikan',
+                'pelamar.pengalamanKerja',
+                'pelamar.referensi',
+                'dokumenPelamarLowongan.dokumenPelamar',
+                'statusLamaran.status',
+                'lowongan',
+                'activityLog',
+                'tesTertulis',
+            )
         ]);
     }
 }

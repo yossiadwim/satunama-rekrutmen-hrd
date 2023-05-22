@@ -66,12 +66,13 @@
                     {{ \Carbon\Carbon::parse($lowongan->updated_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y ') }}
                 </h6>
             </div>
-            <div class="container rounded mt-4 fw-bold" style="background-color: #EAEAEA">
-                <ul class="nav nav-pills mb-3 py-2 px-2 justify-content-center" id="pills-tab" role="tablist">
+            <div class="container rounded mt-4 fw-bold" style="background-color: #eaeaea">
+                <ul class="nav nav-pills nav- mb-3 py-2 px-2 justify-content-center" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pills-review-tab" data-bs-toggle="pill"
+                        <button  class="nav-link active" id="pills-review-tab" data-bs-toggle="pill"
                             data-bs-target="#pills-review" type="button" role="tab" aria-controls="pills-review"
                             aria-selected="true">Review</button>
+                            
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-seleksi-tab" data-bs-toggle="pill"
@@ -86,7 +87,7 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-tes-tab" data-bs-toggle="pill" data-bs-target="#pills-tes"
                             type="button" role="tab" aria-controls="pills-tes" aria-selected="false">Tes Tertulis
-                        </button>
+                    </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-wawancara-tab" data-bs-toggle="pill"
@@ -196,17 +197,17 @@
 
                     @include('dashboard.kelola_kandidat.seleksi_berkas_kandidat')
 
-                    @include('dashboard.kelola_kandidat.reference_check_kandidat')
+                    {{-- @include('dashboard.kelola_kandidat.reference_check_kandidat') --}}
 
-                    @include('dashboard.kelola_kandidat.assesment_kandidat')
+                    {{-- @include('dashboard.kelola_kandidat.assesment_kandidat') --}}
 
-                    @include('dashboard.kelola_kandidat.wawancara_kandidat')
+                    {{-- @include('dashboard.kelola_kandidat.wawancara_kandidat') --}}
 
-                    @include('dashboard.kelola_kandidat.penawaran_kandidat')
+                    {{-- @include('dashboard.kelola_kandidat.penawaran_kandidat') --}}
 
-                    @include('dashboard.kelola_kandidat.direkrut_kandidat')
+                    {{-- @include('dashboard.kelola_kandidat.direkrut_kandidat') --}}
 
-                    @include('dashboard.kelola_kandidat.ditolak_kandidat')
+                    {{-- @include('dashboard.kelola_kandidat.ditolak_kandidat') --}}
 
                 </div>
 
@@ -242,17 +243,17 @@
 
     }
 
-    // document.addEventListener("DOMContentLoaded", () => {
-    //     const rows = document.querySelectorAll("tr[data-href]");
-    //     console.log(rows);
+    document.addEventListener("DOMContentLoaded", () => {
+        const rows = document.querySelectorAll("tr[data-href]");
+        console.log(rows);
 
-    //     rows.forEach(row => {
-    //         row.addEventListener("click", () => {
-    //             window.location.href = row.dataset.href;
-    //         })
-    //     });
+        rows.forEach(row => {
+            row.addEventListener("click", () => {
+                window.location.href = row.dataset.href;
+            })
+        });
 
-    // });
+    });
 
     function getData(id) {
 

@@ -6,3 +6,47 @@ tr[data-href]:hover {
     background-color: #eaeaea;
 }
 
+.nav-decoration{
+    text-decoration: underline;
+}
+/* .nav-color{
+    color: black;
+}
+
+
+#pills-review-tab:hover {
+    text-decoration: underline;
+}
+#pills-review-tab:focus {
+    text-decoration: underline;
+}
+
+
+#pills-seleksi-tab:hover {
+    text-decoration: underline;
+}
+
+#pills-referensi-tab:hover{
+    text-decoration: underline;
+}
+
+#pills-tes-tab:hover{
+    text-decoration: underline;
+}
+
+#pills-wawancara-tab:hover{
+    text-decoration: underline;
+}
+
+#pills-penawaran-tab:hover{
+    text-decoration: underline;
+}
+
+#pills-direkrut-tab:hover{
+    text-decoration: underline;
+}
+
+#pills-ditolak-tab:hover{
+    text-decoration: underline;
+}
+ */

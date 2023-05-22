@@ -67,10 +67,12 @@
                          <label for="alamat">Masukkan alamat Anda</label>
                      </div>
 
-                     <div class="d-flex mt-3 mb-2">
+                    
+
+                     <div class="mt-3 mb-2">
                          <label for="date" class="px-2">Masukkan tanggal lahir </label>
                          <input type="date"
-                             class="@error('tanggal_lahir')
+                             class="form-control @error('tanggal_lahir')
                              is-invalid
                          @enderror"
                              id="tanggal_lahir" name="tanggal_lahir" value="{{ $user->pelamar->tanggal_lahir }}"
@@ -83,10 +85,10 @@
                      </div>
 
 
-                     <div class="d-flex mt-3 mb-2">
+                     <div class="mt-3 mb-2">
                          <label for="jenisKelamin">Jenis Kelamin</label>
                          <select
-                             class="form-select mt-3 @error('jenis_kelamin')
+                             class="form-select  @error('jenis_kelamin')
                              is-invalid
                          @enderror"
                              id="jenisKelamin" aria-label="Default select example" name="jenis_kelamin">

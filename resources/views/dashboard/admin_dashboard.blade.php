@@ -82,22 +82,22 @@
                                                         {{ $job->nama_lowongan }} <span
                                                             class="badge rounded-pill text-bg-success">Aktif</span>
                                                     </h5>
-                                                    <div class="row mt-4">
-                                                        <div class="col-md-6">
-                                                            <p class="card-text"><i class="bi bi-building-fill"></i>
-                                                                Departemen
-                                                                {{ $job->nama_departemen }}</p>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <p class="card-text"><i class="bi bi-person-fill"></i>
-                                                                {{ $job->tipe_lowongan }}
-                                                            </p>
-                                                        </div>
 
+                                                    <div class="mt-4">
+                                                        <p class="card-text"><i class="bi bi-building-fill"></i>
+                                                            Departemen
+                                                            {{ $job->nama_departemen }}</p>
                                                     </div>
+                                                    <div class="mt-4">
+                                                        <p class="card-text"><i class="bi bi-clock-fill"></i>
+                                                            {{ $job->tipe_lowongan }}
+                                                        </p>
+                                                    </div>
+
+
                                                     <div class="col-md-4 mt-4">
-                                                        <p class="card-text"><i class="bi bi-calendar-fill"></i>
-                                                            Dibuat pada {{ $job->created_at->toDateString() }}
+                                                        <p class="card-text"><i class="bi bi-calendar"></i>
+                                                            Dibuat pada {{ \Carbon\Carbon::parse($job->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y ') }}
                                                         </p>
                                                     </div>
                                                     <div class=" row mt-4 mb-3 text-center">

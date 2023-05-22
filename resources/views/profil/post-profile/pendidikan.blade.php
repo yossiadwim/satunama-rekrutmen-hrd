@@ -56,6 +56,12 @@
 
                                     <label for="jurusan">Jurusan</label>
                                 </div>
+                                <div class="form-floating mb-4 mt-4 col-6">
+                                    <input type="text" class="form-control" id="tahun_lulus" name="tahun_lulus"
+                                        placeholder="tahun_lulus">
+
+                                    <label for="tahun_lulus">Tahun Selesai</label>
+                                </div>
 
                                 <div class="form-floating mb-4 mt-4 col-6">
                                     <input type="text" class="form-control" id="ipk" name="ipk"
@@ -126,8 +132,8 @@
                                 </div>
 
                                 <div class="form-floating mb-4 mt-4 col-6">
-                                    <input type="text" class="form-control" id="nama_institusi" name="nama_institusi"
-                                        placeholder="nama_institusi">
+                                    <input type="text" class="form-control" id="nama_institusi"
+                                        name="nama_institusi" placeholder="nama_institusi">
 
                                     <label for="nama_institusi">Nama Sekolah/Institusi/Universitas</label>
                                 </div>
@@ -137,6 +143,13 @@
                                         placeholder="jurusan">
 
                                     <label for="jurusan">Jurusan</label>
+                                </div>
+
+                                <div class="form-floating mb-4 mt-4 col-6">
+                                    <input type="text" class="form-control" id="tahun_lulus" name="tahun_lulus"
+                                        placeholder="tahun_lulus">
+
+                                    <label for="tahun_lulus">Tahun Selesai</label>
                                 </div>
 
                                 <div class="form-floating mb-4 mt-4 col-6">
@@ -211,7 +224,7 @@
                                             @method('PUT')
                                             <div class="modal-body">
                                                 <p>Beritahu kami pendidikan yang pernah Anda tempuh</p>
-                                                
+
 
                                                 <div class="row g-3 mb-4">
                                                     <div class="col-md-6">
@@ -395,11 +408,25 @@
                                                 </div>
 
                                                 <div class="form-floating mb-4 mt-4 col-6">
+                                                    <input type="text" class="form-control" id="nama_institusi" name="nama_institusi"
+                                                        placeholder="nama_institusi">
+                
+                                                    <label for="nama_institusi">Nama Sekolah/Institusi/Universitas</label>
+                                                </div>
+
+                                                <div class="form-floating mb-4 mt-4 col-6">
                                                     <input type="text" class="form-control" id="jurusan"
                                                         name="jurusan" placeholder="jurusan"
                                                         value="{{ old('jurusan', $pendidikan->jurusan) }}">
 
                                                     <label for="jurusan">Jurusan</label>
+                                                </div>
+
+                                                <div class="form-floating mb-4 mt-4 col-6">
+                                                    <input type="text" class="form-control" id="tahun_selesai" name="tahun_selesai"
+                                                        placeholder="tahun_selesai" value="{{ old('tahun_selesai', $pendidikan->tahun_selesai) }}">
+                
+                                                    <label for="tahun_selesai">Tahun Selesai</label>
                                                 </div>
 
                                                 <div class="form-floating mb-4 mt-4 col-6">
@@ -418,45 +445,46 @@
                                                     <label for="id_pelamar">id_pelamar</label>
                                                 </div>
                                             </div>
-                           
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary btn-batal"
-                                            data-bs-dismiss="modal" onclick="hapusData()">Batal</button>
-                                        <button type="submit"
-                                            class="btn btn-primary btn-simpan border-0">Simpan</button>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-batal"
+                                                    data-bs-dismiss="modal" onclick="hapusData()">Batal</button>
+                                                <button type="submit"
+                                                    class="btn btn-primary btn-simpan border-0">Simpan</button>
+                                            </div>
+                                        </form>
                                     </div>
-                                    </form>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal fade" id="hapusPendidikan{{ $pendidikan->id_pendidikan }}" tabindex="-1"
-                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Konfirmasi</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Informasi ini akan dihapus. Yakin ingin menghapusnya?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                        <form action="/pendidikan/{{ $pendidikan->id_pendidikan }}" method="post">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="submit" class="btn btn-primary">Hapus</button>
-                                        </form>
+                            <div class="modal fade" id="hapusPendidikan{{ $pendidikan->id_pendidikan }}"
+                                tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Konfirmasi</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Informasi ini akan dihapus. Yakin ingin menghapusnya?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <form action="/pendidikan/{{ $pendidikan->id_pendidikan }}"
+                                                method="post">
+                                                @csrf
+                                                @method('delete')
+                                                <button type="submit" class="btn btn-primary">Hapus</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                @endforeach
             </div>
-        @endforeach
+        @endif
     </div>
-    @endif
-</div>
 </div>

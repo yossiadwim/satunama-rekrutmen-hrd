@@ -7,48 +7,47 @@
                         aria-orientation="vertical">
                         @foreach ($datas as $data)
                             @foreach ($data->statusLamaran as $data_status)
-                                @if ($data_status->status->nama_status == 'seleksi berkas')
-                                    @if ($data->pelamar->id == 1)
-                                        <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
-                                            data-bs-target="#tab-candidate-seleksi{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
-                                            type="button" role="tab" aria-controls="v-pills-home"
-                                            aria-selected="true">
-                                            <div class="row shadow-sm border px-2 py-2">
-                                                <div class="col-3 ">
-                                                    <img class="rounded-circle" height="70px" width="70px"
-                                                        style="border-radius: 50%; object-fit: cover;"
-                                                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                                                </div>
-                                                {{-- <div class="col-9 ">
+                                {{-- @if ($data_status->status->nama_status == 'seleksi berkas') --}}
+                                @if ($data->pelamar->id == 1)
+                                    <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
+                                        data-bs-target="#tab-candidate-seleksi{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
+                                        type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                                        <div class="row shadow-sm border px-2 py-2">
+                                            <div class="col-3 ">
+                                                <img class="rounded-circle" height="70px" width="70px"
+                                                    style="border-radius: 50%; object-fit: cover;"
+                                                    src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+                                            </div>
+                                            {{-- <div class="col-9 ">
                                                     <p>{{ $data->pelamar->nama_pelamar }}</p>
                                                     <p><span class="badge rounded-pill text-bg-info">{{ $data_status->status->nama_status }}</span></p>
                                                     <p>{{ $data->pelamar->alamat }}</p>
                                                 </div> --}}
-                                            </div>
-                                        </button>
-                                    @else
-                                        <button class="nav-link" id="v-pills-home-tab" data-bs-toggle="pill"
-                                            data-bs-target="#tab-candidate-seleksi-{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
-                                            type="button" role="tab" aria-controls="v-pills-home">
-                                            <div class="row shadow-sm border px-2 py-2">
-                                                <div class="col-3 ">
-                                                    <img class="rounded-circle" height="70px" width="70px"
-                                                        style="border-radius: 50%; object-fit: cover;"
-                                                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                                                </div>
-                                                <div class="col-9">
-                                                    <p>{{ $data->pelamar->nama_pelamar }}</p>
-                                                    {{-- <p><span class="badge rounded-pill text-bg-info">{{ Str::title($data_status->status->nama_status) }}</span></p> --}}
-                                                    <p>{{ $data->pelamar->alamat }}</p>
-                                                </div>
-                                            </div>
-                                        </button>
-                                    @endif
+                                        </div>
+                                    </button>
                                 @else
-                                    <div>
-                                        <h3>Tidak pelamar di tahap ini</h3>
-                                    </div>
+                                    <button class="nav-link" id="v-pills-home-tab" data-bs-toggle="pill"
+                                        data-bs-target="#tab-candidate-seleksi-{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
+                                        type="button" role="tab" aria-controls="v-pills-home">
+                                        <div class="row shadow-sm border px-2 py-2">
+                                            <div class="col-3 ">
+                                                <img class="rounded-circle" height="70px" width="70px"
+                                                    style="border-radius: 50%; object-fit: cover;"
+                                                    src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+                                            </div>
+                                            <div class="col-9">
+                                                <p>{{ $data->pelamar->nama_pelamar }}</p>
+                                                {{-- <p><span class="badge rounded-pill text-bg-info">{{ Str::title($data_status->status->nama_status) }}</span></p> --}}
+                                                <p>{{ $data->pelamar->alamat }}</p>
+                                            </div>
+                                        </div>
+                                    </button>
                                 @endif
+                                {{-- @else --}}
+                                {{-- <div>
+                                        <h3>Tidak pelamar di tahap ini</h3>
+                                    </div> --}}
+                                {{-- @endif --}}
                             @endforeach
                         @endforeach
                     </div>
@@ -86,6 +85,11 @@
                                                             {{ $data->pelamar->nama_pelamar }} |
                                                             <span
                                                                 class="badge text-bg-info">{{ Str::title($data_status->status->nama_status) }}</span>
+                                                            @if ($data_status->status->nama_status == 'reference check')
+                                                                <a class="btn btn-secondary mt-3"
+                                                                    href="/admin-dashboard/lowongan/{{ $data->id_pelamar_lowongan }}/reference-check"
+                                                                    role="button">Lakukan Reference Check</a>
+                                                            @endif
                                                         </h4>
                                                     </div>
                                                 @endif
@@ -157,6 +161,14 @@
                                     </div>
                                 </div>
 
+                                @if ($data_status->status->nama_status == 'tes')
+                                    <div class="mb-3">
+                                        <a class="btn btn-secondary mt-3"
+                                            href="/admin-dashboard/lowongan/{{ $data->id_pelamar_lowongan }}/assesment"
+                                            role="button">Jadwalkan Tes Kandidat</a>
+                                    </div>
+                                @endif
+
                                 <h5>Melamar pada:
                                     {{ \Carbon\Carbon::parse($data->tanggal_melamar)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y ') }}
                                 </h5>
@@ -181,7 +193,6 @@
                                         <div class="tab-pane fade show"
                                             id="status-lamaran-seleksi-{{ $data_status->id_status_lamaran }}"
                                             role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
-
                                             <div class="row">
                                                 <div class="col-5 card mt-4" style="width: 18rem;">
                                                     <div class="card-body">
@@ -208,12 +219,8 @@
                                                                                     {{ Str::title($stat->nama_status) }}
                                                                                 </button>
                                                                             @endif
-
-
-
                                                                         </li>
                                                                     @endforeach
-
                                                                 </ul>
                                                                 @foreach ($status as $stat)
                                                                     <div class="modal fade"
@@ -286,7 +293,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-7">
-                                                    <div class="card mt-4" style="width: 18rem;">
+                                                    <div class="card mt-4 overflow-auto" style="width: 18rem;">
                                                         <div class="card-body">
                                                             <h5 class="card-title">Riwayat Aktivitas</h5>
                                                             <p class="card-text mb-2 text-body-secondary">Menampilkan
@@ -308,14 +315,12 @@
                                                 </div>
                                             </div>
 
-
-
                                         </div>
                                         <div class="tab-pane fade show active"
                                             id="detail-pelamar-seleksi-{{ $data_status->id_status_lamaran }}"
                                             role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
 
-                                            <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
+                                            {{-- <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
                                                 <div class="accordion-item">
                                                     <h2 class="accordion-header">
                                                         <button class="accordion-button fw-bold" type="button"
@@ -655,7 +660,7 @@
 
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="accordion mt-4" id="accordionPanelsStayOpenExample">
                                                 <div class="accordion-item">
@@ -742,7 +747,7 @@
                                                                                 <button class="nav-link active"
                                                                                     id="resume-tab"
                                                                                     data-bs-toggle="tab"
-                                                                                    data-bs-target="#tab-pane-{{ $dd->id_dokumen }}"
+                                                                                    data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
                                                                                     type="button" role="tab"
                                                                                     aria-selected="true">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
                                                                             </li>
@@ -751,7 +756,7 @@
                                                                                 <button class="nav-link "
                                                                                     id="resume-tab"
                                                                                     data-bs-toggle="tab"
-                                                                                    data-bs-target="#tab-pane-{{ $dd->id_dokumen }}"
+                                                                                    data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
                                                                                     type="button"
                                                                                     role="tab">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
                                                                             </li>
@@ -763,7 +768,7 @@
                                                                 @foreach ($data->dokumenPelamarLowongan as $dd)
                                                                     @if ($dd->id_dokumen == 1)
                                                                         <div class="tab-pane fade show active"
-                                                                            id="tab-pane-{{ $dd->id_dokumen }}"
+                                                                            id="tab-pane-seleksi-{{ $dd->id_dokumen }}"
                                                                             role="tabpanel" aria-labelledby="home-tab"
                                                                             tabindex="0">
                                                                             <embed
@@ -773,7 +778,7 @@
                                                                         </div>
                                                                     @else
                                                                         <div class="tab-pane fade"
-                                                                            id="tab-pane-{{ $dd->id_dokumen }}"
+                                                                            id="tab-pane-seleksi-{{ $dd->id_dokumen }}"
                                                                             role="tabpanel" aria-labelledby="home-tab"
                                                                             tabindex="0">
                                                                             <embed
@@ -825,7 +830,7 @@
                                                     <li class="nav-item" role="presentation">
                                                         <button class="nav-link active" id="resume-tab"
                                                             data-bs-toggle="tab"
-                                                            data-bs-target="#tab-pane-{{ $dd->id_dokumen }}"
+                                                            data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
                                                             type="button" role="tab"
                                                             aria-selected="true">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
                                                     </li>
@@ -833,7 +838,7 @@
                                                     <li class="nav-item" role="presentation">
                                                         <button class="nav-link " id="resume-tab"
                                                             data-bs-toggle="tab"
-                                                            data-bs-target="#tab-pane-{{ $dd->id_dokumen }}"
+                                                            data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
                                                             type="button"
                                                             role="tab">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
                                                     </li>
@@ -845,15 +850,16 @@
                                         @foreach ($data->dokumenPelamarLowongan as $dd)
                                             @if ($dd->id_dokumen == 1)
                                                 <div class="tab-pane fade show active"
-                                                    id="tab-pane-{{ $dd->id_dokumen }}" role="tabpanel"
+                                                    id="tab-pane-seleksi-{{ $dd->id_dokumen }}" role="tabpanel"
                                                     aria-labelledby="home-tab" tabindex="0">
                                                     <embed
                                                         src="{{ asset('storage/' . $dd->dokumenPelamar->dokumen) }}"
                                                         type="application/pdf" width="100%" height="800px" />
                                                 </div>
                                             @else
-                                                <div class="tab-pane fade" id="tab-pane-{{ $dd->id_dokumen }}"
-                                                    role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                                                <div class="tab-pane fade"
+                                                    id="tab-pane-seleksi-{{ $dd->id_dokumen }}" role="tabpanel"
+                                                    aria-labelledby="home-tab" tabindex="0">
                                                     <embed
                                                         src="{{ asset('storage/' . $dd->dokumenPelamar->dokumen) }}"
                                                         type="application/pdf" width="100%" height="800px" />
