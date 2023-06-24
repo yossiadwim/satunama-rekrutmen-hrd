@@ -1,6 +1,7 @@
 {{-- @dd($departemens) --}}
 {{-- @dd($jobs) --}}
 {{-- @dd($profils) --}}
+{{-- @dd($users) --}}
 
 <!doctype html>
 <html lang="en">
@@ -15,6 +16,7 @@
     <link rel="stylesheet" href="/css/main-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
 
 </head>
 
@@ -62,7 +64,7 @@
     @if (count($lowongans) > 0)
         <div class="container">
             <div class="card card-container mt-4 border-0">
-                <h4>Lowongan yang masih dibuka</h4>
+                <h4 class="fw-bold">Lowongan yang masih dibuka</h4>
                 <div class="row mt-4 ">
                     @foreach ($lowonganOpen->take(3) as $job)
                         <div class="col-md-4 mb-5">
@@ -81,7 +83,8 @@
                                         <br>
                                         <p class="card-text" style="font-size: 14px; color: #63686E"><i
                                                 class="bi bi-clock"></i> Dibuka pada
-                                            {{ $job->created_at->toDateString() }},
+                                            {{ \Carbon\Carbon::parse($job->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
+                                            ,
                                             {{ $job->created_at->diffForHumans() }}</p>
                                         <p class="card-text"></p>
                                     </div>
@@ -94,7 +97,7 @@
         </div>
         <div class="container">
             <div class="card card-container mt-4 border-0">
-                <h4>Lowongan yang sudah ditutup</h4>
+                <h4 class="fw-bold">Lowongan yang sudah ditutup</h4>
                 <div class="row mt-4 ">
                     @foreach ($lowonganClosed as $job)
                         <div class="col-md-4 mb-5">
@@ -114,7 +117,8 @@
                                         <br>
                                         <p class="card-text" style="font-size: 14px; color: #63686E"><i
                                                 class="bi bi-clock"></i> Ditutup pada
-                                            {{ $job->created_at->toDateString() }},
+                                            {{ \Carbon\Carbon::parse($job->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
+                                            ,
                                             {{ $job->created_at->diffForHumans() }}</p>
                                         <p class="card-text"></p>
                                     </div>

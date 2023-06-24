@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 
@@ -12,6 +13,7 @@
     <link rel="stylesheet" href="/css/detail-lowongan-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
 </head>
 
 <body style="font-family: Poppins">
@@ -47,10 +49,17 @@
 
         <div class="mt-4">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
-                data-bs-target="#button-lamar" {{ $lowongan->closed == 'true' ? 'disabled' : '' }}>
-                Lamar
-            </button>
+            @if ($pelamarExist)
+                <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
+                    data-bs-target="#button-lamar" disabled>
+                    Anda Sudah Melamar Lowongan Ini
+                </button>
+            @else
+                <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
+                    data-bs-target="#button-lamar" {{ $lowongan->closed == 'true' ? 'disabled' : '' }}>
+                    {{ $lowongan->closed == 'true' ? "Lowongan Sudah Ditutup" : "Lamar"}}
+                </button>
+            @endif
 
             <!-- Modal -->
             <div class="modal fade" id="button-lamar" tabindex="-1" aria-labelledby="modal-lamar" aria-hidden="true">
@@ -65,24 +74,24 @@
                             enctype="multipart/form-data">
                             @csrf
                             <div class="modal-body">
-                                @foreach ($users as $user)
-                                    <div class=" mb-3" hidden>
-                                        <input type="text" class="form-control mb-4" name="id_pelamar"
-                                            id="id_pelamar" value="{{ $user->id_pelamar }}">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="inputGroupFile01">Surat lamaran, Resume/CV, dan Kartu
-                                            Identitas</label>
-                                        <input type="file"
-                                            class="form-control mt-1 @error('dokumen.*') is-invalid @enderror"
-                                            id="inputGroupFile01" name="dokumen[]" multiple>
-                                        @error('dokumen.*')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    {{-- <div class="mb-4">
+
+                                <div class=" mb-3" hidden>
+                                    <input type="text" class="form-control mb-4" name="id_pelamar" id="id_pelamar"
+                                        value="{{ $user->id_pelamar }}">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="inputGroupFile01">Surat lamaran, Resume/CV, dan Kartu
+                                        Identitas</label>
+                                    <input type="file"
+                                        class="form-control mt-1 @error('dokumen.*') is-invalid @enderror"
+                                        id="inputGroupFile01" name="dokumen[]" multiple>
+                                    @error('dokumen.*')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                {{-- <div class="mb-4">
                                         <label for="inputGroupFile01">Surat Lamaran</label>
                                         <input type="file" class="form-control" id="inputGroupFile01"
                                             name="surat_lamaran">
@@ -95,12 +104,12 @@
                                         <label for="inputGroupFile03">KTP (Kartu Identitas)</label>
                                         <input type="file" class="form-control" id="inputGroupFile03" name="ktp">
                                     </div> --}}
-                                    {{-- <div class="mb-4">
+                                {{-- <div class="mb-4">
                                         <label for="inputGroupFile04">Dokumen Lain</label>
                                         <input type="file" class="form-control" id="inputGroupFile04"
                                             name="dokumen_lain">
                                     </div> --}}
-                                @endforeach
+
 
                             </div>
                             <div class="modal-footer">

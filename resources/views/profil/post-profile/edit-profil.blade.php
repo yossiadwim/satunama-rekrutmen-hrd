@@ -67,7 +67,7 @@
                          <label for="alamat">Masukkan alamat Anda</label>
                      </div>
 
-                    
+
 
                      <div class="mt-3 mb-2">
                          <label for="date" class="px-2">Masukkan tanggal lahir </label>
@@ -109,7 +109,7 @@
                      </div>
                      <div class="mt-4">
 
-                         <input
+                         {{-- <input
                              class="form-control @error('kewarganegaraan')
                              is-invalid
                          @enderror"
@@ -118,7 +118,8 @@
                          <datalist id="negara">
                              @foreach ($countries as $country)
                                  @if (old('kebangsaan', $country) == $user->pelamar->kebangsaan)
-                                     <option value="{{ $user->pelamar->kebangsaan }}">{{ $user->pelamar->kebangsaan }}
+                                     <option value="{{ $user->pelamar->kebangsaan }}">
+                                         {{ $user->pelamar->kebangsaan }}
                                      </option>
                                  @else
                                      <option value="{{ $country }}">{{ $country }}</option>
@@ -129,7 +130,24 @@
                              <div class="invalid-feedback">
                                  {{ $message }}
                              </div>
-                         @enderror
+                         @enderror --}}
+
+                         <div class="form-floating">
+                             <select class="form-select selectpicker" data-live-search="true" data-show-subtext="true"
+                                 id="kebangsaan" name="kebangsaan" aria-label="Floating label select example">
+                                 @foreach ($countries as $country)
+                                     @if (old('kebangsaan', $country) == $user->pelamar->kebangsaan)
+                                         <option value="{{ $user->pelamar->kebangsaan }}" selected>
+                                             {{ $user->pelamar->kebangsaan }}
+                                         </option>
+                                     @else
+                                         <option value="{{ $country }}">{{ $country }}</option>
+                                     @endif
+                                 @endforeach
+
+                             </select>
+                             <label for="kebangsaan">Kewarganegaraan</label>
+                         </div>
 
                      </div>
                  </div>

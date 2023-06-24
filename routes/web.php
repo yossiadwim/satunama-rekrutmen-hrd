@@ -7,6 +7,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\LowonganKerjaController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\ReferensiController;
 use App\Models\TesTertulis;
@@ -23,7 +24,7 @@ use App\Models\TesTertulis;
 */
 
 Route::get('/lowongan-kerja',[LowonganKerjaController::class,'index']);
-Route::post('/lowongan-kerja/{lowongan}',[LowonganKerjaController::class,'upload']);
+Route::post('/lowongan-kerja/{lowongan}',[LowonganKerjaController::class,'apply']);
 Route::get('/lowongan-kerja/{lowongan:slug}/detail',[LowonganKerjaController::class,'show']);
 
 Route::post('/login',[LoginController::class, 'authenticate']);
@@ -35,10 +36,13 @@ Route::post('/register', [RegisterController::class, 'store']);
 Route::get('/register/createSlug',[RegisterController::class, 'checkSlug']);
 
 // Route::get('/compose', [AdminDashboardController::class, 'send']);
-Route::post('/compose', [AdminDashboardController::class, 'send']);
+// Route::post('/compose', [AdminDashboardController::class, 'send']);
+// Route::post('/sendEmail',[EmailController::class,'send']);
 
 // Route::get('/profil-kandidat/{users:slug}',[ProfilController::class,'show']);
 Route::post('/profil-kandidat/users/{user:slug}/description',[ProfilController::class,'description']);
+Route::get('/profil-kandidat/users/{user:slug}/lamaran-saya',[ProfilController::class,'my_application']);
+Route::get('/profil-kandidat/users/{user:slug}/application-form',[ProfilController::class,'application_form']);
 Route::resource('/profil-kandidat/users',ProfilController::class);
 
 Route::resource('/pengalamanKerja',PengalamanKerjaController::class);
@@ -52,6 +56,11 @@ Route::put('/admin-dashboard/tesTertulis/edit-schedule/{tesTertulis}',[AdminDash
 Route::get('/admin-dashboard/lowongan/createSlug',[AdminDashboardController::class, 'checkSlug']);
 Route::post('/admin-dashboard/lowongan/{lowongan:slug}/closeJobs', [AdminDashboardController::class, 'closeJobs']);
 Route::get('/admin-dashboard/lowongan/{lowongan:slug}/kelola-kandidat', [AdminDashboardController::class, 'show']);
+
+Route::post('/admin-dashboard/lowongan/show-filter', [AdminDashboardController::class, 'showFilter']);
+
+
+// Route::match(['get', 'post'],'/admin-dashboard/lowongan/{lowongan:slug}/kelola-kandidat', [AdminDashboardController::class, 'show']);
 Route::get('/admin-dashboard/lowongan/detail-pelamar/{pelamarLowongan}', [AdminDashboardController::class, 'detailCandidate']);
 Route::post('/admin-dashboard/lowongan/{statusLamaran}/changePosition', [AdminDashboardController::class, 'changePosition']);
 Route::get('/admin-dashboard/lowongan/{pelamarLowongan}/reference-check', [AdminDashboardController::class, 'referenceCheck']);

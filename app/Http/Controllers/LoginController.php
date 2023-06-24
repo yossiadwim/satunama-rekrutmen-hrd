@@ -42,7 +42,7 @@ class LoginController extends Controller
             }
         }
 
-        return back()->with('loginError', 'Login Gagal');
+        return back()->with('loginError', 'Email atau Password salah');
     }
 
     public function logout(Request $request)

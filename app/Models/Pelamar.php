@@ -34,4 +34,8 @@ class Pelamar extends Model
     public function referensi(){
         return $this->hasMany(Referensi::class,'id_pelamar','id');
     }
+
+    public function agama(){
+        return $this->hasOne(Agama::class,'id_agama','id_agama');
+    }
 }

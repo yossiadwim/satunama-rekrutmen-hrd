@@ -7,7 +7,9 @@ use App\Models\DokumenPelamar;
 use App\Models\DokumenPelamarLowongan;
 use App\Models\Lowongan;
 use App\Models\PelamarLowongan;
+use App\Models\StatusLamaran;
 use App\Models\User;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -21,7 +23,7 @@ class LowonganKerjaController extends Controller
         try {
             $user = Auth::user();
             if ($user) {
-                $id_user = $user->id;
+                // $id_user = $users->id;
 
                 return view('lowongan.lowongan_kerja', [
 
@@ -42,7 +44,9 @@ class LowonganKerjaController extends Controller
                         ->where('closed', '=', 'true')
                         ->get(),
 
-                    'users' => User::where('id', auth()->user()->id)->get(),
+                    // 'users' => User::where('id', auth()->user()->id)->get(),
+
+                    'user' => $user,
 
                     'title' => 'Lowongan Kerja'
 
@@ -68,7 +72,7 @@ class LowonganKerjaController extends Controller
                         ->where('closed', '=', 'true')
                         ->get(),
 
-                    'users' => User::where('id', auth()->user()->id)->get(),
+                    // 'users' => User::where('id', auth()->user()->id)->get(),
 
                     'title' => 'Lowongan Kerja'
 
@@ -86,49 +90,98 @@ class LowonganKerjaController extends Controller
             "lowongan" => $lowongan,
             "departemen" => Departemen::where('id_departemen', $lowongan->id_departemen),
             // "profils" => Profil::where('user_id',auth()->user()->id)->get(),
-            "users" => User::where('id', auth()->user()->id)->get(),
+            "user" => Auth::user(),
+            "pelamarExist" => PelamarLowongan::where('id_pelamar',auth()->user()->id_pelamar)->where('id_lowongan',$lowongan->id)->exists(),
             "title" => "Detail Lowongan Kerja"
         ]);
     }
 
-    public function upload(Request $request, Lowongan $lowongan)
+    public function apply(Request $request, Lowongan $lowongan)
     {
-        $request->validate([
-            'dokumen' => 'required',
-            'dokumen.*' => 'required|mimes:png,jpg,pdf,docx,doc',
-        ]);
+        try {
+            $request->validate([
+                'dokumen' => 'required',
+                'dokumen.*' => 'required|mimes:png,jpg,pdf,docx,doc',
+            ]);
 
-        $pelamar_lowongan = PelamarLowongan::create([
-            'id_pelamar' => $request->input('id_pelamar'),
-            'id_lowongan' => $lowongan->id,
-            'tanggal_melamar' => Carbon::now()
-        ]);
+            $pelamar_lowongan = PelamarLowongan::create([
+                'id_pelamar' => $request->input('id_pelamar'),
+                'id_lowongan' => $lowongan->id,
+                'tanggal_melamar' => Carbon::now()
+            ]);
 
-        $user = User::where('id', auth()->user()->id)->get();
-        $user_slug = $user->pluck('slug');
-        $directory = 'document/' . $user_slug[0];
-        Storage::makeDirectory($directory);
+            $user = User::where('id', auth()->user()->id)->get();
+            $user_slug = $user->pluck('slug');
+            $directory = 'document/' . $user_slug[0];
+            Storage::makeDirectory($directory);
 
-        if ($request->dokumen) {
-            foreach ($request->dokumen as $file) {
-                $nama_file = $file->getClientOriginalName();
-                $path = Storage::putFileAs($directory, $file, $nama_file);
+            if ($request->dokumen) {
+                foreach ($request->dokumen as $file) {
+                    $nama_file = $file->getClientOriginalName();
+                    $path = Storage::putFileAs($directory, $file, $nama_file);
 
-                $dokumen_pelamar = DokumenPelamar::create([
-                    'nama' => $nama_file,
-                    'dokumen' => $path
-                ]);
+                    $dokumen_pelamar = DokumenPelamar::create([
+                        'nama' => $nama_file,
+                        'dokumen' => $path
+                    ]);
 
-                DokumenPelamarLowongan::create([
-                    'id_dokumen' => $dokumen_pelamar->id,
-                    'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
-                ]);
+                    DokumenPelamarLowongan::create([
+                        'id_dokumen' => $dokumen_pelamar->id,
+                        'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+                    ]);
+                }
             }
+
+            StatusLamaran::create([
+                'tanggal' => Carbon::now()->format('Y-m-d'),
+                'id_status' => 1,
+                'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+            ]);
+
+            return back()->with('success', 'Dokumen berhasil diunggah');
+        } catch (\Throwable $th) {
+            $th->getMessage();
         }
 
-        return back()->with('success','Dokumen berhasil diunggah');
+    //     $request->validate([
+    //         'dokumen' => 'required',
+    //         'dokumen.*' => 'required|mimes:png,jpg,pdf,docx,doc',
+    //     ]);
 
+    //     $pelamar_lowongan = PelamarLowongan::create([
+    //         'id_pelamar' => $request->input('id_pelamar'),
+    //         'id_lowongan' => $lowongan->id,
+    //         'tanggal_melamar' => Carbon::now()
+    //     ]);
 
-        
+    //     $user = User::where('id', auth()->user()->id)->get();
+    //     $user_slug = $user->pluck('slug');
+    //     $directory = 'document/' . $user_slug[0];
+    //     Storage::makeDirectory($directory);
+
+    //     if ($request->dokumen) {
+    //         foreach ($request->dokumen as $file) {
+    //             $nama_file = $file->getClientOriginalName();
+    //             $path = Storage::putFileAs($directory, $file, $nama_file);
+
+    //             $dokumen_pelamar = DokumenPelamar::create([
+    //                 'nama' => $nama_file,
+    //                 'dokumen' => $path
+    //             ]);
+
+    //             DokumenPelamarLowongan::create([
+    //                 'id_dokumen' => $dokumen_pelamar->id,
+    //                 'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+    //             ]);
+    //         }
+    //     }
+
+    //     StatusLamaran::create([
+    //         'tanggal' => Carbon::now()->format('Y-m-d'),
+    //         'id_status' => 1,
+    //         'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+    //     ]);
+
+    //     return back()->with('success', 'Dokumen berhasil diunggah');
     }
 }

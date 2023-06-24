@@ -20,7 +20,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" id="close"
                                 aria-label="Close" onclick="hapusData()"></button>
                         </div>
-                        <form action="/pendidikan" method="post" id="formPendidikan" enctype="multipart/form-data">
+                        <form action="/referensi" method="post" id="formPendidikan" enctype="multipart/form-data">
                             <div class="modal-body">
                                 <p>Tambahkan referensi Anda dalam mendaftar</p>
                                 @csrf

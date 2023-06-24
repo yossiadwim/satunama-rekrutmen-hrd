@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/admin-dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
 
 </head>
 
@@ -78,25 +79,25 @@
                                         <div class="col-md-12">
                                             <div class="card shadow-sm mb-4">
                                                 <div class="card-body">
-                                                    <h5 class="card-text">
+                                                    <h5 class="card-text fw-bold">
                                                         {{ $job->nama_lowongan }} <span
                                                             class="badge rounded-pill text-bg-success">Aktif</span>
                                                     </h5>
 
                                                     <div class="mt-4">
-                                                        <p class="card-text"><i class="bi bi-building-fill"></i>
+                                                        <p class="card-text"><i class="fa-solid fa-building"></i>
                                                             Departemen
                                                             {{ $job->nama_departemen }}</p>
                                                     </div>
                                                     <div class="mt-4">
-                                                        <p class="card-text"><i class="bi bi-clock-fill"></i>
+                                                        <p class="card-text"><i class="fa-solid fa-clock"></i>
                                                             {{ $job->tipe_lowongan }}
                                                         </p>
                                                     </div>
 
 
                                                     <div class="col-md-4 mt-4">
-                                                        <p class="card-text"><i class="bi bi-calendar"></i>
+                                                        <p class="card-text"><i class="fa-solid fa-calendar-days"></i>
                                                             Dibuat pada {{ \Carbon\Carbon::parse($job->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y ') }}
                                                         </p>
                                                     </div>

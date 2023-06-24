@@ -223,14 +223,19 @@
     <link rel="stylesheet" href="/css/admin-dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
+
 </head>
 
 <body style="font-family: Poppins">
     @include('partials.navbar')
     <div class="container mt-5">
         <div class="row">
-            <div class="col ">
+            <div class="col">
                 <h4 class="fw-bold">{{ $datas->lowongan->nama_lowongan }}</h4>
+            </div>
+            <div class="col-7">
+
             </div>
             <div class="card mt-4 mb-4">
                 <div class="card-body">
@@ -242,302 +247,313 @@
                             {{ \Carbon\Carbon::parse($datas->tanggal_melamar)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y ') }}
                         </p>
                     </div>
-                    <div class="row mt-4">
+                    <div class="row mt-2">
                         @if ($datas->pelamar->telepon_rumah == null)
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Nomor
+                                <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
                                     Telepon</label>
                                 <p>{{ '-' }}</p>
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Nomor
+                                <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
                                     Telepon</label>
                                 <p>{{ $datas->pelamar->telepon_rumah }}</p>
                             </div>
                         @endif
                         <div class="col-md-6">
-                            <label class="labels fw-bold">Email</label>
+                            <label class="labels fw-bold"><i class="fa-solid fa-envelope"></i>
+                                Email</label>
                             <p>{{ $datas->pelamar->email }}</p>
                         </div>
                     </div>
                     <div class="row mt-2">
 
-                        @if ($datas->pelamar->alamat == null && $datas->pelamar->tanggal_lahir == null && $datas->pelamar->jenis_kelamin == null)
+                        @if ($datas->pelamar->alamat == null && $datas->pelamar->tanggal_lahir == null)
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Alamat</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i> Alamat</label>
                                 <p>{{ '-' }}</p>
 
                             </div>
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Tanggal
-                                    Lahir, Jenis Kelamin</label>
+                                <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i> Tanggal
+                                    Lahir</label>
                                 <p>{{ '-' }}</p>
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Alamat</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i> Alamat</label>
                                 <p>{{ $datas->pelamar->alamat }}</p>
 
                             </div>
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Tanggal
-                                    Lahir, Jenis Kelamin</label>
+                                <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i> Tanggal
+                                    Lahir</label>
                                 <p>{{ \Carbon\Carbon::parse($datas->pelamar->tanggal_lahir)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
-                                    ,
-                                    {{ $datas->pelamar->jenis_kelamin }}</p>
+                                </p>
                             </div>
                         @endif
                     </div>
+
                     <div class="row mt-2">
                         @if ($datas->pelamar->kebangsaan == null)
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Kebangsaan</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                    Kebangsaan</label>
+                                <p>{{ '-' }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                    Jenis Kelamin</label>
                                 <p>{{ '-' }}</p>
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Kebangsaan</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                    Kebangsaan</label>
                                 <p>{{ $datas->pelamar->kebangsaan }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                    Jenis Kelamin</label>
+                                <p>{{ $datas->pelamar->jenis_kelamin }}</p>
                             </div>
                         @endif
                     </div>
 
                 </div>
+                <div class="container  rounded mt-4 mb-4">
+                    <div class="accordion mt-4 mb-4 col-12" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#tesTertulis" aria-expanded="true"
+                                    aria-controls="panelsStayOpen-collapseOne">
+                                    Test Tertulis
+                                </button>
 
-            </div>
-            <div class="container border rounded mt-4 mb-4">
-                <div class="accordion mt-4 mb-4 col-12" id="accordionPanelsStayOpenExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#tesTertulis" aria-expanded="true"
-                                aria-controls="panelsStayOpen-collapseOne">
-                                Test Tertulis
-                            </button>
+                            </h2>
+                            <div id="tesTertulis" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    <div class="mt-3 mb-3">
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#jadwalTesTertulis">
+                                            Buat Jadwal Tes
+                                        </button>
 
-                        </h2>
-                        <div id="tesTertulis" class="accordion-collapse collapse show">
-                            <div class="accordion-body">
-                                <div class="mt-3 mb-3">
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#jadwalTesTertulis">
-                                        Buat Jadwal Tes
-                                    </button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="jadwalTesTertulis" tabindex="-1"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Jadwal Tes
+                                                            Tertulis</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="/admin-dashboard/lowongan/addScheduleTest"
+                                                            method="POST" id="formAddScheduleTest">
+                                                            @csrf
+                                                            <div class="modal-body">
+                                                                <div class="col-9">
+                                                                    <div class="mb-3">
+                                                                        <label for="tanggal_tes"
+                                                                            class="form-label">Tanggal
+                                                                            Tes</label>
+                                                                        <input type="date" class="form-control"
+                                                                            id="tanggal_tes" placeholder="Tanggal Tes"
+                                                                            name="tanggal_tes"
+                                                                            value="{{ old('tanggal_tes') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-9">
+                                                                    <div class="mb-3">
+                                                                        <label for="waktu_mulai"
+                                                                            class="form-label">Waktu
+                                                                            Mulai</label>
+                                                                        <input type="time" class="form-control"
+                                                                            id="waktu_mulai" placeholder="Waktu Mulai"
+                                                                            name="waktu_mulai"
+                                                                            value="{{ old('waktu_mulai') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-9">
+                                                                    <div class="mb-3">
+                                                                        <label for="waktu_selesai"
+                                                                            class="form-label">Waktu
+                                                                            Selesai</label>
+                                                                        <input type="time" class="form-control"
+                                                                            id="waktu_selesai"
+                                                                            placeholder="Waktu Selesai"
+                                                                            name="waktu_selesai"
+                                                                            value="{{ old('waktu_selesai') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-9" hidden>
+                                                                    <div class="mb-3">
+                                                                        <label for="id_pelamar_lowongan"
+                                                                            class="form-label">id_pelamar_lowongan</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="id_pelamar_lowongan"
+                                                                            placeholder="id pelamar lowongan"
+                                                                            name="id_pelamar_lowongan">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal"
+                                                                    onclick="hapusData()">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save
+                                                                    changes</button>
+                                                            </div>
 
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="jadwalTesTertulis" tabindex="-1"
-                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Jadwal Tes
-                                                        Tertulis</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
+                                                        </form>
+                                                    </div>
+
                                                 </div>
-                                                <div class="modal-body">
-                                                    <form action="/admin-dashboard/lowongan/addScheduleTest"
-                                                        method="POST" id="formAddScheduleTest">
-                                                        @csrf
-                                                        <div class="modal-body">
-                                                            <div class="col-9">
-                                                                <div class="mb-3">
-                                                                    <label for="tanggal_tes" class="form-label">Tanggal
-                                                                        Tes</label>
-                                                                    <input type="date" class="form-control"
-                                                                        id="tanggal_tes" placeholder="Tanggal Tes"
-                                                                        name="tanggal_tes"
-                                                                        value="{{ old('tanggal_tes') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-9">
-                                                                <div class="mb-3">
-                                                                    <label for="waktu_mulai" class="form-label">Waktu
-                                                                        Mulai</label>
-                                                                    <input type="time" class="form-control"
-                                                                        id="waktu_mulai" placeholder="Waktu Mulai"
-                                                                        name="waktu_mulai"
-                                                                        value="{{ old('waktu_mulai') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-9">
-                                                                <div class="mb-3">
-                                                                    <label for="waktu_selesai"
-                                                                        class="form-label">Waktu
-                                                                        Selesai</label>
-                                                                    <input type="time" class="form-control"
-                                                                        id="waktu_selesai" placeholder="Waktu Selesai"
-                                                                        name="waktu_selesai"
-                                                                        value="{{ old('waktu_selesai') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-9" hidden>
-                                                                <div class="mb-3">
-                                                                    <label for="id_pelamar_lowongan"
-                                                                        class="form-label">id_pelamar_lowongan</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="id_pelamar_lowongan"
-                                                                        placeholder="id pelamar lowongan"
-                                                                        name="id_pelamar_lowongan">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal"
-                                                                onclick="hapusData()">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Save
-                                                                changes</button>
-                                                        </div>
-
-                                                    </form>
-                                                </div>
-
                                             </div>
                                         </div>
                                     </div>
+                                    <table class="table table-borderless table-responsive">
+                                        <thead class="">
+                                            <tr>
+                                                <th scope="col" class="text-center">No</th>
+                                                <th scope="col" class="text-center">Tanggal Tes</th>
+                                                <th scope="col" class="text-center">Waktu</th>
+                                                <th scope="col">Tindakan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                        </tbody>
+                                    </table>
+
                                 </div>
-                                <table class="table table-borderless table-responsive">
-                                    <thead class="">
-                                        <tr>
-                                            <th scope="col" class="text-center">No</th>
-                                            <th scope="col" class="text-center">Tanggal Tes</th>
-                                            <th scope="col" class="text-center">Waktu</th>
-                                            <th scope="col">Tindakan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-
-                                    </tbody>
-                                </table>
-
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="accordion mt-4 mb-4 col-12" id="accordionPanelsStayOpenExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#tesWawancara" aria-expanded="true"
-                                aria-controls="panelsStayOpen-collapseOne">
-                                Test Wawancara
-                            </button>
+                    <div class="accordion mt-4 mb-4 col-12" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#tesWawancara" aria-expanded="true"
+                                    aria-controls="panelsStayOpen-collapseOne">
+                                    Test Wawancara
+                                </button>
 
-                        </h2>
-                        <div id="tesWawancara" class="accordion-collapse collapse show">
-                            <div class="accordion-body">
-                                <div class="mt-3 mb-3">
-                                    <!-- Button trigger modal -->
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#jadwalTesWawancara">
-                                        Buat Jadwal Tes
-                                    </button>
+                            </h2>
+                            <div id="tesWawancara" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    <div class="mt-3 mb-3">
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#jadwalTesWawancara">
+                                            Buat Jadwal Tes
+                                        </button>
 
-                                    <!-- Modal -->
-                                    <div class="modal fade" id="jadwalTesWawancara" tabindex="-1"
-                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Jadwal Tes
-                                                        Wawancara</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="jadwalTesWawancara" tabindex="-1"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Jadwal Tes
+                                                            Wawancara</h1>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="/admin-dashboard/lowongan/addScheduleTest"
+                                                            method="POST" id="formAddScheduleTest">
+                                                            @csrf
+                                                            <div class="modal-body">
+                                                                <div class="col-9">
+                                                                    <div class="mb-3">
+                                                                        <label for="tanggal_tes"
+                                                                            class="form-label">Tanggal
+                                                                            Tes</label>
+                                                                        <input type="date" class="form-control"
+                                                                            id="tanggal_tes" placeholder="Tanggal Tes"
+                                                                            name="tanggal_tes"
+                                                                            value="{{ old('tanggal_tes') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-9">
+                                                                    <div class="mb-3">
+                                                                        <label for="waktu_mulai"
+                                                                            class="form-label">Waktu
+                                                                            Mulai</label>
+                                                                        <input type="time" class="form-control"
+                                                                            id="waktu_mulai" placeholder="Waktu Mulai"
+                                                                            name="waktu_mulai"
+                                                                            value="{{ old('waktu_mulai') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-9">
+                                                                    <div class="mb-3">
+                                                                        <label for="waktu_selesai"
+                                                                            class="form-label">Waktu
+                                                                            Selesai</label>
+                                                                        <input type="time" class="form-control"
+                                                                            id="waktu_selesai"
+                                                                            placeholder="Waktu Selesai"
+                                                                            name="waktu_selesai"
+                                                                            value="{{ old('waktu_selesai') }}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-9" hidden>
+                                                                    <div class="mb-3">
+                                                                        <label for="id_pelamar_lowongan"
+                                                                            class="form-label">id_pelamar_lowongan</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="id_pelamar_lowongan"
+                                                                            placeholder="id pelamar lowongan"
+                                                                            name="id_pelamar_lowongan">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal"
+                                                                    onclick="hapusData()">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save
+                                                                    changes</button>
+                                                            </div>
+
+                                                        </form>
+                                                    </div>
+
                                                 </div>
-                                                <div class="modal-body">
-                                                    <form action="/admin-dashboard/lowongan/addScheduleTest"
-                                                        method="POST" id="formAddScheduleTest">
-                                                        @csrf
-                                                        <div class="modal-body">
-                                                            <div class="col-9">
-                                                                <div class="mb-3">
-                                                                    <label for="tanggal_tes"
-                                                                        class="form-label">Tanggal
-                                                                        Tes</label>
-                                                                    <input type="date" class="form-control"
-                                                                        id="tanggal_tes" placeholder="Tanggal Tes"
-                                                                        name="tanggal_tes"
-                                                                        value="{{ old('tanggal_tes') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-9">
-                                                                <div class="mb-3">
-                                                                    <label for="waktu_mulai" class="form-label">Waktu
-                                                                        Mulai</label>
-                                                                    <input type="time" class="form-control"
-                                                                        id="waktu_mulai" placeholder="Waktu Mulai"
-                                                                        name="waktu_mulai"
-                                                                        value="{{ old('waktu_mulai') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-9">
-                                                                <div class="mb-3">
-                                                                    <label for="waktu_selesai"
-                                                                        class="form-label">Waktu
-                                                                        Selesai</label>
-                                                                    <input type="time" class="form-control"
-                                                                        id="waktu_selesai" placeholder="Waktu Selesai"
-                                                                        name="waktu_selesai"
-                                                                        value="{{ old('waktu_selesai') }}">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-9" hidden>
-                                                                <div class="mb-3">
-                                                                    <label for="id_pelamar_lowongan"
-                                                                        class="form-label">id_pelamar_lowongan</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="id_pelamar_lowongan"
-                                                                        placeholder="id pelamar lowongan"
-                                                                        name="id_pelamar_lowongan">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal"
-                                                                onclick="hapusData()">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Save
-                                                                changes</button>
-                                                        </div>
-
-                                                    </form>
-                                                </div>
-
                                             </div>
                                         </div>
                                     </div>
+                                    <table class="table table-borderless table-responsive">
+                                        <thead class="">
+                                            <tr>
+                                                <th scope="col" class="text-center">No</th>
+                                                <th scope="col" class="text-center">Tanggal Tes</th>
+                                                <th scope="col" class="text-center">Waktu</th>
+                                                <th scope="col">Tindakan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+
+                                        </tbody>
+                                    </table>
+
                                 </div>
-                                <table class="table table-borderless table-responsive">
-                                    <thead class="">
-                                        <tr>
-                                            <th scope="col" class="text-center">No</th>
-                                            <th scope="col" class="text-center">Tanggal Tes</th>
-                                            <th scope="col" class="text-center">Waktu</th>
-                                            <th scope="col">Tindakan</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-
-                                    </tbody>
-                                </table>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-    </div>
-    </div>
-
-    </div>
     </div>
 </body>
 

@@ -10,15 +10,21 @@ use App\Models\TesTertulis;
 use Illuminate\Http\Request;
 use App\Models\StatusLamaran;
 use App\Models\PelamarLowongan;
+use App\Models\Pendidikan;
+use App\Models\PengalamanKerja;
 use Illuminate\Support\Facades\DB;
 use Cviebrock\EloquentSluggable\Services\SlugService;
-
+use App\Mail\MailNotify;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class AdminDashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
 
@@ -75,9 +81,15 @@ class AdminDashboardController extends Controller
     public function show(Lowongan $lowongan)
     {
 
+        $arrPengalamanId = PengalamanKerja::all()->pluck('id_pelamar')->toArray();
+        $arrPendidikanId = Pendidikan::all()->pluck('id_pelamar')->toArray();
+
+
         return view('dashboard.kelola_kandidat', [
             'lowongan' => $lowongan,
-            'datas' =>  $lowongan->pelamarLowongan->load(
+            'arrPengalamanId' => $arrPengalamanId,
+            'arrPendidikanId' => $arrPendidikanId,
+            'datas' =>  $lowongan->pelamarLowongan->load([
                 'pelamar.user',
                 'pelamar.pendidikan',
                 'pelamar.pengalamanKerja',
@@ -86,9 +98,8 @@ class AdminDashboardController extends Controller
                 'statusLamaran.status',
                 'activityLog',
                 'tesTertulis',
-            ),
+            ]),
             'status' => Status::all()
-
         ]);
     }
 
@@ -158,18 +169,6 @@ class AdminDashboardController extends Controller
     public function changePosition(Request $request, StatusLamaran $statusLamaran)
     {
         // dd($request);
-        // if ($request->method() === 'GET') {
-
-        //     if ($request->id_status == 3) {
-        //         return view('dashboard.kelola_kandidat.reference_check_kandidat', [
-
-        //             'datas' => PelamarLowongan::with(['pelamar' => function (Builder $query) use ($request) {
-        //                 $query->where('id_pelamar_lowongan', $request->id_pelamar_lowongan);
-        //             }])
-
-        //         ]);
-        //     }
-        // } else {
         $validatedData = $request->validate([
             'tanggal' => 'required',
             'approved_by' => 'required',
@@ -186,11 +185,21 @@ class AdminDashboardController extends Controller
 
         ActivityLog::create($data_activity);
 
+        $data_email = [
+            'subject' => 'Perubahan Status Lamaran',
+            'email' => $request->email,
+            'status' => $request->status_kandidat,
+            'nama_pelamar' => $request->nama_pelamar
+        ];
+
+        Mail::to($data_email['email'])->send(new MailNotify($data_email));
+
         $slug_lowongan = PelamarLowongan::join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
             ->select(DB::raw('slug'))
             ->get();
 
-        return redirect('/admin-dashboard/lowongan/' . $slug_lowongan[0]->slug . '/kelola-kandidat');
+        return redirect('/admin-dashboard/lowongan/detail-pelamar/' . $request->id_pelamar_lowongan)->with('success change position', 'Berhasil Mengubah Posisi Kandidat');
+        // return redirect('/admin-dashboard/lowongan/' . $slug_lowongan[0]->slug . '/kelola-kandidat')->with('success change position', 'Berhasil Mengubah Posisi Kandidat');
     }
 
     public function addScheduleTest(Request $request)
@@ -275,5 +284,75 @@ class AdminDashboardController extends Controller
                 'tesTertulis',
             )
         ]);
+    }
+
+    public function detailCandidate(PelamarLowongan $pelamarLowongan)
+    {
+        $arrPengalamanId = PengalamanKerja::all()->pluck('id_pelamar')->toArray();
+        $arrPendidikanId = Pendidikan::all()->pluck('id_pelamar')->toArray();
+
+        return view('dashboard.detail_kandidat', [
+            'arrPengalamanId' => $arrPengalamanId,
+            'arrPendidikanId' => $arrPendidikanId,
+            'title' => 'Detail Kandidat',
+            'status' => Status::all(),
+            'datas' => $pelamarLowongan->load(
+                'pelamar.user',
+                'pelamar.pendidikan',
+                'pelamar.pengalamanKerja',
+                'pelamar.referensi',
+                'dokumenPelamarLowongan.dokumenPelamar',
+                'statusLamaran.status',
+                'lowongan',
+                'activityLog',
+                'tesTertulis',
+
+            )
+        ]);
+    }
+
+    public function showFilter(Request $request)
+    {
+
+        // $lowongan = Lowongan::find($request->id_lowongan);
+
+        // // dd($lowongan->pelamarLowongan);  
+
+        // $arrPengalamanId = PengalamanKerja::all()->pluck('id_pelamar')->toArray();
+        // $arrPendidikanId = Pendidikan::all()->pluck('id_pelamar')->toArray();
+
+        // $html = view('partials.kelola_kandidat_partials', [
+        //     'lowongan' => $lowongan,
+        //     'arrPengalamanId' => $arrPengalamanId,
+        //     'arrPendidikanId' => $arrPendidikanId,
+        //     'datas' =>  $lowongan->pelamarLowongan->load([
+        //         'pelamar.user',
+        //         'pelamar.pendidikan',
+        //         'pelamar.pengalamanKerja',
+        //         'pelamar.referensi',
+        //         'dokumenPelamarLowongan.dokumenPelamar',
+        //         'statusLamaran.status',
+        //         'activityLog',
+        //         'tesTertulis'
+        // ]) 
+        // ])->render();
+
+        // return response()->json(array('success' => true, 'html'=>$html));
+
+        // return view('partials.kelola_kandidat_partials', [
+        //     'lowongan' => $lowongan,
+        //     'arrPengalamanId' => $arrPengalamanId,
+        //     'arrPendidikanId' => $arrPendidikanId,
+        //     'datas' =>  $lowongan->pelamarLowongan->load([
+        //         'pelamar.user',
+        //         'pelamar.pendidikan',
+        //         'pelamar.pengalamanKerja',
+        //         'pelamar.referensi',
+        //         'dokumenPelamarLowongan.dokumenPelamar',
+        //         'statusLamaran.status',
+        //         'activityLog',
+        //         'tesTertulis',
+        // ])
+        // ]);
     }
 }

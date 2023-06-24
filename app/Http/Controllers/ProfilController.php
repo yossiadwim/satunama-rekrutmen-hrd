@@ -10,6 +10,7 @@ use App\Models\PengalamanKerja;
 use App\Models\Referensi;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Agama;
 use Monarobase\CountryList\CountryListFacade;
 
 class ProfilController extends Controller
@@ -48,9 +49,10 @@ class ProfilController extends Controller
         $countries = CountryListFacade::getList('en');
 
         return view('profil.profil_main', [
-            'users' => User::where('id', auth()->user()->id)->get(),
+            // 'users' => User::where('id', auth()->user()->id)->get(),
             'pelamars' => $pelamar,
             'user' => $user,
+            // 'users' => $user,
             'countries' => $countries,
 
             'pengalamanKerjaExists' => PengalamanKerja::where('id_pelamar', '=', $user->id_pelamar)->exists(),
@@ -73,7 +75,6 @@ class ProfilController extends Controller
     public function edit(User $user)
     {
 
-        return view('profil.post-profile.edit-profil', []);
     }
 
     /**
@@ -114,5 +115,38 @@ class ProfilController extends Controller
         Pelamar::where('id', $user->id)->update($validatedData);
 
         return redirect('/profil-kandidat/users/' . $user->slug)->with('success add description', 'Berhasil mengubah deskripsi');
+    }
+
+    public function my_application(User $user){
+        
+        return view('lamaran-saya',[
+            'title' => 'Lamaran Saya',
+            'user' => $user,
+            'datas' => $user->pelamar->pelamarLowongan->load([
+                'pelamar',
+                'lowongan.departemen',
+                'dokumenPelamarLowongan.dokumenPelamar',
+                'statusLamaran.status',
+                'activityLog',
+            ])
+        ]);
+    }
+
+    public function application_form(User $user){
+        $countries = CountryListFacade::getList('en');
+        $religion = Agama::all();
+        return view('application-forms.application_form', [
+            'title' => 'Application Form',
+            'countries' => $countries,
+            'religions' => $religion,
+            'user' => $user,
+            'datas' => $user->pelamar->pelamarLowongan->load([
+                'pelamar.user',
+                'lowongan.departemen',
+                'dokumenPelamarLowongan.dokumenPelamar',
+                'statusLamaran.status',
+                'activityLog',
+            ])
+        ]);
     }
 }

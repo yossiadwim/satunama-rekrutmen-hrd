@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/admin-dashboard.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
 </head>
 
 <body style="font-family: Poppins">
@@ -30,63 +31,76 @@
                             {{ \Carbon\Carbon::parse($datas->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y ') }}
                         </p>
                     </div>
-                    <div class="row mt-4">
+                    <div class="row mt-2">
                         @if ($datas->pelamar->telepon_rumah == null)
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Nomor
+                                <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
                                     Telepon</label>
                                 <p>{{ '-' }}</p>
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Nomor
+                                <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
                                     Telepon</label>
                                 <p>{{ $datas->pelamar->telepon_rumah }}</p>
                             </div>
                         @endif
                         <div class="col-md-6">
-                            <label class="labels fw-bold">Email</label>
+                            <label class="labels fw-bold"><i class="fa-solid fa-envelope"></i>
+                                Email</label>
                             <p>{{ $datas->pelamar->email }}</p>
                         </div>
                     </div>
                     <div class="row mt-2">
 
-                        @if ($datas->pelamar->alamat == null && $datas->pelamar->tanggal_lahir == null && $datas->pelamar->jenis_kelamin == null)
+                        @if ($datas->pelamar->alamat == null && $datas->pelamar->tanggal_lahir == null)
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Alamat</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i> Alamat</label>
                                 <p>{{ '-' }}</p>
 
                             </div>
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Tanggal
-                                    Lahir, Jenis Kelamin</label>
+                                <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i> Tanggal
+                                    Lahir</label>
                                 <p>{{ '-' }}</p>
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Alamat</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i> Alamat</label>
                                 <p>{{ $datas->pelamar->alamat }}</p>
 
                             </div>
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Tanggal
-                                    Lahir, Jenis Kelamin</label>
+                                <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i> Tanggal
+                                    Lahir</label>
                                 <p>{{ \Carbon\Carbon::parse($datas->pelamar->tanggal_lahir)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
-                                    ,
-                                    {{ $datas->pelamar->jenis_kelamin }}</p>
+                                </p>
                             </div>
                         @endif
                     </div>
+
                     <div class="row mt-2">
                         @if ($datas->pelamar->kebangsaan == null)
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Kebangsaan</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                    Kebangsaan</label>
+                                <p>{{ '-' }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                    Jenis Kelamin</label>
                                 <p>{{ '-' }}</p>
                             </div>
                         @else
                             <div class="col-md-6">
-                                <label class="labels fw-bold">Kebangsaan</label>
+                                <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                    Kebangsaan</label>
                                 <p>{{ $datas->pelamar->kebangsaan }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                    Jenis Kelamin</label>
+                                <p>{{ $datas->pelamar->jenis_kelamin }}</p>
                             </div>
                         @endif
                     </div>
@@ -131,7 +145,7 @@
                                                     <button type="button" class="btn btn-primary"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#sendEmail-{{ $data->id_pengalaman_kerja }}">
-                                                        <i class="bi bi-envelope"></i> Kirim Email
+                                                        <i class="fa-solid fa-envelope"></i> Kirim Email
                                                     </button>
 
                                                 </td>
@@ -160,7 +174,8 @@
 
                                                                 <div class="card-body">
                                                                     @if (session('success'))
-                                                                        <div class="alert alert-success" role="alert">
+                                                                        <div class="alert alert-success"
+                                                                            role="alert">
                                                                             {{ session('success') }}
                                                                         </div>
                                                                     @endif

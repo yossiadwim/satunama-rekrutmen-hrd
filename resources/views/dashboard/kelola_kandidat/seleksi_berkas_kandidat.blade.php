@@ -10,7 +10,7 @@
                                 {{-- @if ($data_status->status->nama_status == 'seleksi berkas') --}}
                                 @if ($data->pelamar->id == 1)
                                     <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
-                                        data-bs-target="#tab-candidate-seleksi{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
+                                        data-bs-target="#tab-candidate-seleksi-{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
                                         type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
                                         <div class="row shadow-sm border px-2 py-2">
                                             <div class="col-3 ">
@@ -18,11 +18,7 @@
                                                     style="border-radius: 50%; object-fit: cover;"
                                                     src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
                                             </div>
-                                            {{-- <div class="col-9 ">
-                                                    <p>{{ $data->pelamar->nama_pelamar }}</p>
-                                                    <p><span class="badge rounded-pill text-bg-info">{{ $data_status->status->nama_status }}</span></p>
-                                                    <p>{{ $data->pelamar->alamat }}</p>
-                                                </div> --}}
+
                                         </div>
                                     </button>
                                 @else
@@ -37,7 +33,6 @@
                                             </div>
                                             <div class="col-9">
                                                 <p>{{ $data->pelamar->nama_pelamar }}</p>
-                                                {{-- <p><span class="badge rounded-pill text-bg-info">{{ Str::title($data_status->status->nama_status) }}</span></p> --}}
                                                 <p>{{ $data->pelamar->alamat }}</p>
                                             </div>
                                         </div>
@@ -61,7 +56,6 @@
                             <div class="container tab-pane fade"
                                 id="tab-candidate-seleksi-{{ $data_status->status->slug }}-{{ $data->pelamar->id }}"
                                 role="tabpanel" tabindex="0">
-
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="d-flex flex-column align-items-center text-center p-3 py-5">
@@ -99,63 +93,82 @@
                                             <div class="row mt-2">
                                                 @if ($data->pelamar->telepon_rumah == null)
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Nomor
+                                                        <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
                                                             Telepon</label>
                                                         <p>{{ '-' }}</p>
                                                     </div>
                                                 @else
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Nomor
+                                                        <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
                                                             Telepon</label>
                                                         <p>{{ $data->pelamar->telepon_rumah }}</p>
                                                     </div>
                                                 @endif
                                                 <div class="col-md-6">
-                                                    <label class="labels fw-bold">Email</label>
+                                                    <label class="labels fw-bold"><i class="fa-solid fa-envelope"></i>
+                                                        Email</label>
                                                     <p>{{ $data->pelamar->email }}</p>
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
 
-                                                @if ($data->pelamar->alamat == null && $data->pelamar->tanggal_lahir == null && $data->pelamar->jenis_kelamin == null)
+                                                @if ($data->pelamar->alamat == null && $data->pelamar->tanggal_lahir == null)
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Alamat</label>
+                                                        <label class="labels fw-bold"><i
+                                                                class="fa-solid fa-location-dot"></i> Alamat</label>
                                                         <p>{{ '-' }}</p>
 
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Tanggal
-                                                            Lahir, Jenis Kelamin</label>
+                                                        <label class="labels fw-bold"><i
+                                                                class="fa-regular fa-calendar-days"></i> Tanggal
+                                                            Lahir</label>
                                                         <p>{{ '-' }}</p>
                                                     </div>
                                                 @else
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Alamat</label>
+                                                        <label class="labels fw-bold"><i
+                                                                class="fa-solid fa-location-dot"></i> Alamat</label>
                                                         <p>{{ $data->pelamar->alamat }}</p>
 
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Tanggal
-                                                            Lahir, Jenis Kelamin</label>
+                                                        <label class="labels fw-bold"><i
+                                                                class="fa-regular fa-calendar-days"></i> Tanggal
+                                                            Lahir</label>
                                                         <p>{{ \Carbon\Carbon::parse($data->pelamar->tanggal_lahir)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
-                                                            ,
-                                                            {{ $data->pelamar->jenis_kelamin }}</p>
+                                                        </p>
                                                     </div>
                                                 @endif
                                             </div>
+
                                             <div class="row mt-2">
                                                 @if ($data->pelamar->kebangsaan == null)
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Kebangsaan</label>
+                                                        <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                                            Kebangsaan</label>
+                                                        <p>{{ '-' }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                                            Jenis Kelamin</label>
                                                         <p>{{ '-' }}</p>
                                                     </div>
                                                 @else
                                                     <div class="col-md-6">
-                                                        <label class="labels fw-bold">Kebangsaan</label>
+                                                        <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                                            Kebangsaan</label>
                                                         <p>{{ $data->pelamar->kebangsaan }}</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                                            Jenis Kelamin</label>
+                                                        <p>{{ $data->pelamar->jenis_kelamin }}</p>
                                                     </div>
                                                 @endif
                                             </div>
+
+
 
                                         </div>
                                     </div>
@@ -215,7 +228,7 @@
                                                                                     data-bs-toggle="modal"
                                                                                     data-bs-target="#id-seleksi-{{ $stat->id }}"
                                                                                     value="{{ $stat->id }}"
-                                                                                    id="button_status-{{ $stat->id }}">
+                                                                                    id="button_status_seleksi-{{ $stat->id }}">
                                                                                     {{ Str::title($stat->nama_status) }}
                                                                                 </button>
                                                                             @endif
@@ -676,18 +689,42 @@
                                                     <div id="pengalamanKerja"
                                                         class="accordion-collapse collapse show">
                                                         <div class="accordion-body">
-                                                            @foreach ($data->pelamar->pengalamanKerja as $data_pengalaman_kerja)
-                                                                <div
-                                                                    class="border-start px-3 border-4 border-secondary">
-                                                                    <p class="fw-bold">
-                                                                        {{ $data_pengalaman_kerja->nama_perusahaan }}
-                                                                    </p>
-                                                                    <p>{{ $data_pengalaman_kerja->jabatan }}
-                                                                    </p>
-                                                                    <p>{{ $data_pengalaman_kerja->periode }}
-                                                                    </p>
+                                                            @if (in_array($data->pelamar->id, $arrPengalamanId))
+                                                                @foreach ($data->pelamar->pengalamanKerja as $data_pengalaman_kerja)
+                                                                    <div
+                                                                        class="border-start px-3 border-4 border-secondary">
+                                                                        <p class="fw-bold">
+                                                                            {{ $data_pengalaman_kerja->nama_perusahaan }}
+                                                                        </p>
+                                                                        <p>{{ $data_pengalaman_kerja->jabatan }}
+                                                                        </p>
+                                                                        <p>{{ $data_pengalaman_kerja->periode }}
+                                                                        </p>
+                                                                    </div>
+                                                                @endforeach
+                                                            @else
+                                                                <div class="d-flex justify-content-center">
+                                                                    <p>Belum ada data yang ditambahkan</p>
                                                                 </div>
-                                                            @endforeach
+                                                            @endif
+                                                            {{-- @if ($data->pelamar->pengalamanKerja->id_pelamar)
+                                                                <div class="d-flex justify-content-center">
+                                                                    <p>Belum ada data yang ditambahkan</p>
+                                                                </div>
+                                                            @else
+                                                                @foreach ($data->pelamar->pengalamanKerja as $data_pengalaman_kerja)
+                                                                    <div
+                                                                        class="border-start px-3 border-4 border-secondary">
+                                                                        <p class="fw-bold">
+                                                                            {{ $data_pengalaman_kerja->nama_perusahaan }}
+                                                                        </p>
+                                                                        <p>{{ $data_pengalaman_kerja->jabatan }}
+                                                                        </p>
+                                                                        <p>{{ $data_pengalaman_kerja->periode }}
+                                                                        </p>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endif --}}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -706,20 +743,27 @@
                                                     </h2>
                                                     <div id="pendidikan" class="accordion-collapse collapse show">
                                                         <div class="accordion-body">
-                                                            @foreach ($data->pelamar->pendidikan as $data_status_pendidikan)
-                                                                <div
-                                                                    class="border-start px-3 border-4 border-secondary">
-                                                                    <p>Jenjang:
-                                                                        {{ $data_status_pendidikan->jenjang_pendidikan }}
-                                                                    </p>
-                                                                    <p>Jurusan:
-                                                                        {{ $data_status_pendidikan->jurusan }}
-                                                                    </p>
-                                                                    <p>IPK: {{ $data_status_pendidikan->ipk }}
-                                                                    </p>
+                                                            @if (in_array($data->pelamar->id, $arrPendidikanId))
+                                                                @foreach ($data->pelamar->pendidikan as $data_status_pendidikan)
+                                                                    <div
+                                                                        class="border-start px-3 border-4 border-secondary">
+                                                                        <p>Jenjang:
+                                                                            {{ $data_status_pendidikan->jenjang_pendidikan }}
+                                                                        </p>
+                                                                        <p>Jurusan:
+                                                                            {{ $data_status_pendidikan->jurusan }}
+                                                                        </p>
+                                                                        <p>IPK: {{ $data_status_pendidikan->ipk }}
+                                                                        </p>
 
+                                                                    </div>
+                                                                @endforeach
+                                                            @else
+                                                                <div class="d-flex justify-content-center">
+                                                                    <p>Belum ada data yang ditambahkan</p>
                                                                 </div>
-                                                            @endforeach
+                                                            @endif
+
                                                         </div>
                                                     </div>
                                                 </div>
