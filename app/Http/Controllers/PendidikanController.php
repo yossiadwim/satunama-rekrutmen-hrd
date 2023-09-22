@@ -36,7 +36,7 @@ class PendidikanController extends Controller
             [
                 'jenjang_pendidikan' => 'required',
                 'jurusan' => 'required',
-                'ipk' => 'required',
+                'ipk' => '',
                 'id_pelamar' => 'required'
             ]
         );
@@ -77,7 +77,7 @@ class PendidikanController extends Controller
                 'id_pelamar' => 'required'
             ]
         );
-        Pendidikan::where('id', $pendidikan->id)->update($validatedData);
+        Pendidikan::where('id_pendidikan', $pendidikan->id_pendidikan)->update($validatedData);
         return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success update education', 'Berhasil mengubah informasi pendidikan');
     }
 

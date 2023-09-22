@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Providers;
+
+use App\Models\Pelamar;
 use App\Models\User;
 use App\Models\UserRole;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,5 +47,12 @@ class AppServiceProvider extends ServiceProvider
 
             return $role_name[0]['role'] == 'admin';
         });
+
+        Blade::directive('currency', function ($expression) {
+            return "<?php echo 'Rp ' . number_format($expression, 2, ',', '.'); ?>";
+        });
+
+        Pelamar::unguard();
     }
+
 }

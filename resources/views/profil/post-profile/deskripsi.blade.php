@@ -1,8 +1,8 @@
 <div class="md-12">
-    <h5 class="fw-bold">Profil Information</h5>
+    <h2 class="fw-bold">PROFIL INFORMATION</h2>
     <h3 class="fw-bold mt-5">TENTANG SAYA </h3>
     <hr class="border border-secondary">
-    <div class="col-md-12 mt-5 mb-5 d-flex justify-content-center">
+    <div class="col-md-12 mt-5 mb-5  ">
         <!-- Button trigger modal -->
         @if ($user->pelamar->deskripsi == null)
             <a href="/profil-kandidat/users/{{ $user->slug }}/description" class="btn btn-primary border-0 mt-5 mb-5"
@@ -36,13 +36,13 @@
                 </div>
             </div>
         @else
-            <div class="row g-3">
-                <div class="col-11">
+            <div class="row">
+                <div class="col-10">
                     <article style="text-align: justify">
                         {!! $user->pelamar->deskripsi !!}
                     </article>
                 </div>
-                <div class="col">
+                <div class="col-2">
                     <a href="/profil-kandidat/users/{{ $user->slug }}/description" class="btn btn-primary border-0 mt-5 mb-5"
                         data-bs-toggle="modal" data-bs-target="#deskripsiModal"><i class="bi bi-pencil-fill"></i>
                         Edit</a>

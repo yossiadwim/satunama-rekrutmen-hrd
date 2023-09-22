@@ -7,7 +7,10 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PendidikanController;
 use App\Http\Controllers\LowonganKerjaController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\PengalamanKerjaController;
+use App\Http\Controllers\ReferensiController;
+use App\Models\TesTertulis;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +24,9 @@ use App\Http\Controllers\PengalamanKerjaController;
 */
 
 Route::get('/lowongan-kerja',[LowonganKerjaController::class,'index']);
-Route::post('/lowongan-kerja/{lowongan}',[LowonganKerjaController::class,'upload']);
+Route::post('/lowongan-kerja/{lowongan}',[LowonganKerjaController::class,'apply']);
 Route::get('/lowongan-kerja/{lowongan:slug}/detail',[LowonganKerjaController::class,'show']);
+// Route::get('lowongan-kerja/{departemen:kode_departemen}', [LowonganKerjaController::class,'filterByDepartement']);
 
 Route::post('/login',[LoginController::class, 'authenticate']);
 Route::get('/login',[LoginController::class, 'index']);
@@ -32,15 +36,36 @@ Route::get('/register',[RegisterController::class, 'index']);
 Route::post('/register', [RegisterController::class, 'store']);
 Route::get('/register/createSlug',[RegisterController::class, 'checkSlug']);
 
+
 // Route::get('/profil-kandidat/{users:slug}',[ProfilController::class,'show']);
 Route::post('/profil-kandidat/users/{user:slug}/description',[ProfilController::class,'description']);
+Route::get('/profil-kandidat/users/{user:slug}/lamaran-saya',[ProfilController::class,'my_application']);
+Route::get('/profil-kandidat/users/{user:slug}/pengaturan-akun',[ProfilController::class,'accountSettings']);
+Route::get('/profil-kandidat/users/{user:slug}/application-form',[ProfilController::class,'application_form']);
+Route::put('/profil-kandidat/users/{user:slug}/send-application-form',[ProfilController::class,'send_application_form']);
+Route::post('/profil-kandidat/users/{user:slug}/changeAccountSettings',[ProfilController::class,'changeAccountSettings']);
 Route::resource('/profil-kandidat/users',ProfilController::class);
 
 Route::resource('/pengalamanKerja',PengalamanKerjaController::class);
+
 Route::resource('/pendidikan', PendidikanController::class);
 
+Route::resource('/referensi', ReferensiController::class);
+
+
+Route::put('/admin-dashboard/tesTertulis/edit-schedule/{tesTertulis}',[AdminDashboardController::class, 'editScheduleTest']);
 Route::get('/admin-dashboard/lowongan/createSlug',[AdminDashboardController::class, 'checkSlug']);
 Route::post('/admin-dashboard/lowongan/{lowongan:slug}/closeJobs', [AdminDashboardController::class, 'closeJobs']);
 Route::get('/admin-dashboard/lowongan/{lowongan:slug}/kelola-kandidat', [AdminDashboardController::class, 'show']);
-Route::post('/admin-dashboard/lowongan/{lowongan:slug}/changePosition', [AdminDashboardController::class, 'changePosition']);
+Route::get('/admin-dashboard/lowongan/detail-pelamar/beban-kerja/{user}', [AdminDashboardController::class, 'workLoad']);
+Route::get('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/{lowongan}', [AdminDashboardController::class, 'instrumenAnalisaBebanKerja']);
+Route::post('/admin-dashboard/lowongan/instrumen-analisis-beban-kerja/{lowongan}', [AdminDashboardController::class, 'instrumentAnalysis']);
+
+Route::get('/admin-dashboard/lowongan/detail-pelamar/{user}', [AdminDashboardController::class, 'detailCandidate']);
+Route::post('/admin-dashboard/lowongan/{statusLamaran}/changePosition', [AdminDashboardController::class, 'changePosition']);
+Route::get('/admin-dashboard/lowongan/{pelamarLowongan}/assesment', [AdminDashboardController::class, 'assesment']);
+Route::post('/admin-dashboard/lowongan/addScheduleTest', [AdminDashboardController::class, 'addScheduleTest']);
+Route::post('/admin-dashboard/lowongan/detail-pelamar/reference-check', [AdminDashboardController::class, 'referenceCheck']);
 Route::resource('/admin-dashboard/lowongan', AdminDashboardController::class);
+
+

@@ -1,15 +1,15 @@
 <nav class="navbar navbar-expand-lg bg-custom border shadow-sm">
-    <img src="{{ asset('img/satunama-logo.png') }}" alt="logo" width="70" height="70">
     <div class="container ">
         <a class="navbar-brand" href="/main"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        {{-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-        </button>
+        </button> --}}
         <div class="collapse navbar-collapse" id="navbarNav">
+            <img class="" src="{{ asset('img/satunama-logo.png') }}" alt="logo" width="70" height="70">
 
             @can('admin')
-                <ul class="navbar-nav">
+                <ul class="navbar-nav mx-5">
                     <li class="nav-item">
                         <a class="nav-link fw-bold" href="/admin-dashboard/lowongan">Dashboard</a>
                     </li>
@@ -36,23 +36,26 @@
 
                             @can('user')
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    @foreach ($users as $user)
-                                        <li><a class="dropdown-item mb-2" href="/profil-kandidat/users/{{ $user->slug }}"><i
-                                                    class="bi bi-person-circle"></i>
-                                                Profil</a></li>
-                                        <li><a class="dropdown-item mb-2" href="/lamaran_saya"><i
-                                                    class="bi bi-file-text-fill"></i>
-                                                Lamaran Saya</a></li>
-                                        <li><a class="dropdown-item mb-2" href="/pengaturan"><i class="bi bi-gear-fill"></i></i>
-                                                Pengaturan Akun</a></li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                    @endforeach
+                                    <li><a class="dropdown-item mb-2" href="/profil-kandidat/users/{{ $user->slug }}"><i
+                                                class="fa-solid fa-circle-user"></i>
+                                            Profil</a></li>
+                                    <li><a class="dropdown-item mb-2"
+                                            href="/profil-kandidat/users/{{ $user->slug }}/lamaran-saya"><i
+                                                class="fa-solid fa-file-lines"></i>
+                                            Lamaran Saya</a></li>
+                                    <li><a class="dropdown-item mb-2" href="/profil-kandidat/users/{{ $user->slug }}/pengaturan-akun"><i class="fa-solid fa-gear"></i>
+                                            Pengaturan Akun</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li>
                                         <form action="/logout" method="post">
                                             @csrf
-                                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i>
+                                            <input type="text" name="id_karyawan" id="id_karyawan" value="{{ $user->id_karyawan }}" hidden>
+                                            <input type="text" name="id_pelamar" id="id_pelamar" value="{{ $user->id_pelamar }}" hidden>
+                                            
+                                            <button type="submit" class="dropdown-item"><i
+                                                    class="fa-solid fa-right-from-bracket" style="color: #000000;"></i>
                                                 Keluar</button>
                                         </form>
 
@@ -61,7 +64,7 @@
                             @elsecan('admin')
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                                    <li><a class="dropdown-item mb-2" href="/pengaturan"><i class="bi bi-gear-fill"></i></i>
+                                    <li><a class="dropdown-item mb-2" href="/pengaturan"><i class="fa-solid fa-gear" style="color: #000000;"></i>
                                             Pengaturan Akun</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
@@ -69,7 +72,11 @@
                                     <li>
                                         <form action="/logout" method="post">
                                             @csrf
-                                            <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i>
+                                            <input type="text" name="id_karyawan" id="id_karyawan" value="{{ $user == null? '' : $user->id_karyawan }}" hidden>
+                                            <input type="text" name="id_pelamar" id="id_pelamar" value="{{  $user == null? '' : $user->pelamar }}" hidden>
+
+                                            <button type="submit" class="dropdown-item"><i
+                                                class="fa-solid fa-right-from-bracket" style="color: #000000;"></i>
                                                 Keluar</button>
                                         </form>
 
@@ -82,7 +89,7 @@
                 @else
                     <li class="nav-item">
                         <a href="/login" class="nav-link">
-                            <i class="bi bi-box-arrow-in-right"></i>
+                            <i class="fa-solid fa-right-to-bracket"></i>
                             Login
                         </a>
                     </li>

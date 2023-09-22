@@ -7,7 +7,9 @@ use App\Models\DokumenPelamar;
 use App\Models\DokumenPelamarLowongan;
 use App\Models\Lowongan;
 use App\Models\PelamarLowongan;
+use App\Models\StatusLamaran;
 use App\Models\User;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -20,8 +22,17 @@ class LowonganKerjaController extends Controller
     {
         try {
             $user = Auth::user();
+
+
+            $lowonganOpen = Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
+                ->select(DB::raw('lowongan.id, lowongan.id_departemen, departemen.nama_departemen, departemen.kode_departemen, nama_lowongan, slug, lowongan.tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
+                ->where('closed', '=', 'false')->latest();
+
+            $lowonganClosed = Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
+                ->select(DB::raw('lowongan.id, lowongan.id_departemen, departemen.nama_departemen, departemen.kode_departemen, nama_lowongan, slug, lowongan.tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
+                ->where('closed', '=', 'true')->latest();
+
             if ($user) {
-                $id_user = $user->id;
 
                 return view('lowongan.lowongan_kerja', [
 
@@ -32,43 +43,28 @@ class LowonganKerjaController extends Controller
                         ->groupBy('departemen.id_departemen')
                         ->get(),
 
-                    'lowonganOpen' => Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
-                        ->select(DB::raw('lowongan.id, lowongan.id_departemen, departemen.nama_departemen, nama_lowongan, slug, lowongan.tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
-                        ->where('closed', '=', 'false')
-                        ->get(),
+                    'lowonganOpen' => $lowonganOpen->search(request('search'))->filter(request(['tanggal','tipe_lowongan','kode_departemen']))->get(),
 
-                    'lowonganClosed' => Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
-                        ->select(DB::raw('lowongan.id, lowongan.id_departemen, departemen.nama_departemen, nama_lowongan, slug, lowongan.tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
-                        ->where('closed', '=', 'true')
-                        ->get(),
+                    'lowonganClosed' => $lowonganClosed->search(request('search'))->filter(request(['tanggal','tipe_lowongan','kode_departemen']))->get(),
 
-                    'users' => User::where('id', auth()->user()->id)->get(),
+                    'user' => $user,
 
                     'title' => 'Lowongan Kerja'
 
-                    // 'profils' => Profil::where('user_id', '=', $id_user)->get(),
                 ]);
             } else {
-                return view('main.index', [
+                return view('lowongan.lowongan_kerja', [
 
-                    'lowongan' => Lowongan::all(),
+                    'lowongans' => Lowongan::all(),
 
                     'departemens' => Lowongan::rightJoin('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
                         ->select(DB::raw('count(lowongan.nama_lowongan) as total_lowongan, departemen.id_departemen as id_departemen, nama_departemen, kode_departemen'))
                         ->groupBy('departemen.id_departemen')
                         ->get(),
 
-                    'lowonganOpen' => Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
-                        ->select(DB::raw('lowongan.id, lowongan.id_departemen, departemen.nama_departemen, nama_lowongan, slug, tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
-                        ->where('closed', '=', 'false')
-                        ->get(),
+                    'lowonganOpen' => $lowonganOpen->search(request('search'))->filter(request(['tanggal','tipe_lowongan','kode_departemen']))->get(),
 
-                    'lowonganClosed' => Lowongan::join('departemen', 'lowongan.id_departemen', '=', 'departemen.id_departemen')
-                        ->select(DB::raw('lowongan.id, lowongan.id_departemen, departemen.nama_departemen, nama_lowongan, slug, tipe_lowongan, deskripsi, lowongan.created_at, lowongan.updated_at'))
-                        ->where('closed', '=', 'true')
-                        ->get(),
-
-                    'users' => User::where('id', auth()->user()->id)->get(),
+                    'lowonganClosed' => $lowonganClosed->search(request('search'))->filter(request(['tanggal','tipe_lowongan','kode_departemen']))->get(),
 
                     'title' => 'Lowongan Kerja'
 
@@ -82,53 +78,124 @@ class LowonganKerjaController extends Controller
     public function show(Lowongan $lowongan)
     {
 
-        return view('lowongan.detail_lowongan_kerja', [
-            "lowongan" => $lowongan,
-            "departemen" => Departemen::where('id_departemen', $lowongan->id_departemen),
-            // "profils" => Profil::where('user_id',auth()->user()->id)->get(),
-            "users" => User::where('id', auth()->user()->id)->get(),
-            "title" => "Detail Lowongan Kerja"
+        $user = Auth::user();
+
+        if ($user) {
+            return view('lowongan.detail_lowongan_kerja', [
+                "lowongan" => $lowongan,
+                "departemen" => Departemen::where('id_departemen', $lowongan->id_departemen),
+                "user" => Auth::user(),
+                "pelamarExist" => PelamarLowongan::where('id_pelamar', auth()->user()->id_pelamar)->where('id_lowongan', $lowongan->id)->exists(),
+                "title" => "Detail Lowongan Kerja"
+            ]);
+        } else {
+
+            return view('lowongan.detail_lowongan_kerja', [
+                "lowongan" => $lowongan,
+                "departemen" => Departemen::where('id_departemen', $lowongan->id_departemen),
+                "user" => Auth::user(),
+                "pelamarExist" => null,
+                "title" => "Detail Lowongan Kerja"
+            ]);
+        }
+    }
+
+    public function filterByDepartement(Departemen $departemen)
+    {
+        return view('lowongan.filter_lowongan', [
+            'title' => 'Filter',
+            'lowongans' => Lowongan::where('id_departemen', $departemen->id_departemen)->get(),
+            'departemen' => $departemen,
+            'user' => Auth::user()
         ]);
     }
 
-    public function upload(Request $request, Lowongan $lowongan)
+    public function apply(Request $request, Lowongan $lowongan)
     {
-        $request->validate([
-            'dokumen' => 'required',
-            'dokumen.*' => 'required|mimes:png,jpg,pdf,docx,doc',
-        ]);
+        try {
+            $request->validate([
+                'dokumen' => 'required',
+                'dokumen.*' => 'required|mimes:png,jpg,pdf,docx,doc',
+            ]);
 
-        $pelamar_lowongan = PelamarLowongan::create([
-            'id_pelamar' => $request->input('id_pelamar'),
-            'id_lowongan' => $lowongan->id,
-            'tanggal_melamar' => Carbon::now()
-        ]);
+            $pelamar_lowongan = PelamarLowongan::create([
+                'id_pelamar' => $request->input('id_pelamar'),
+                'id_lowongan' => $lowongan->id,
+                'tanggal_melamar' => Carbon::now()
+            ]);
 
-        $user = User::where('id', auth()->user()->id)->get();
-        $user_slug = $user->pluck('slug');
-        $directory = 'document/' . $user_slug[0];
-        Storage::makeDirectory($directory);
+            $user = User::where('id', auth()->user()->id)->get();
+            $user_slug = $user->pluck('slug');
+            $directory = 'document/' . $user_slug[0];
+            Storage::makeDirectory($directory);
 
-        if ($request->dokumen) {
-            foreach ($request->dokumen as $file) {
-                $nama_file = $file->getClientOriginalName();
-                $path = Storage::putFileAs($directory, $file, $nama_file);
+            if ($request->dokumen) {
+                foreach ($request->dokumen as $file) {
+                    $nama_file = $file->getClientOriginalName();
+                    $path = Storage::putFileAs($directory, $file, $nama_file);
 
-                $dokumen_pelamar = DokumenPelamar::create([
-                    'nama' => $nama_file,
-                    'dokumen' => $path
-                ]);
+                    $dokumen_pelamar = DokumenPelamar::create([
+                        'nama' => $nama_file,
+                        'dokumen' => $path
+                    ]);
 
-                DokumenPelamarLowongan::create([
-                    'id_dokumen' => $dokumen_pelamar->id,
-                    'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
-                ]);
+                    DokumenPelamarLowongan::create([
+                        'id_dokumen' => $dokumen_pelamar->id,
+                        'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+                    ]);
+                }
             }
+
+            StatusLamaran::create([
+                'tanggal' => Carbon::now()->format('Y-m-d'),
+                'id_status' => 1,
+                'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+            ]);
+
+            return back()->with('success', 'Dokumen berhasil diunggah');
+        } catch (\Throwable $th) {
+            $th->getMessage();
         }
 
-        return back()->with('success','Dokumen berhasil diunggah');
+        //     $request->validate([
+        //         'dokumen' => 'required',
+        //         'dokumen.*' => 'required|mimes:png,jpg,pdf,docx,doc',
+        //     ]);
 
+        //     $pelamar_lowongan = PelamarLowongan::create([
+        //         'id_pelamar' => $request->input('id_pelamar'),
+        //         'id_lowongan' => $lowongan->id,
+        //         'tanggal_melamar' => Carbon::now()
+        //     ]);
 
-        
+        //     $user = User::where('id', auth()->user()->id)->get();
+        //     $user_slug = $user->pluck('slug');
+        //     $directory = 'document/' . $user_slug[0];
+        //     Storage::makeDirectory($directory);
+
+        //     if ($request->dokumen) {
+        //         foreach ($request->dokumen as $file) {
+        //             $nama_file = $file->getClientOriginalName();
+        //             $path = Storage::putFileAs($directory, $file, $nama_file);
+
+        //             $dokumen_pelamar = DokumenPelamar::create([
+        //                 'nama' => $nama_file,
+        //                 'dokumen' => $path
+        //             ]);
+
+        //             DokumenPelamarLowongan::create([
+        //                 'id_dokumen' => $dokumen_pelamar->id,
+        //                 'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+        //             ]);
+        //         }
+        //     }
+
+        //     StatusLamaran::create([
+        //         'tanggal' => Carbon::now()->format('Y-m-d'),
+        //         'id_status' => 1,
+        //         'id_pelamar_lowongan' => $pelamar_lowongan->id_pelamar_lowongan
+        //     ]);
+
+        //     return back()->with('success', 'Dokumen berhasil diunggah');
     }
 }

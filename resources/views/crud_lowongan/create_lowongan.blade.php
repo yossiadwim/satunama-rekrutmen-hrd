@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,86 +29,101 @@
         @endforeach
     @endif --}}
 
-    <form method="post" action="/admin-dashboard/lowongan">
-        @csrf
-        <div class="container mt-5">
-            <div class="col-md-12">
-                <div class="mb-3 col-md-6">
-                    <label for="nama_lowongan" class="form-label">Nama Lowongan</label>
-                    <input type="text"
-                        class="form-control @error('nama_lowongan')
+    <div class="container rounded border border-2 mt-2">
+        <form method="post" action="/admin-dashboard/lowongan">
+            @csrf
+            <div class="container mt-5">
+                <div class="col-md-12">
+                    <div class="mb-3 col-md-6">
+                        <label for="nama_lowongan" class="form-label">Nama Lowongan</label>
+                        <input type="text"
+                            class="form-control @error('nama_lowongan')
+                            is-invalid
+                        @enderror"
+                            id="nama_lowongan" name="nama_lowongan" value="{{ old('nama_lowongan') }}">
+                        @error('nama_lowongan')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-12" hidden>
+                    <div class="mb-3 col-md-6 mt-5">
+                        <label for="slug" class="form-label">Slug</label>
+                        <input type="text" class="form-control" id="slug" name="slug"
+                            value="{{ old('slug') }}" placeholder="Terisi otomatis">
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="mb-3 col-md-6 mt-5">
+                        <input type="hidden" name="closed" value="false">
+                    </div>
+                </div>
+                <div class="mb-3 col-md-6 mt-5">
+                    <label for="departemen" class="form-label">Departemen</label>
+                    <select
+                        class="form-select @error('id_departemen')
                         is-invalid
                     @enderror"
-                        id="nama_lowongan" name="nama_lowongan" value="{{ old('nama_lowongan') }}">
-                    @error('nama_lowongan')
+                        id="departemen" name="id_departemen">
+                        <option value="---" selected disabled>---</option>
+                        @foreach ($departemen as $dp)
+                            <option value="{{ $dp->id_departemen }}">{{ $dp->nama_departemen }}</option>
+                        @endforeach
+                    </select>
+                    @error('id_departemen')
                         <div class="invalid-feedback">
                             {{ $message }}
                         </div>
                     @enderror
                 </div>
-            </div>
-            <div class="col-md-12">
-                <div class="mb-3 col-md-6 mt-5">
-                    <label for="slug" class="form-label">Slug</label>
-                    <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}"
-                        placeholder="Terisi otomatis">
+                <div class="mb-3 col-md-3 mt-5">
+                    <select
+                        class="form-select @error('tipe_lowongan')
+                        is-invalid
+                    @enderror"
+                        aria-label="Default select example" name="tipe_lowongan">
+                        <option selected disabled>Tipe Lowongan</option>
+                        <option value="Magang">Magang</option>
+                        <option value="Kontrak">Kontrak</option>
+                        <option value="Harian">Harian</option>
+                        <option value="Tetap">Karyawan Tetap</option>
+                    </select>
+                    @error('tipe_lowongan')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
                 </div>
-            </div>
-            <div class="col-md-12">
-                <div class="mb-3 col-md-6 mt-5">
-                    <input type="hidden" name="closed" value="false">
+                <div class="col-md-12">
+                    <div class="mb-3 col-md-2 mt-5">
+                        <label for="tanggal_tutup" class="form-label">Tanggal Tutup</label>
+                        <input type="date"
+                            class="form-control @error('tanggal_tutup')
+                            is-invalid
+                        @enderror"
+                            id="tanggal_tutup" name="tanggal_tutup" value="{{ old('tanggal_tutup') }}">
+                        @error('tanggal_tutup')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
                 </div>
-            </div>
-            <div class="mb-3 col-md-6 mt-5">
-                <label for="departemen" class="form-label">Departemen</label>
-                <select
-                    class="form-select @error('id_departemen')
-                    is-invalid
-                @enderror"
-                    id="departemen" name="id_departemen">
-                    <option value="---" selected disabled>---</option>
-                    @foreach ($departemen as $dp)
-                        <option value="{{ $dp->id_departemen }}">{{ $dp->nama_departemen }}</option>
-                    @endforeach
-                </select>
-                @error('id_departemen')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-            <div class="mb-3 col-md-3 mt-5">
-                <select
-                    class="form-select @error('tipe_lowongan')
-                    is-invalid
-                @enderror"
-                    aria-label="Default select example" name="tipe_lowongan">
-                    <option selected disabled>Tipe Lowongan</option>
-                    <option value="Magang">Magang</option>
-                    <option value="Kontrak">Kontrak</option>
-                    <option value="Harian">Harian</option>
-                    <option value="Tetap">Karyawan Tetap</option>
-                </select>
-                @error('tipe_lowongan')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
-            </div>
-            <div class="mb-3 col-md-10 mt-5 ">
-                <label for="deskripsi" class="form-label">Deksripsi Lowongan</label>
-                @error('deskripsi_lowongan')
-                    <p class="text-danger">{{ $message }}</p>
-                @enderror
-                <textarea class="ckeditor form-control" name="deskripsi">{{ old('deskripsi') }}</textarea>
-            </div>
-            <div class="mb-5 col-md-12 mt-5 d-flex justify-content-center">
-                <button class="btn btn-primary border-0 " type="submit">Posting Lowongan</button>
-            </div>
+                <div class="mb-3 col-md-10 mt-5 ">
+                    <label for="deskripsi" class="form-label">Deksripsi Lowongan</label>
+                    @error('deskripsi_lowongan')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                    <textarea class="ckeditor form-control" name="deskripsi">{{ old('deskripsi') }}</textarea>
+                </div>
+                <div class="mb-5 col-md-12 mt-5 d-flex justify-content-center">
+                    <button class="btn btn-primary border-0 " type="submit">Posting Lowongan</button>
+                </div>
 
-        </div>
-    </form>
-
+            </div>
+        </form>
     </div>
 
 

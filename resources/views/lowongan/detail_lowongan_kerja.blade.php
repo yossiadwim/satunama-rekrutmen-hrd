@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/css/detail-lowongan-style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
 </head>
 
 <body style="font-family: Poppins">
@@ -39,36 +40,65 @@
     @endif
 
     <div class="container">
-        <h2 class="mt-5 fw-bold">{{ $lowongan->nama_lowongan }}</h2>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb mt-4">
+                <li class="breadcrumb-item"><a href="/lowongan-kerja">Lowongan Kerja</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Detail Lowongan Kerja</li>
+            </ol>
+        </nav>
+
+        <h2 class="mt-4 fw-bold">{{ $lowongan->nama_lowongan }}</h2>
         <h5 class="mt-4">YAYASAN SATUNAMA</h5>
-        <h6 class="mt-4"><i class="bi bi-building"></i>Departemen {{ $lowongan->departemen->nama_departemen }}
+        <h6 class="mt-4"><i class="fa-solid fa-building" style="color: #000000;"></i></i> Departemen
+            {{ $lowongan->departemen->nama_departemen }}
         </h6>
-        <h6 class="mt-4"><i class="bi bi-person-fill"></i> {{ $lowongan->tipe_lowongan }}</h6>
+        <h6 class="mt-4"><i class="fa-solid fa-hourglass-half" style="color: #000000;"></i> {{ $lowongan->tipe_lowongan }}</h6>
+        <h6 class="mt-4"><i class="fa-solid fa-calendar-days" style="color: #000000;"></i> Dibuka sampai dengan, {{ \Carbon\Carbon::parse($lowongan->tanggal_tutup)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ')}}</h6>
 
         <div class="mt-4">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
-                data-bs-target="#button-lamar" {{ $lowongan->closed == 'true' ? 'disabled' : '' }}>
-                Lamar
-            </button>
+            @if ($pelamarExist != null)
+                <button type="button" class="btn btn-danger bg-btn border-0" data-bs-toggle="modal"
+                    data-bs-target="#button-lamar" disabled>
+                    Anda Sudah Melamar Lowongan Ini
+                </button>
+            @endif
 
-            <!-- Modal -->
-            <div class="modal fade" id="button-lamar" tabindex="-1" aria-labelledby="modal-lamar" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="modal-lamar">Unggah Dokumen</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <form action="/lowongan-kerja/{{ $lowongan->slug }}" method="post"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-body">
-                                @foreach ($users as $user)
+            @if ($pelamarExist == null && $lowongan->closed == false)
+                <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
+                    data-bs-target="#button-lamar">
+                    Lamar
+                </button>
+            @endif
+
+            @if ($lowongan->closed == true)
+                <button type="button" class="btn btn-primary bg-btn border-0" data-bs-toggle="modal"
+                    data-bs-target="#button-lamar" disabled>
+                    Lowongan Sudah Ditutup
+                </button>
+            @endif
+
+
+
+            @if ($user)
+                <!-- Modal -->
+                <div class="modal fade" id="button-lamar" tabindex="-1" aria-labelledby="modal-lamar"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modal-lamar">Unggah Dokumen</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="/lowongan-kerja/{{ $lowongan->slug }}" method="post"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div class="modal-body">
+
                                     <div class=" mb-3" hidden>
                                         <input type="text" class="form-control mb-4" name="id_pelamar"
-                                            id="id_pelamar" value="{{ $user->id_pelamar }}">
+                                            id="id_pelamar" value="{{ $user == null ? '' : $user->id_pelamar }}">
                                     </div>
                                     <div class="mb-4">
                                         <label for="inputGroupFile01">Surat lamaran, Resume/CV, dan Kartu
@@ -82,35 +112,44 @@
                                             </div>
                                         @enderror
                                     </div>
-                                    {{-- <div class="mb-4">
-                                        <label for="inputGroupFile01">Surat Lamaran</label>
-                                        <input type="file" class="form-control" id="inputGroupFile01"
-                                            name="surat_lamaran">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="inputGroupFile02">CV</label>
-                                        <input type="file" class="form-control" id="inputGroupFile02" name="cv">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="inputGroupFile03">KTP (Kartu Identitas)</label>
-                                        <input type="file" class="form-control" id="inputGroupFile03" name="ktp">
-                                    </div> --}}
-                                    {{-- <div class="mb-4">
-                                        <label for="inputGroupFile04">Dokumen Lain</label>
-                                        <input type="file" class="form-control" id="inputGroupFile04"
-                                            name="dokumen_lain">
-                                    </div> --}}
-                                @endforeach
 
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-primary">Unggah</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @else
+                <!-- Modal -->
+                <div class="modal fade" id="button-lamar" tabindex="-1" aria-labelledby="modal-lamar"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="modal-lamar"><i
+                                        class="fa-solid fa-triangle-exclamation" style="color: #f0e800;"></i>
+                                    Pemberitahuan</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Silahkan untuk melakukan login atau membuat akun telebih dahulu sebelum melamar</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary"
+                                    data-bs-dismiss="modal">Keluar</button>
+                                <a href="/login" class="btn btn-primary">Login</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            @endif
+
         </div>
 
         <div class="mt-5">
@@ -118,10 +157,9 @@
         </div>
 
         <div class="mt-4">
-            <article class="justify-content-center text-justify">
+            <article class="justify-content-center text-justify col-9">
                 {!! $lowongan->deskripsi !!}
             </article>
-
         </div>
 
 

@@ -115,6 +115,21 @@
                     </div>
                 @enderror
             </div>
+            <div class="col-md-12">
+                <div class="mb-3 col-md-2 mt-5">
+                    <label for="tanggal_tutup" class="form-label">Tanggal Tutup</label>
+                    <input type="date"
+                        class="form-control @error('tanggal_tutup')
+                        is-invalid
+                    @enderror"
+                        id="tanggal_tutup" name="tanggal_tutup" value="{{ old('tanggal_tutup', $lowongan->tanggal_tutup) }}">
+                    @error('tanggal_tutup')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+            </div>
             <div class="mb-3 col-md-10 mt-5 ">
                 <label for="deskripsi" class="form-label">Deksripsi Lowongan</label>
                 @error('deskripsi_lowongan')

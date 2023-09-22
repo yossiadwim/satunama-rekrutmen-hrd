@@ -11,8 +11,18 @@ class Departemen extends Model
 
     protected $table = 'departemen';
 
-    public function lowongan(){
+    public function lowongan()
+    {
 
         return $this->hasMany(Lowongan::class);
+    }
+
+    public function sluggable(): array
+    {
+        return [
+            'kode_departemen' => [
+                'source' => 'kode_departemen'
+            ]
+        ];
     }
 }

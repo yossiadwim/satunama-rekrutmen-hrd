@@ -15,7 +15,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        
+        $schedule->command('close:jobClose')->dailyAt('12:00')
+                ->timezone('Asia/Jakarta')
+                ->runInBackground();
+
+        $schedule->command('close:closeJobOnTheDay')->dailyAt('12.00')
+                ->timezone('Asia/Jakarta')
+                ->runInBackground();
     }
 
     /**
