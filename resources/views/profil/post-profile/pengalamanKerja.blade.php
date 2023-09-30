@@ -36,7 +36,7 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control mb-4" name="jabatan" id="posisijabatan"
+                                    <input type="text" class="form-control mb-4" name="posisi" id="posisijabatan"
                                         placeholder="Posisi / jabatan">
                                     <label for="posisijabatan">Posisi / Jabatan</label>
                                 </div>
@@ -123,7 +123,7 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control mb-4" name="jabatan"
+                                    <input type="text" class="form-control mb-4" name="posisi"
                                         id="posisijabatan" placeholder="Posisi / jabatan">
                                     <label for="posisijabatan">Posisi / Jabatan</label>
                                 </div>
@@ -177,7 +177,7 @@
                     <div class="row border-secondary border-3 border-start mb-2">
                         <div class="col">
                             <p class="fs-4 fw-bold">{{ $pk->nama_perusahaan }}</p>
-                            <p>{{ $pk->jabatan }}</p>
+                            <p>{{ $pk->posisi }}</p>
                             <p>{{ $pk->periode }}</p>
                         </div>
                         <div class="col">
@@ -220,8 +220,8 @@
                                                 </div>
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control mb-4" name="jabatan"
-                                                        id="posisijabatan" placeholder="Posisi / jabatan" value="{{ $pk->jabatan }}">
+                                                    <input type="text" class="form-control mb-4" name="posisi"
+                                                        id="posisijabatan" placeholder="Posisi / jabatan" value="{{ $pk->posisi }}">
                                                     <label for="posisijabatan">Posisi / Jabatan</label>
                                                 </div>
 

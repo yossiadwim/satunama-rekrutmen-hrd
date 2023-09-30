@@ -36,7 +36,7 @@ class PengalamanKerjaController extends Controller
         $validatedData = $request->validate(
             [
                 'nama_perusahaan' => 'required',
-                'jabatan' => 'required',
+                'posisi' => 'required',
                 'periode' => 'required',
                 'gaji' => 'required',
                 'alasan_mengundurkan_diri' => 'required',
@@ -76,7 +76,7 @@ class PengalamanKerjaController extends Controller
             [
 
                 'nama_perusahaan' => 'required',
-                'jabatan' => 'required',
+                'posisi' => 'required',
                 'periode' => 'required',
                 'masih_bekerja' => 'nullable',
                 'gaji' => 'required',
