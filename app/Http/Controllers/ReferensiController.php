@@ -43,7 +43,7 @@ class ReferensiController extends Controller
         $validatedData = $request->validate([
             'nama_referensi' => 'required',
             'alamat_referensi' => 'required',
-            'telepon_referensi' => 'required,
+            'telepon_referensi' => 'required',
             'email_referensi' => 'required',
             'hubungan_referensi' => 'nullable',
             'posisi_referensi' => 'nullable',
