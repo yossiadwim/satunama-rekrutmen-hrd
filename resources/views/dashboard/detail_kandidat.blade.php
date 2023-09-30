@@ -162,7 +162,7 @@
                                                     <p class="fw-bold">
                                                         {{ $data_pengalaman_kerja->nama_perusahaan }}
                                                     </p>
-                                                    <p>{{ $data_pengalaman_kerja->jabatan }}
+                                                    <p>{{ $data_pengalaman_kerja->posisi }}
                                                     </p>
                                                     <p>{{ $data_pengalaman_kerja->periode }}
                                                     </p>
