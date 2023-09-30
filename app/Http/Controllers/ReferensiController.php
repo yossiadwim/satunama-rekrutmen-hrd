@@ -41,12 +41,12 @@ class ReferensiController extends Controller
         $user_slug = $user->pluck('slug');
 
         $validatedData = $request->validate([
-            'nama' => 'required',
-            'alamat' => 'required',
-            'telepon' => 'required',
-            'email' => 'required',
-            'hubungan' => 'nullable',
-            'posisi' => 'nullable',
+            'nama_referensi' => 'required',
+            'alamat_referensi' => 'required',
+            'telepon_referensi' => 'required|numeric|min_digits:11|max_digits:12|unique:referensi,telepon_referensi',
+            'email_referensi' => 'required',
+            'hubungan_referensi' => 'nullable',
+            'posisi_referensi' => 'nullable',
             'id_pelamar' => 'required',
 
         ]);
@@ -90,12 +90,13 @@ class ReferensiController extends Controller
         $user_slug = $user->pluck('slug');
 
         $validatedData = $request->validate([
-            'nama' => 'required',
-            'alamat' => 'required',
-            'telepon' => 'required',
-            'email' => 'required',
-            'hubungan' => 'nullable',
-            'posisi' => 'nullable',
+            'nama_referensi' => 'required',
+            'alamat_referensi' => 'required',
+            // 'telepon_referensi' => 'nullable|numeric|min_digits:11|max_digits:12|unique:referensi,telepon_referensi',
+            'telepon_referensi' => 'nullable|numeric|min_digits:11|max_digits:12',
+            'email_referensi' => 'required',
+            'hubungan_referensi' => 'nullable',
+            'posisi_referensi' => 'nullable',
             'id_pelamar' => 'required',
 
         ]);
