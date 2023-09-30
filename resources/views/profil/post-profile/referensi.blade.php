@@ -5,7 +5,7 @@
         </div>
         @if ($referensiExists)
             <div class="col-4">
-                <a href="/profil-kandidat/users/{{ $user->slug }}/reference" class="btn bg-btn btn-success border-0"
+                <a href="/profil-kandidat/users/{{ $user->slug }}/reference" class="btn bg-btn btn-primary border-0"
                     data-bs-toggle="modal" data-bs-target="#referensi"><i class="bi bi-plus-circle-fill"></i> Tambahkan
                     Referensi</a>
             </div>
@@ -181,8 +181,8 @@
         @else
             <div class="container">
                 @foreach ($referensis as $referensi)
-                    <div class="row rounded shadow-sm mb-3" style="background-color: #f2f1f1">
-                        <div class="col-8">
+                    <div class="row border-secondary border-3 border-start mb-3" >
+                        <div class="col">
                             <p>Nama: {{ $referensi->nama_referensi }}</p>
                             <p>Alamat: {{ $referensi->alamat_referensi }}</p>
                             <p>Telepon: {{ $referensi->telepon_referensi }}</p>
@@ -191,10 +191,10 @@
                             <p>Posisi: {{ $referensi->posisi_referensi == null ? '-' : $referensi->posisi_referensi }}
                             </p>
                         </div>
-                        <div class="col-4">
+                        <div class="col">
                             <div>
                                 <a href="/referensi/{{ $referensi->id_referensi }}/edit"
-                                    class="btn btn-warning border-0 mt-5 mb-5" data-bs-toggle="modal"
+                                    class="btn btn-primary border-0 mt-5 mb-5" data-bs-toggle="modal"
                                     data-bs-target="#referensi-{{ $referensi->id_referensi }}"><i
                                         class="bi bi-pencil-fill"></i>
                                     Edit</a>
@@ -289,9 +289,9 @@
                                             </div>
 
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger btn-batal"
+                                                <button type="button" class="btn btn-secondary btn-batal"
                                                     data-bs-dismiss="modal" onclick="hapusData()">Batal</button>
-                                                <button type="submit" class="btn btn-success btn-edit border-0"
+                                                <button type="submit" class="btn btn-primary btn-edit border-0"
                                                     id="submit-button-edit-referensi-{{ $referensi->id_referensi }}"
                                                     value="{{ $referensi->id_referensi }}"
                                                     onclick="getID({{ $referensi->id_referensi }});">Simpan</button>
@@ -313,12 +313,12 @@
                                             Informasi ini akan dihapus. Yakin ingin menghapusnya?
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-danger"
+                                            <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Close</button>
                                             <form action="/referensi/{{ $referensi->id_referensi }}" method="post">
                                                 @csrf
                                                 @method('delete')
-                                                <button type="submit" class="btn btn-success btn-delete"
+                                                <button type="submit" class="btn btn-primary btn-delete"
                                                     id="submit-button-delete-referensi-{{ $referensi->id_referensi }}"
                                                     value="{{ $referensi->id_referensi }}"
                                                     onclick="getID({{ $referensi->id_referensi }});">Hapus</button>
@@ -333,8 +333,4 @@
             </div>
         @endif
     </div>
-</div>
-<div id="loader" class="loader-wrapper" style="display: none;">
-    <div class="loader"></div>
-    <div class="mx-2 fw-bold text-light">Loading...</div>
 </div>

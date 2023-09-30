@@ -43,7 +43,7 @@ class ReferensiController extends Controller
         $validatedData = $request->validate([
             'nama_referensi' => 'required',
             'alamat_referensi' => 'required',
-            'telepon_referensi' => 'required|numeric|min_digits:11|max_digits:12|unique:referensi,telepon_referensi',
+            'telepon_referensi' => 'required,
             'email_referensi' => 'required',
             'hubungan_referensi' => 'nullable',
             'posisi_referensi' => 'nullable',
@@ -92,8 +92,7 @@ class ReferensiController extends Controller
         $validatedData = $request->validate([
             'nama_referensi' => 'required',
             'alamat_referensi' => 'required',
-            // 'telepon_referensi' => 'nullable|numeric|min_digits:11|max_digits:12|unique:referensi,telepon_referensi',
-            'telepon_referensi' => 'nullable|numeric|min_digits:11|max_digits:12',
+            'telepon_referensi' => 'nullable',
             'email_referensi' => 'required',
             'hubungan_referensi' => 'nullable',
             'posisi_referensi' => 'nullable',
