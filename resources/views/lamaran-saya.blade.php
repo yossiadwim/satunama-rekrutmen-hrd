@@ -43,11 +43,12 @@
                         @endif
                     </p>
                 </div>
-                <div class="mt-4">
+                {{--   <div class="mt-4">
                     <a href="/profil-kandidat/users/{{ $user->slug }}/application-form"
                         style="text-decoration: none; color: blue"><i class="fa-solid fa-up-right-from-square"></i>
                         Isi Application Form</a>
-                </div>
+                </div> --}}
+              
                 {{-- <div class="mt-4">
                     <div class="mt-5 mb-4">
                         <h5 class="fw-bold">Tracking Status Lamaran</h5>
