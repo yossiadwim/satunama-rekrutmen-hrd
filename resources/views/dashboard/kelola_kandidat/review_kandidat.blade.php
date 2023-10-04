@@ -22,19 +22,26 @@
                                     {{ $review[$i]['pelamar']['alamat'] }}</td>
                                 <td>{{ $review[$i]['pelamar']['email'] }}</td>
                                 <td>{!! $review[$i]['pelamar']['jenis_kelamin'] != null ? $review[$i]['pelamar']['jenis_kelamin'] : '-' !!}</td>
-                                <td>{{ $review[$i]['pelamar']['telepon_rumah'] != null ? $review[$i]['pelamar']['telepon_rumah'] : '-' }}</td>
+                                <td>{{ $review[$i]['pelamar']['telepon_rumah'] != null ? $review[$i]['pelamar']['telepon_rumah'] : '-' }}
+                                </td>
                                 @if ($review[$i]['pelamar']['pengalaman_kerja'] != null)
-                                    @for ($j = 0; $j < count($review[$i]['pelamar']['pengalaman_kerja']); $j++)
-                                        <td>{{ $review[$i]['pelamar']['pengalaman_kerja'][$j]['posisi'] }}</td>
-                                    @endfor
+                                    <td>
+                                        @for ($j = 0; $j < count($review[$i]['pelamar']['pengalaman_kerja']); $j++)
+                                            {{ $review[$i]['pelamar']['pengalaman_kerja'][$j]['posisi'] }}
+                                            {!! nl2br('<br>') !!}
+                                        @endfor
+                                    </td>
                                 @else
                                     <td>-</td>
                                 @endif
                                 <td>
-                                    <a href="/admin-dashboard/lowongan/detail-pelamar/{{ $review[$i]['pelamar']['user']['slug'] }}"
-                                        class="btn fw-semibold" style="background-color: #90c291; outline-color: #90c291"><i class="bi bi-info-circle-fill"></i> Detail </a>
-                                        {!! nl2br('<br>') !!}
-
+                                    <a href="/admin-dashboard/lowongan/{{ $datas[0]->lowongan->slug }}/detail-pelamar/{{ $review[$i]['pelamar']['user']['slug'] }}"
+                                        class="btn btn-success btn-detail fw-semibold text-white"
+                                        id="button-detail-{{ $review[$i]['pelamar']['user']['slug'] }}"
+                                        data-pk-id="{{ $review[$i]['pelamar']['user']['slug'] }}"
+                                        ><i
+                                            class="bi bi-info-circle-fill"></i> Detail </a>
+                                    {{-- {!! nl2br('<br>') !!} --}}
 
                                 </td>
                             </tr>

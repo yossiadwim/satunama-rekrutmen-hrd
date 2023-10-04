@@ -59,4 +59,12 @@ class PelamarLowongan extends Model
     public function hasilAnalisa(){
         return $this->hasMany(HasilAnalisa::class,'id_pelamar_lowongan','id_pelamar_lowongan');
     }
+
+    public function applicationForm(){
+        return $this->hasMany(ApplicationForm::class,'id_pelamar_lowongan','id_pelamar_lowongan');
+    }
+
+    public function penawaranPelamar(){
+        return $this->hasOne(PenawaranPelamar::class,'id_pelamar_lowongan','id_pelamar_lowongan');
+    }
 }

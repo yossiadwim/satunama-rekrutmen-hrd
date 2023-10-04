@@ -29,10 +29,10 @@ class CloseJobsOnTheDay extends Command
     public function handle()
     {
         $lowongan_tutup = Lowongan::where('tanggal_tutup', now())->get();
-        dump($lowongan_tutup);
+
 
         if ($lowongan_tutup == null) {
-            $this->info("Tidak ada lowongan hari ini");
+            $this->info("Tidak ada lowongan tutup hari ini");
         } else {
             $this->info('Ada Lowongan tutup hari ini');
             $data = [

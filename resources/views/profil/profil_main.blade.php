@@ -1,4 +1,3 @@
-{{-- @dd($users ) --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+    <link rel="stylesheet" href="{{ asset('css/profil-main.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
@@ -29,109 +29,190 @@
 <body style="font-family: Poppins">
     @include('partials.navbar')
 
+    @auth
+        <div class="offcanvas offcanvas-end " data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+            id="notifikasi_user" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">Notifikasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#belum_dibaca"
+                            type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Belum
+                            Dibaca</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#sudah_dibaca"
+                            type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Sudah
+                            Dibaca</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane mt-2 fade show active" id="belum_dibaca" role="tabpanel" aria-labelledby="home-tab"
+                        tabindex="0">
+                        @foreach ($notifikasi as $notif)
+                            <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-2 fw-bold ">{!! $notif->data['subject'] !!}</h6>
+                                </div>
+                                @if ($notif->type == 'App\Notifications\RegisterMessage')
+                                    <p class="mb-1 fw-bold">Selamat datang {{ $notif->data['nama_pelamar'] }}</p>
+                                @else
+                                    <p class="mb-1">Status lamaran pada {{ $notif->data['nama_lowongan'] }} diperbarui ke
+                                        Tahap
+                                    <p class="fw-bold">{{ $notif->data['status'] }} </p>
+                                    </p>
+                                @endif
+                                <small>{{ $notif->created_at->diffForHumans() }}</small>
+                            </a>
+                            <hr class="dividers">
+                        @endforeach
+                    </div>
+                    <div class="tab-pane fade" id="sudah_dibaca" role="tabpanel" aria-labelledby="profile-tab"
+                        tabindex="0">...</div>
+                </div>
+
+            </div>
+        </div>
+    @endauth
     <div class="container border border-light">
         <div class="row mt-3">
-            <div class="col-md-3">
-                <div class="d-flex flex-column align-items-center  p-3 py-5">
-                    <img class="rounded-circle " width="150px"
-                        src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
-                    <span> </span>
-
-                    @include('profil.post-profile.edit-profil')
-
+            @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <p>Gagal Mengubah Profil!</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+            @endif
+            <nav class="mt-5" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/lowongan-kerja">Lowongan</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Profil Saya</li>
+                </ol>
+            </nav>
+            <div class="loader-wrapper">
+                <div class="loader"></div>
+                <div class="mx-2 fw-bold text-light">Loading...</div>
             </div>
-            <div class="col-md-8">
-                <div class="p-3 py-5">
-                    @foreach ($pelamars as $pelamar)
-                        <h4 class="fw-bold mb-4">{{ $pelamar->nama_pelamar }}</h4>
-                        <div class="row mt-2">
-                            @if ($pelamar->telepon_rumah == null)
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
-                                        Telepon</label>
-                                    <p>{{ '-' }}</p>
-                                </div>
-                            @else
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
-                                        Telepon</label>
-                                    <p>{{ $pelamar->telepon_rumah }}</p>
-                                </div>
-                            @endif
-                            <div class="col-md-6">
-                                <label class="labels fw-bold"><i class="fa-solid fa-envelope"></i>
-                                    Email</label>
-                                <p>{{ $pelamar->email }}</p>
-                            </div>
+
+            <div class="container rounded">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="d-flex flex-column align-items-center  p-3 py-5">
+                            <img class="mb-3" width="150px" height="150px"
+                                src="{{ asset('img/user.png') }}"
+                                style="border-radius: 50%; object-fit: cover">
+                            <span> </span>
+
+                            @include('profil.post-profile.edit-profil')
+
                         </div>
-                        <div class="row mt-2">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="p-3 py-5">
+                            @foreach ($pelamars as $pelamar)
+                                <h4 class="fw-bold mb-4">{{ $pelamar->nama_pelamar }}</h4>
+                                <div class="row mt-2">
 
-                            @if ($pelamar->alamat == null && $pelamar->tanggal_lahir == null)
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i>
-                                        Alamat</label>
-                                    <p>{{ '-' }}</p>
+                                    <div class="col-md-6">
+                                        <label class="labels fw-bold"><i class="fa-solid fa-phone"></i> Nomor
+                                            Telepon</label>
+                                        <p>{{ $pelamar->telepon_rumah == null ? '-' : $pelamar->telepon_rumah }}</p>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <label class="labels fw-bold"><i class="fa-solid fa-envelope"></i>
+                                            Email</label>
+                                        <p>{{ $pelamar->email }}</p>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i>
-                                        Tanggal
-                                        Lahir</label>
-                                    <p>{{ '-' }}</p>
-                                </div>
-                            @else
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i>
-                                        Alamat</label>
-                                    <p>{{ $pelamar->alamat }}</p>
+                                <div class="row mt-2">
 
+                                    @if ($pelamar->alamat == null && $pelamar->tanggal_lahir == null)
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i>
+                                                Alamat</label>
+                                            <p>{{ '-' }}</p>
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i>
+                                                Tanggal
+                                                Lahir</label>
+                                            <p>{{ '-' }}</p>
+                                        </div>
+                                    @else
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-solid fa-location-dot"></i>
+                                                Alamat</label>
+                                            <p>{{ $pelamar->alamat }}</p>
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i>
+                                                Tanggal
+                                                Lahir</label>
+                                            <p>{{ \Carbon\Carbon::parse($pelamar->tanggal_lahir)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
+                                            </p>
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-regular fa-calendar-days"></i>
-                                        Tanggal
-                                        Lahir</label>
-                                    <p>{{ \Carbon\Carbon::parse($pelamar->tanggal_lahir)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('j F Y ') }}
-                                    </p>
+
+                                <div class="row mt-2">
+                                    @if ($pelamar->kebangsaan == null)
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                                Kebangsaan</label>
+                                            <p>{{ '-' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                                Jenis Kelamin</label>
+                                            <p>{{ '-' }}</p>
+                                        </div>
+                                    @else
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
+                                                Kebangsaan</label>
+                                            <p>{{ $pelamar->kebangsaan }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
+                                                Jenis Kelamin</label>
+                                            <p>{{ $pelamar->jenis_kelamin }}</p>
+                                        </div>
+                                    @endif
                                 </div>
-                            @endif
+                            @endforeach
                         </div>
+                    </div>
 
-                        <div class="row mt-2">
-                            @if ($pelamar->kebangsaan == null)
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
-                                        Kebangsaan</label>
-                                    <p>{{ '-' }}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
-                                        Jenis Kelamin</label>
-                                    <p>{{ '-' }}</p>
-                                </div>
-                            @else
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-globe"></i>
-                                        Kebangsaan</label>
-                                    <p>{{ $pelamar->kebangsaan }}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="labels fw-bold"><i class="fa-solid fa-user"></i>
-                                        Jenis Kelamin</label>
-                                    <p>{{ $pelamar->jenis_kelamin }}</p>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
                 </div>
+
+            </div>
+
+            <div id="loader" class="loader-wrapper" style="display: none;">
+                <div class="loader"></div>
+                <div class="mx-2 fw-bold text-light">Loading...</div>
             </div>
 
 
             <div class="container mt-4">
-                @include('profil.post-profile.deskripsi')
-                @include('profil.post-profile.pengalamanKerja')
-                @include('profil.post-profile.pendidikan')
-                @include('profil.post-profile.referensi')
+                <h2 class="fw-bold">PROFIL INFORMATION</h2>
+                <div class="mb-5 mt-5"> @include('profil.post-profile.deskripsi')   
+                </div>
+                <div class="mb-5 mt-5"> @include('profil.post-profile.pengalamanKerja')
+                </div>
+                <div class="mb-5 mt-5"> @include('profil.post-profile.pendidikan')
+                </div>
+                <div class="mb-5 mt-5"> @include('profil.post-profile.referensi')
+                </div>
             </div>
 
 
@@ -145,6 +226,7 @@
 </body>
 
 </html>
+<script src="{{ asset('js/profil.js') }}"></script>
 
 <script>
     @if (Session::has('success'))
@@ -159,8 +241,16 @@
         toastr.success("{{ Session::get('success add work experience') }}")
         toastr.options.timeOut = 30; // How long the toast will display without user interaction
         toastr.options.extendedTimeOut = 60;
+    @elseif (Session::has('error add work experience'))
+        toastr.errors("{{ Session::get('error add work experience') }}")
+        toastr.options.timeOut = 30; // How long the toast will display without user interaction
+        toastr.options.extendedTimeOut = 60;
     @elseif (Session::has('success update work experience'))
         toastr.success("{{ Session::get('success update work experience') }}")
+        toastr.options.timeOut = 30; // How long the toast will display without user interaction
+        toastr.options.extendedTimeOut = 60;
+    @elseif (Session::has('error update work experience'))
+        toastr.errors("{{ Session::get('error update work experience') }}")
         toastr.options.timeOut = 30; // How long the toast will display without user interaction
         toastr.options.extendedTimeOut = 60;
     @elseif (Session::has('success delete work experience'))
@@ -193,94 +283,52 @@
         toastr.options.extendedTimeOut = 60;
     @endif
 
-    document.addEventListener('trix-file-accept', function(e) {
-        e.preventDefault();
-    });
+    
 
-    function hapusData() {
-        document.getElementById("formDeskripsiDiri").reset();
-        document.getElementById("formPengalamanKerja").reset();
-        document.getElementById("formPendidikan").reset();
-        document.getElementById("formReferensi").reset();
-        document.getElementById("formEditProfil").reset();
-        $('#kabupaten').html("");
-        $('#kabupaten').append($('<option>', {
-            class: 'kabupaten-list',
-            value: "",
-            text: "Kabupaten/Kota"
-        }));
+    function formatCurrency(input) {
+
+        // Get input value and remove non-numeric characters
+        let value = input.value.replace(/[^\d]/g, '');
+
+        // Format the value with IDR currency format
+        let formattedValue = formatIDRCurrency(value);
+
+        // Update the input value with the formatted currency value
+        input.value = formattedValue;
+
+        // input_gaji.addEventListener("input", function() {
+        //     if (input_gaji.value != "") {
+        //         input_gaji.classList.add("is-valid");
+        //     } else {
+        //         input_gaji.classList.add("is-invalid");
+        //     }
+        // })
 
     }
 
+    function formatIDRCurrency(value) {
+        // const input_gaji = document.getElementById("gaji");
+        // const feedback_validation_gaji = document.getElementById("validation-gaji");
 
-    var confirm = document.getElementById("konfirmasi")
+        // // Check if value is empty or not a number
+        // if (value === '' || isNaN(value)) {
+        //     input_gaji.classList.add("is-invalid");
+        //     feedback_validation_gaji.textContent = "Field tidak boleh kosong dan harus berupa angka";
+        //     return '';
+        // } else {
+        //     input_gaji.classList.remove("is-invalid");
+        //     input_gaji.classList.add("is-valid");
 
-    confirm.addEventListener("change", function() {
-        if (confirm.checked) {
-            confirm.value = "true"
-        } else {
-            confirm.value = "false"
-        }
-    })
+        // }
 
-    var button_check_reference = document.getElementById('button-check-reference');
+        // Convert the value to a number and apply currency formatting
+        let formatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
 
-    button_check_reference.addEventListener("click", function() {
-        if (button_check_reference.checked) {
-            document.getElementById('div-posisi').hidden = false;
-
-        } else {
-            document.getElementById('div-posisi').hidden = true;
-        }
-    })
-    // confirm.addEventListener("change", function() {
-
-    //     if (confirm.checked) {
-    //         document.getElementById("tahun_selesai").disabled = true;
-    //         document.getElementById("tahun_selesai").value = ""
-    //     } else {
-    //         document.getElementById("tahun_selesai").disabled = false;
-    //     }
-    // })
-
-    var jenjang_pendidikan = document.getElementById('jenjangPendidikan')
-    jenjang_pendidikan.addEventListener("click", function() {
-        console.log(jenjang_pendidikan.checked)
-
-    })
-
-    // $('#provinsi').on('change', function(e) {
-    //     console.log(this.value);
-    //     e.preventDefault();
-    //     $.ajax({
-    //         headers: {
-    //             'X-CSRF-TOKEN': $('meta[name=csrf-token]').attr('content')
-    //         },
-    //         type: 'GET',
-    //         url: "{{ url('/profil/fetch_kabupaten') }}",
-    //         data: {
-    //             id_provinsi: this.value
-    //         },
-    //         dataType: 'json',
-    //         success: function(data) {
-    //             $('#kabupaten').html("");
-
-    //             data.forEach(function(kabupaten) {
-
-
-    //                 // $('#kabupaten').html('<option value"='+kabupaten.id_kabupaten+'">'+kabupaten.nama_kabupaten+'</option>')
-
-    //                 $('#kabupaten').append($('<option>', {
-    //                     class: 'kabupaten-list',
-    //                     value: kabupaten.id_kabupaten,
-    //                     text: kabupaten.nama_kabupaten
-    //                 }));
-
-    //             })
-
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.log('eror');
-    //         }
-    //     });
+        return formatter.format(Number(value));
+    }
 </script>

@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row g-2 mt-2 mb-4">
         @for ($i = 0; $i < count($computer_skills); $i++)
-            <div class="form-check col-2">
+            <div class="form-check col-3">
                 <input class="form-check-input" type="checkbox" value="{{ $computer_skills[$i] }}" id="flexCheckDefault"
                     name="nama_kemampuan[]" id="keahlian_komputer">
                 <label class="form-check-label" for="flexCheckDefault">
@@ -14,10 +14,10 @@
     </div>
     <div class="row g-2 mt-2 mb-4">
         <div class="mt-4 mb-4 mx-2">
-            <h3 class="fw-bold">Software</h3>
+            <h3 class="fw-bold">Software/Perangkat Lunak</h3>
         </div>
         @for ($i = 0; $i < count($software); $i++)
-            <div class="form-check col-2">
+            <div class="form-check col-3">
                 <input class="form-check-input" type="checkbox" value="{{ $software[$i] }}" id="flexCheckDefault"
                     name="software[]" id="software">
                 <label class="form-check-label" for="flexCheckDefault">

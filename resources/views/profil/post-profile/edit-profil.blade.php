@@ -1,7 +1,6 @@
-<a href="/profil-kandidat/users/{{ $user->slug }}/edit" class="btn btn-primary border-0" data-bs-toggle="modal"
+<a href="/profil-kandidat/users/{{ $user->slug }}/edit" class="btn btn-success border-0" data-bs-toggle="modal"
     data-bs-target="#editProfil"></i>
     Edit Profil</a>
-
 
 <!-- Modal -->
 <div class="modal fade" id="editProfil" tabindex="-1" aria-labelledby="profilLabel" aria-hidden="true">
@@ -18,14 +17,14 @@
                 <div class="modal-body">
                     @csrf
                     <div class="form-floating">
-                        <input type="text" class="form-control mb-4" name="nama_pelamar" id="namaPelamar"
+                        <input type="text" class="form-control mb-4 " name="nama_pelamar" id="namaPelamar"
                             placeholder="Nama Anda" value="{{ $user->pelamar->nama_pelamar }}" required>
                         <label for="namaPelamar">Nama Anda</label>
                     </div>
 
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="email" name="email"
-                            placeholder="Masukkan email Anda" value="{{ $user->pelamar->email }}" required>
+                            placeholder="Masukkan email Anda" value="{{ $user->pelamar->email }}" readonly required>
                         <label for="email">Masukkan email Anda</label>
                     </div>
 
@@ -37,13 +36,15 @@
                                      is-invalid
                                  @enderror"
                                     id="nomorTeleponPelamar" name="telepon_rumah" placeholder="Nomor telepon"
-                                    aria-describedby="noHpHelp" value="{{ $user->pelamar->telepon_rumah }}" required>
+                                    aria-describedby="noHpHelp" value="{{ $user->pelamar->telepon_rumah }}"
+                                    maxlength="12" required>
                                 @error('nomor_telepon')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                 @enderror
-                                <label for="nomorTeleponPelamar">Masukkan nomor telepon. Contoh +62812345678</label>
+                                <label for="nomorTeleponPelamar" class="text-body-tertiary">Masukkan nomor telepon.
+                                    Contoh 081234567890</label>
                             </div>
 
                         </div>
@@ -118,12 +119,14 @@
 
                     </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                        onclick="hapusData()">Close</button>
-                    <button class="btn btn-primary" type="submit">Simpan</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                        onclick="hapusData()">Batal</button>
+                    <button class="btn btn-success" type="submit" id="submit-form">Simpan</button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>

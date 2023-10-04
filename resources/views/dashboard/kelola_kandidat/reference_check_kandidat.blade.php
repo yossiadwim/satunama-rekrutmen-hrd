@@ -35,9 +35,11 @@
                                     <td>-</td>
                                 @endif
                                 <td>
-                                    <a href="/admin-dashboard/lowongan/detail-pelamar/{{ $reference_check[$i]['pelamar']['user']['slug'] }}"
-                                        class="btn fw-semibold"
-                                        style="background-color: #90c291; outline-color: #90c291"><i
+                                    <a href="/admin-dashboard/lowongan/{{ $datas[0]->lowongan->slug }}/detail-pelamar/{{ $reference_check[$i]['pelamar']['user']['slug'] }}"
+                                        class="btn btn-success btn-detail fw-semibold text-white"
+                                        id="button-detail-{{ $reference_check[$i]['pelamar']['user']['slug'] }}"
+                                        data-pk-id="{{ $reference_check[$i]['pelamar']['user']['slug'] }}"
+                                        ><i
                                             class="bi bi-info-circle-fill"></i> Detail </a>
 
                                 </td>

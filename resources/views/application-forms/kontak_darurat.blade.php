@@ -8,10 +8,11 @@
             <th scope="col">Hubungan</th>
             <th scope="col">Telepon</th>
             <th scope="col">Alamat</th>
-            
+            <th scope="col"></th>
+
         </tr>
     </thead>
-    <tbody id="table-body-kontak-darurat">
+    <tbody id="table-kontak-darurat">
         {{-- <tr id="table-row-kontak-darurat">
             <td >
                 <input type="text" class="form-control" id="nama" name="nama" placeholder="Nama">
@@ -28,12 +29,7 @@
         </tr> --}}
     </tbody>
 </table>
-
-<div class="col-2">
-    <div class="form-floating">
-        <input type="number" class="form-control" name="jumlah_kontak_darurat" id="jumlah_kontak_darurat" placeholder="Jumlah Kontak Darurat"
-            onchange="addRowTableEmergencyContact()" min="0">
-        <label for="jumlah_kontak_darurat">Tambah</label>
-    </div>
-
+<div class="col-3 mt-4">
+    <button type="button" class="btn btn-success" id="add-emergency-contact-row"><i class="fa-solid fa-plus"
+            style="color: #ffffff;"></i> Tambah</button>
 </div>

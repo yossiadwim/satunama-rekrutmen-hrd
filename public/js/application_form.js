@@ -73,6 +73,37 @@ function checkNullValue() {
         }
     });
 
+    const alamat_tetap_pelamar = document.getElementById("alamat_tetap");
+    const invalidFeedbackAlamatTetap = document.getElementById("validation-alamat-tetap");
+    alamat_tetap_pelamar.addEventListener("input", function () {
+
+        if (alamat_tetap_pelamar.value == "") {
+            alamat_tetap_pelamar.classList.add("is-invalid");
+            invalidFeedbackAlamatTetap.textContent = "Field tidak boleh kosong";
+
+        }
+        else {
+
+            alamat_tetap_pelamar.classList.remove("is-invalid");
+            alamat_tetap_pelamar.classList.add("is-valid");
+        }
+    });
+    alamat_tetap_pelamar.addEventListener("change", function () {
+
+        if (alamat_tetap_pelamar.value == "") {
+            alamat_tetap_pelamar.classList.add("is-invalid");
+            invalidFeedbackAlamatTetap.textContent = "Field tidak boleh kosong";
+        }
+        else {
+
+
+            alamat_tetap_pelamar.classList.remove("is-invalid");
+            alamat_tetap_pelamar.classList.add("is-valid");
+        }
+    });
+
+
+
     //check field telepon rumah
     const telepon_rumah = document.getElementById("telepon_rumah");
     const invalidFeedbackTeleponRumah = document.getElementById("validation_telepon_rumah");
@@ -263,199 +294,211 @@ function formatIDRCurrency(value) {
     return formatter.format(Number(value));
 }
 
+$(document).ready(function () {
 
-function addRowTableChildren() {
+    var total_row_anak = document.getElementById("counter_row_anak");
+    var total_row_keluarga = document.getElementById("counter_row_keluarga");
+    var total_row_organisasi = document.getElementById("counter_row_organisasi");
+    var total_row_kontak_darurat = document.getElementById("counter_row_kontak_darurat");
+    var total_row_pendidikan = document.getElementById("counter_row_riwayat_pendidikan");
+    var total_row_riwayat_pekerjaan = document.getElementById("counter_row_riwayat_pekerjaan");
+    var total_row_referensi = document.getElementById("counter_row_referensi");
+    var total_referensi_satunama = document.getElementById("counter_row_referensi_from_satunama");
 
-    var jumlah_anak = document.getElementById('jumlah_anak');
+    $('#add-children-row').click(function (e) {
+        var row_children = $('<tr>');
+        col_children = "";
+        col_children += ` 
+        
+                        <td >
+                        <input type="text" class="form-control" id="nama_anak" name="nama_anak[]" placeholder="Nama Anak" required>
+                    </td>
+                    <td>
+                        <select class="form-select" id="jenis_kelamin" name="jenis_kelamin_anak[]"
+                            aria-label="Floating label select example" required>
+                            <option value="" selected disabled>Pilih</option>
+                            <option value="Pria">Pria</option>
+                            <option value="Wanita">Wanita</option>
 
-    const table_body = document.getElementById('table-body-children');
-
-    table_body.innerHTML = '';
-
-    for (var i = 1; i <= jumlah_anak.value; i++) {
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-        <td id="col-2">
-            <input type="text" class="form-control" id="nama_anak" name="nama_anak[]" placeholder="Nama Anak" >
-        </td>
-        <td id="col-3">
-            <select class="form-select" id="jenis_kelamin_anak" name="jenis_kelamin_anak[]"
-                aria-label="Floating label select example">
-                <option value="" selected disabled>Pilih</option>
-                <option value="Laki-laki">Laki-laki</option>
-                <option value="Perempuan" >Perempuan</option>
-
-            </select>
-        </td>
-        <td id="col-4" class="col-2">
-            <input type="number" class="form-control" name="umur_anak[]" id="umur_anak" placeholder="Umur" min="0">
-        </td>
-        `
-        table_body.appendChild(tr);
-    }
-
-
-}
-
-function addRowTableFamily() {
-    var jumlah_anggota_keluarga = document.getElementById('jumlah_anggota_keluarga');
-
-    const table_body = document.getElementById('table-body-family');
-
-    table_body.innerHTML = '';
-
-    for (var i = 1; i <= jumlah_anggota_keluarga.value; i++) {
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-                <td>
-        <div class="form-floating mb-3 ">
-            <select class="form-select" id="hubungan" name="hubungan_keluarga[]" aria-label="Floating label select example">
-                <option value="" selected disabled>Pilih</option>
-                <option value="ayah">Ayah</option>
-                <option value="ibu">Ibu</option>
-                <option value="kakak">Kakak</option>
-                <option value="adik">Adik</option>
-                <option value="paman">Paman</option>
-                <option value="bibi">Bibi</option>
-                <option value="kakek">Kakek</option>
-                <option value="nenek">Nenek</option>
-
-            </select>
-            <label for="floatingSelect">Hubungan</label>
-        </div>
-    </td>
-
-    <td>
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="nama" name="nama_anggota_keluarga[]" placeholder="Nama">
-            <label for="nama">Nama</label>
-        </div>
-    </td>
-
-    <td>
-        <div class="form-floating mb-3">
-            <select class="form-select" id="jenis_kelamin" name="jenis_kelamin_anggota_keluarga[]"
-                aria-label="Floating label select example">
-                <option value="" selected disabled>Pilih</option>
-                <option value="Pria">Pria</option>
-                <option value="Wanita">Wanita</option>
-
-            </select>
-            <label for="floatingSelect">Jenis Kelamin</label>
-        </div>
-    </td>
-
-    <td>
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="umur" name="umur_anggota_keluarga[]" placeholder="Umur" min="0">
-            <label for="umur">Umur</label>
-        </div>
-
-    </td>
-
-    <td>
-        <div class="form-floating mb-3">
-            <select class="form-select" aria-label="Default select example" id="jenjangPendidikan"
-                name="jenjang_pendidikan_anggota_keluarga[]">
-                <option selected disabled>Pilih Jenjang Pendidikan</option>
-                <option value="SD">SD</option>
-                <option value="SMP">SMP</option>
-                <option value="SMA">SMA</option>
-                <option value="SMK">SMK</option>
-                <option value="D3">D3</option>
-                <option value="D4">D4</option>
-                <option value="S1">S1</option>
-                <option value="S2">S2</option>
-                <option value="S3">S3</option>
-            </select>
-            <label for="floatingSelect">Pendidikan Terakhir</label>
-        </div>
-    </td>
-
-    <td>
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="pekerjaan" name="pekerjaan_anggota_keluarga[]" placeholder="Pekerjaan">
-            <label for="pekerjaan">Pekerjaan</label>
-        </div>
-    </td>
-
-    <td>
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="perusahaan" name="perusahaan_tempat_bekerja[]" placeholder="perusahaan">
-            <label for="Perusahaan">Perusahaan/Instansi</label>
-        </div>
-
-    </td>
-        `
-        table_body.appendChild(tr);
-    }
-}
-
-function addRowTableOrganization() {
-
-    var jumlah_organisasi = document.getElementById('jumlah_organisasi');
-
-    const table_body = document.getElementById('table-body-organisasi');
-
-    table_body.innerHTML = '';
-
-    for (var i = 1; i <= jumlah_organisasi.value; i++) {
-        var tr = document.createElement("tr");
-        tr.innerHTML = `
-        <tr id="table-row-organisasi">
-        <td >
-            <input type="text" class="form-control" id="nama_organisasi" name="nama_organisasi[]" placeholder="Nama Organisasi">
-        </td>
-        <td >
-            <input type="text" class="form-control" id="posisi" name="posisi_di_organisasi[]" placeholder="Posisi">
-        </td>
-    </tr>
-        `
-        table_body.appendChild(tr);
-    }
-}
-
-function addRowTableEmergencyContact() {
-    var jumlah_kontak_darurat = document.getElementById('jumlah_kontak_darurat');
-
-    const table_body = document.getElementById('table-body-kontak-darurat');
-
-    table_body.innerHTML = '';
-
-    for (var i = 1; i <= jumlah_kontak_darurat.value; i++) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = `
-        <td >
-            <input type="text" class="form-control" id="nama" name="nama_kontak[]" placeholder="Nama">
-        </td>
-        <td >
-            <input type="text" class="form-control" id="hubungan" name="hubungan_kontak[]" placeholder="Hubungan">
-        </td>
-        <td >
-            <input type="text" class="form-control" id="telepon" name="telepon_kontak[]" placeholder="Telepon">
-        </td>
-        <td >
-            <input type="text" class="form-control" id="alamat" name="alamat_kontak[]" placeholder="Alamat">
-        </td>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" name="umur_anak[]" id="umur" placeholder="Umur" min="0" required >
+                    </td>
+                    <td id="col-4">
+                        <button type="button" class="btn btn-danger" id="remove-children-row">Hapus</button>
+                    </td>
         `;
 
-        table_body.appendChild(tr);
-    }
-}
+        row_children.append(col_children);
+        $("#tableAnak").append(row_children);
+        total_row_anak.value++;
+        console.log("row anak " + total_row_anak.value);
+    })
 
-function addRowTableEducation() {
-    var jumlah_riwayat_pendidikan = document.getElementById('jumlah_riwayat_pendidikan');
+    $(document).on("click", "#remove-children-row", function () {
+        $(this).closest("tr").remove();
+        total_row_anak.value--;
+        console.log("row anak " + total_row_anak.value);
+    });
 
-    const table_body = document.getElementById('table-body-riwayat-pendidikan-2');
 
-    table_body.innerHTML = '';
+    $('#add-family-row').click(function (e) {
+        var row_family = $('<tr>')
+        var col_family = "";
 
-    for (var i = 1; i <= jumlah_riwayat_pendidikan.value; i++) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = `
+        col_family += `<td>
+
+                <select class="form-select" id="hubungan" name="hubungan_keluarga[]" aria-label="Floating label select example" required>
+                    <option value="" selected disabled>Pilih</option>
+                    <option value="ayah">Ayah</option>
+                    <option value="ibu">Ibu</option>
+                    <option value="kakak">Kakak</option>
+                    <option value="adik">Adik</option>
+                    <option value="paman">Paman</option>
+                    <option value="bibi">Bibi</option>
+                    <option value="kakek">Kakek</option>
+                    <option value="nenek">Nenek</option>
+
+                </select>
+        
+
+                </td>
+
+                <td>
+    
+                <input type="text" class="form-control" id="nama" name="nama_anggota_keluarga[]" placeholder="Nama" required>
+    
+                </td>
+
+                <td>
+        
+                <select class="form-select" id="jenis_kelamin" name="jenis_kelamin_anggota_keluarga[]"
+                    aria-label="Floating label select example" required>
+                    <option value="" selected disabled>Pilih</option>
+                    <option value="Pria">Pria</option>
+                    <option value="Wanita">Wanita</option>
+
+                </select>
+        
+                </td>
+
+                <td>
+        
+                <input type="text" class="form-control" id="umur" name="umur_anggota_keluarga[]" placeholder="Umur" min="0" required>
+    
+
+            </td>
+
+            <td>
+            
+                <select class="form-select" aria-label="Default select example" id="jenjangPendidikan"
+                    name="jenjang_pendidikan_anggota_keluarga[]" required>
+                    <option selected disabled>Pilih Jenjang Pendidikan</option>
+                    <option value="SD">SD</option>
+                    <option value="SMP">SMP</option>
+                    <option value="SMA">SMA</option>
+                    <option value="SMK">SMK</option>
+                    <option value="D3">D3</option>
+                    <option value="D4">D4</option>
+                    <option value="S1">S1</option>
+                    <option value="S2">S2</option>
+                    <option value="S3">S3</option>
+                </select>
+        
+            </td>
+
+            <td>
+    
+                <input type="text" class="form-control" id="pekerjaan" name="pekerjaan_anggota_keluarga[]" placeholder="Pekerjaan" required>
+        
+            </td>
+
+            <td>
+    
+                <input type="text" class="form-control" id="perusahaan" name="perusahaan_tempat_bekerja[]" placeholder="perusahaan" required>
+
+
+            </td>
+            
+            <td> <button type="button" class="btn btn-danger" id="remove-family-row"></i> Hapus</button></td>
+            
+            `
+
+        row_family.append(col_family);
+        $("#tableFamily").append(row_family);
+        total_row_keluarga.value++;
+        console.log("row keluarga " + total_row_keluarga.value);
+    })
+
+    $(document).on("click", "#remove-family-row", function () {
+        $(this).closest("tr").remove();
+        total_row_keluarga.value--;
+        console.log("row keluarga " + total_row_keluarga.value);
+    });
+
+    $('#add-organization-row').click(function (e) {
+        var row_organization = $('<tr>')
+        var col_organization = "";
+
+        col_organization += ` <td >
+        <input type="text" class="form-control" id="nama_organisasi" name="nama_organisasi[]" placeholder="Nama Organisasi" required>
+    </td>
+    <td >
+        <input type="text" class="form-control" id="posisi" name="posisi_di_organisasi[]" placeholder="Posisi" required>
+    </td>
+    <td> <button type="button" class="btn btn-danger" id="remove-organization-row"></i> Hapus</button></td>
+    `
+        row_organization.append(col_organization);
+        $("#tableOrganisasi").append(row_organization);
+        total_row_organisasi.value++;
+
+
+    });
+
+    $(document).on("click", "#remove-organization-row", function () {
+        $(this).closest("tr").remove();
+        total_row_organisasi.value--;
+    });
+
+    $('#add-emergency-contact-row').click(function (e) {
+        var row_contact = $('<tr>')
+        var col_contact = "";
+
+        col_contact += ` <td >
+                <input type="text" class="form-control" id="nama" name="nama_kontak[]" placeholder="Nama" required>
+            </td>
+            <td >
+                <input type="text" class="form-control" id="hubungan" name="hubungan_kontak[]" placeholder="Hubungan" required>
+            </td>
+            <td >
+                <input type="text" class="form-control" id="telepon" name="telepon_kontak[]" max-length= "12" min-length="11" placeholder="Telepon" required>
+            </td>
+            <td >
+                <input type="text" class="form-control" id="alamat" name="alamat_kontak[]" placeholder="Alamat" required>
+            </td>
+    <td> <button type="button" class="btn btn-danger" id="remove-contact-row"></i> Hapus</button></td>
+    `
+        row_contact.append(col_contact);
+        $("#table-kontak-darurat").append(row_contact);
+        total_row_kontak_darurat.value++;
+
+
+    });
+
+    $(document).on("click", "#remove-contact-row", function () {
+        $(this).closest("tr").remove();
+        total_row_kontak_darurat.value--;
+    });
+
+    $('#add-education-row').click(function (e) {
+        var row_education = $('<tr>')
+        var col_education = "";
+
+        col_education += ` 
         <td >
             <select class="form-select" aria-label="Default select example" id="jenjangPendidikan"
-                            name="jenjang_pendidikan[]">
+                            name="jenjang_pendidikan[]" required>
                             <option disabled selected>Pilih
                                 </option>
                                 <option value="SD">SD (Sekolah Dasar)
@@ -480,139 +523,118 @@ function addRowTableEducation() {
             </select>
         </td>
         <td>
-                <input type="text" class="form-control" id="nama_institusi" name="nama_institusi[]" placeholder="Nama Sekolah/Universitas" >
+                <input type="text" class="form-control" id="nama_institusi" name="nama_institusi[]" placeholder="Nama Sekolah/Universitas" required>
             </td>
             <td>
-                <input type="text" class="form-control" id="jurusan" name="jurusan[]" placeholder="Jurusan">
+                <input type="text" class="form-control" id="jurusan" name="jurusan[]" placeholder="Jurusan" required>
             </td>
             <td>
-                <input type="text" class="form-control" id="tahun_lulus" name="tahun_lulus[]" placeholder="Tahun Lulus">
+                <input type="text" class="form-control" id="tahun_lulus" name="tahun_lulus[]" placeholder="Tahun Lulus" required>
             </td>
             <td>
-                <input type="text" class="form-control" id="ipk" name="ipk[]" placeholder="Indeks Prestasi Kumulatif (IPK)" >
+                <input type="text" class="form-control" id="ipk" name="ipk[]" placeholder="Indeks Prestasi Kumulatif (IPK)" required>
             </td>
-
-        `;
-
-        table_body.appendChild(tr);
-    }
-}
-
-function addRowTableProficiencyLanguage() {
-    var jumlah_tingkat_penguasaan_bahasa = document.getElementById('jumlah_tingkat_penguasaan_bahasa');
-
-    const table_body = document.getElementById('table-body-penguasaan-bahasa');
-
-    table_body.innerHTML = '';
+            <td> <button type="button" class="btn btn-danger" id="remove-education-row"></i> Hapus</button></td>`
 
 
 
-    for (var i = 1; i <= jumlah_tingkat_penguasaan_bahasa.value; i++) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = `
+        row_education.append(col_education);
+        $("#table-riwayat-pendidikan-2").append(row_education);
+        $("#table-body-riwayat-pendidikan").append(row_education);
+
+
+        total_row_pendidikan.value++;
+
+    });
+
+    $(document).on("click", "#remove-education-row", function () {
+        $(this).closest("tr").remove();
+        total_row_pendidikan.value--;
+    });
+
+    $('#add-work-row').click(function (e) {
+        var row_work = $('<tr>')
+        var col_work = "";
+
+        col_work += ` 
         <td>
-            <select class="form-select" aria-label="Default select example" name="nama_bahasa[]" id="nama_bahasa">
+        <input type="text" class="form-control" id="nama_perusahaan" name="nama_perusahaan[]"
+            placeholder="Nama Perusahaan"
+            required>
+    
+    </td>
+    <td>
+    <input type="email" class="form-control" id="email_instansi" name="email_instansi[]"
+        placeholder="Email Instansi"
+        max-length= "12" min-length="11"
+        required>
 
-                <option selected disabled>Pilih</option>
+</td>
+<td>
+    <input type="text" class="form-control" id="telepon" name="telepon[]"
+        placeholder="No Telepon"
+        max-lenght
+        required>
 
-                <?php
-                foreach ($languages as $lang) {
-                    echo '<option value="' . $lang . '">' . $lang . '</option>';
-                }
-                
-                ?>
+</td>
+    <td>
+        <input type="text" class="form-control" id="posisi" name="posisi[]" placeholder="Posisi"
+        required>
+    </td>
+    <td>
+        <input type="text" class="form-control" id="periode" name="periode[]" placeholder="Periode"
+        required >
+    </td>
+    <td>
+        <input type="text" class="form-control" id="gaji" name="gaji[]" placeholder="Gaji"
+        oninput="formatCurrency(this)" required>
+    </td>
+    <td>
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="alasan_mengundurkan_diri[]"
+                style="height: 200px" required></textarea>
+            <label for="floatingTextarea2">Alasan mengundurkan diri</label>
+        </div>
+    </td>
+            <td> <button type="button" class="btn btn-danger" id="remove-work-row"></i> Hapus</button></td>`
 
-            </select>
 
-        </td>
+
+        row_work.append(col_work);
+        $("#table-body-riwayat-pekerjaan-2").append(row_work);
+        $("#table-body-riwayat-pekerjaan").append(row_work);
+        total_row_riwayat_pekerjaan.value++;
+
+    });
+
+    $(document).on("click", "#remove-work-row", function () {
+        $(this).closest("tr").remove();
+        total_row_riwayat_pekerjaan.value--;
+    });
+
+    $('#add-reference-not-satunama-row').click(function (e) {
+        var row_reference_not_satunama = $('<tr>')
+        var col_reference_not_satunama = "";
+
+        col_reference_not_satunama += ` 
         <td>
-            <select class="form-select" aria-label="Default select example" name="tingkat_penguasaan[]"
-                id="tingkat_penguasaan">
-                <option selected disabled>Pilih</option>
-                <option value="Baik Sekali">Baik Sekali</option>
-                <option value="Baik">Baik</option>
-                <option value="Cukup">Cukup</option>
-            </select>
-        </td>
-
-        `;
-
-        table_body.appendChild(tr);
-    }
-}
-
-function addRowTableWorkExperience() {
-    var jumlah_riwayat_pekerjaan = document.getElementById('jumlah_riwayat_pekerjaan');
-
-    const table_body = document.getElementById('table-body-riwayat-pekerjaan-2');
-
-    table_body.innerHTML = '';
-
-    for (var i = 1; i <= jumlah_riwayat_pekerjaan.value; i++) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = `
-        <td>
-    <input type="text" class="form-control" id="nama_perusahaan" name="nama_perusahaan[]"
-        placeholder="Nama Perusahaan"
-        >
-
-</td>
-<td>
-    <input type="text" class="form-control" id="posisi" name="posisi[]" placeholder="Posisi"
-        >
-</td>
-<td>
-    <input type="text" class="form-control" id="periode" name="periode[]" placeholder="Periode"
-      >
-</td>
-<td>
-    <input type="text" class="form-control" id="gaji" name="gaji[]" placeholder="Gaji"
-    oninput="formatCurrency(this)" >
-</td>
-<td>
-    <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="alasan_mengundurkan_diri[]"
-            style="height: 200px"></textarea>
-        <label for="floatingTextarea2">Alasan mengundurkan diri</label>
-    </div>
-</td>
-
-        `;
-
-        table_body.appendChild(tr);
-    }
-}
-
-function addRowTableReferences() {
-    var jumlah_referensi = document.getElementById('jumlah_referensi');
-
-    const table_body = document.getElementById('table-body-referensi-2');
-
-    table_body.innerHTML = '';
-
-    for (var i = 1; i <= jumlah_referensi.value; i++) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = `
-        
-            <tr id="table-row-referensi">
-                <td>
                     <input type="text" class="form-control" id="nama_referensi" name="nama_referensi[]"
-                        placeholder="Nama Referensi">
+                        placeholder="Nama Referensi" required>
 
                 </td>
                 <td>
-                    <input type="text" class="form-control" id="alamat_referensi" name="alamat_referensi[]" placeholder="Alamat"
+                    <input type="text" class="form-control" id="alamat_referensi" name="alamat_referensi[]" placeholder="Alamat" required>
                 </td>
                 <td>
-                    <input type="text" class="form-control" id="telepon_referensi" name="telepon_referensi[]" placeholder="Telepon"
+                    <input type="text" class="form-control" id="telepon_referensi" name="telepon_referensi[]" placeholder="Telepon"  maxlength="12" required>
                 </td>
                 <td>
-                <input type="text" class="form-control" id="email_referensi"
+                <input type="email" class="form-control" id="email_referensi"
                     name="email_referensi[]" placeholder="Email"
-                    >
+                    required>
             </td>
                 <td>
-                    <input type="text" class="form-control" id="hubungan_referensi" name="hubungan_referensi[]" placeholder="Hubungan"
+                    <input type="text" class="form-control" id="hubungan_referensi" name="hubungan_referensi[]" placeholder="Hubungan" required>
                 </td>
                 <td hidden>
                                     <input type="text" class="form-control" id="posisi_referensi"
@@ -620,59 +642,207 @@ function addRowTableReferences() {
                                         value=""
                                         >
                                 </td>
-            </tr>
+            <td> <button type="button" class="btn btn-danger" id="remove-reference-not-satunama-row"></i> Hapus</button></td>`
 
-        `;
 
-        table_body.appendChild(tr);
-    }
-}
 
-function addRowTableReferencesinSatunama() {
-    var jumlah_referensi_satunama = document.getElementById('jumlah_referensi_di_satunama');
+        row_reference_not_satunama.append(col_reference_not_satunama);
+        $("#table-body-referensi-2").append(row_reference_not_satunama);
+        total_row_referensi.value++;
 
-    const table_body = document.getElementById('table-body-referensi-satunama-2');
 
-    table_body.innerHTML = '';
+    });
 
-    for (var i = 1; i <= jumlah_referensi_satunama.value; i++) {
-        var tr = document.createElement('tr');
-        tr.innerHTML = `
-        
-        <td>
+    $(document).on("click", "#remove-reference-not-satunama-row", function () {
+        $(this).closest("tr").remove();
+        total_row_referensi.value--;
+    });
+
+
+    $('#add-reference-from-satunama').click(function (e) {
+        var row_reference_from_satunama = $('<tr>')
+        var col_reference_from_satunama = "";
+
+        col_reference_from_satunama += ` 
+       <td>
             <input type="text" class="form-control" id="nama_referensi" name="nama_referensi[]"
                 placeholder="Nama Referensi"
-                >
+                required>
 
         </td>
         <td>
-        <input type="text" class="form-control" id="email_referensi"
-            name="email_referensi[]" placeholder="Email"
+        <input type="email" class="form-control" id="email_referensi"
+            name="email_referensi[]" placeholder="Email" required
             >
     </td>
     <td>
-                    <input type="text" class="form-control" id="telepon_referensi" name="telepon_referensi[]" placeholder="Telepon"
+                    <input type="text" class="form-control" id="telepon_referensi" name="telepon_referensi[]" placeholder="Telepon" maxlength="12" required>
                 </td>
                 
         <td>
             <input type="text" class="form-control" id="posisi_referensi"
-                name="posisi_referensi[]" placeholder="Posisi"
-                >
+                name="posisi_referensi[]" placeholder="Posisi" required>
         </td>
         <td>
-                    <input type="text" class="form-control" id="alamat_referensi" name="alamat_referensi[]" placeholder="Alamat"
+                    <input type="text" class="form-control" id="alamat_referensi" name="alamat_referensi[]" placeholder="Alamat" required>
                 </td>
         <td>
             <input type="text" class="form-control" id="hubungan_referensi"
-                name="hubungan_referensi[]" placeholder="Hubungan"
+                name="hubungan_referensi[]" placeholder="Hubungan" required
                 >
         </td>
+            <td> <button type="button" class="btn btn-danger" id="remove-reference-from-satunama-row"></i> Hapus</button></td>`
 
-        `;
 
-        table_body.appendChild(tr);
-    }
-}
+
+        row_reference_from_satunama.append(col_reference_from_satunama);
+        $("#table-body-referensi-satunama-2").append(row_reference_from_satunama);
+        total_referensi_satunama.value++;
+
+    });
+
+    $(document).on("click", "#remove-reference-from-satunama-row", function () {
+        $(this).closest("tr").remove();
+        total_referensi_satunama.value--;
+    });
+
+
+
+})
+
+
+// function addRowTableWorkExperience() {
+//     var jumlah_riwayat_pekerjaan = document.getElementById('jumlah_riwayat_pekerjaan');
+
+//     const table_body = document.getElementById('table-body-riwayat-pekerjaan-2');
+
+//     table_body.innerHTML = '';
+
+//     for (var i = 1; i <= jumlah_riwayat_pekerjaan.value; i++) {
+//         var tr = document.createElement('tr');
+//         tr.innerHTML = `
+//         <td>
+//     <input type="text" class="form-control" id="nama_perusahaan" name="nama_perusahaan[]"
+//         placeholder="Nama Perusahaan"
+//         >
+
+// </td>
+// <td>
+//     <input type="text" class="form-control" id="posisi" name="posisi[]" placeholder="Posisi"
+//         >
+// </td>
+// <td>
+//     <input type="text" class="form-control" id="periode" name="periode[]" placeholder="Periode"
+//       >
+// </td>
+// <td>
+//     <input type="text" class="form-control" id="gaji" name="gaji[]" placeholder="Gaji"
+//     oninput="formatCurrency(this)" >
+// </td>
+// <td>
+//     <div class="form-floating">
+//         <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" name="alasan_mengundurkan_diri[]"
+//             style="height: 200px"></textarea>
+//         <label for="floatingTextarea2">Alasan mengundurkan diri</label>
+//     </div>
+// </td>
+
+//         `;
+
+//         table_body.appendChild(tr);
+//     }
+// }
+
+// function addRowTableReferences() {
+//     var jumlah_referensi = document.getElementById('jumlah_referensi');
+
+//     const table_body = document.getElementById('table-body-referensi-2');
+
+//     table_body.innerHTML = '';
+
+//     for (var i = 1; i <= jumlah_referensi.value; i++) {
+//         var tr = document.createElement('tr');
+//         tr.innerHTML = `
+
+//             <tr id="table-row-referensi">
+//                 <td>
+//                     <input type="text" class="form-control" id="nama_referensi" name="nama_referensi[]"
+//                         placeholder="Nama Referensi">
+
+//                 </td>
+//                 <td>
+//                     <input type="text" class="form-control" id="alamat_referensi" name="alamat_referensi[]" placeholder="Alamat"
+//                 </td>
+//                 <td>
+//                     <input type="text" class="form-control" id="telepon_referensi" name="telepon_referensi[]" placeholder="Telepon"
+//                 </td>
+//                 <td>
+//                 <input type="text" class="form-control" id="email_referensi"
+//                     name="email_referensi[]" placeholder="Email"
+//                     >
+//             </td>
+//                 <td>
+//                     <input type="text" class="form-control" id="hubungan_referensi" name="hubungan_referensi[]" placeholder="Hubungan"
+//                 </td>
+//                 <td hidden>
+//                                     <input type="text" class="form-control" id="posisi_referensi"
+//                                         name="posisi_referensi[]" placeholder="Posisi"
+//                                         value=""
+//                                         >
+//                                 </td>
+//             </tr>
+
+//         `;
+
+//         table_body.appendChild(tr);
+//     }
+// }
+
+// function addRowTableReferencesinSatunama() {
+//     var jumlah_referensi_satunama = document.getElementById('jumlah_referensi_di_satunama');
+
+//     const table_body = document.getElementById('table-body-referensi-satunama-2');
+
+//     table_body.innerHTML = '';
+
+//     for (var i = 1; i <= jumlah_referensi_satunama.value; i++) {
+//         var tr = document.createElement('tr');
+//         tr.innerHTML = `
+
+//         <td>
+//             <input type="text" class="form-control" id="nama_referensi" name="nama_referensi[]"
+//                 placeholder="Nama Referensi"
+//                 >
+
+//         </td>
+//         <td>
+//         <input type="text" class="form-control" id="email_referensi"
+//             name="email_referensi[]" placeholder="Email"
+//             >
+//     </td>
+//     <td>
+//                     <input type="text" class="form-control" id="telepon_referensi" name="telepon_referensi[]" placeholder="Telepon"
+//                 </td>
+
+//         <td>
+//             <input type="text" class="form-control" id="posisi_referensi"
+//                 name="posisi_referensi[]" placeholder="Posisi"
+//                 >
+//         </td>
+//         <td>
+//                     <input type="text" class="form-control" id="alamat_referensi" name="alamat_referensi[]" placeholder="Alamat"
+//                 </td>
+//         <td>
+//             <input type="text" class="form-control" id="hubungan_referensi"
+//                 name="hubungan_referensi[]" placeholder="Hubungan"
+//                 >
+//         </td>
+
+//         `;
+
+//         table_body.appendChild(tr);
+//     }
+// }
 
 // function addRowTableTraining() {
 //     var jumlah_pelatihan = document.getElementById('jumlah_pelatihan');
@@ -684,7 +854,7 @@ function addRowTableReferencesinSatunama() {
 //     for (var i = 1; i <= jumlah_pelatihan.value; i++) {
 //         var tr = document.createElement('tr');
 //         tr.innerHTML = `
-        
+
 //         <td class="col-6">
 //             <input type="text" class="form-control" id="subjek_pelatihan" name="subjek_pelatihan[]" placeholder="Subjek Pelatihan">
 //         </td>
@@ -693,12 +863,12 @@ function addRowTableReferencesinSatunama() {
 //             <?php 
 //             $currentYear = \Carbon\Carbon::now()->format('Y');
 //             $startYear = 1950; // Change this to your desired start year
-            
+
 //             for ($year=$currentYear; $year >= $startYear ; $year--) { 
 //                 echo '<option value="' . $year . '">' . $year . '</option>';
 
 //             }
-                
+
 //         ?>
 //             </select>
 //         </td>
@@ -750,6 +920,20 @@ function showHideInputCederaOperation() {
     });
 
 }
+
+document.getElementById('submit-pernyataan').addEventListener('click', function () {
+    const loader = document.getElementById('loader');
+
+    // Display the loader
+    loader.style.display = 'flex';
+
+    // Simulate a form submission delay (replace with your actual form submission logic)
+    setTimeout(function () {
+        // Hide the loader when the form submission is complete
+        loader.style.display = 'none';
+    }, 2500); // Simulate a 2-second delay; replace with actual form submission time
+});
+
 
 
 

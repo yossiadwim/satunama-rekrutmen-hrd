@@ -36,6 +36,8 @@ class PendidikanController extends Controller
             [
                 'jenjang_pendidikan' => 'required',
                 'jurusan' => 'required',
+                'nama_institusi' => 'required',
+                'tahun_lulus' => 'required',
                 'ipk' => '',
                 'id_pelamar' => 'required'
             ]
@@ -74,6 +76,8 @@ class PendidikanController extends Controller
                 'jenjang_pendidikan' => 'required',
                 'jurusan' => 'required',
                 'ipk' => 'required',
+                'nama_institusi' => 'required',
+                'tahun_lulus' => 'required',
                 'id_pelamar' => 'required'
             ]
         );

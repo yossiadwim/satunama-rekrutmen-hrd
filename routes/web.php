@@ -41,9 +41,13 @@ Route::get('/register/createSlug',[RegisterController::class, 'checkSlug']);
 Route::post('/profil-kandidat/users/{user:slug}/description',[ProfilController::class,'description']);
 Route::get('/profil-kandidat/users/{user:slug}/lamaran-saya',[ProfilController::class,'my_application']);
 Route::get('/profil-kandidat/users/{user:slug}/pengaturan-akun',[ProfilController::class,'accountSettings']);
-Route::get('/profil-kandidat/users/{user:slug}/application-form',[ProfilController::class,'application_form']);
+Route::get('/profil-kandidat/users/{user:slug}/application-form/{lowongan}',[ProfilController::class,'application_form']);
+Route::get('/profil-kandidat/users/{user:slug}/offering/{lowongan}',[ProfilController::class,'offering']);
 Route::put('/profil-kandidat/users/{user:slug}/send-application-form',[ProfilController::class,'send_application_form']);
 Route::post('/profil-kandidat/users/{user:slug}/changeAccountSettings',[ProfilController::class,'changeAccountSettings']);
+
+
+
 Route::resource('/profil-kandidat/users',ProfilController::class);
 
 Route::resource('/pengalamanKerja',PengalamanKerjaController::class);
@@ -56,16 +60,21 @@ Route::resource('/referensi', ReferensiController::class);
 Route::put('/admin-dashboard/tesTertulis/edit-schedule/{tesTertulis}',[AdminDashboardController::class, 'editScheduleTest']);
 Route::get('/admin-dashboard/lowongan/createSlug',[AdminDashboardController::class, 'checkSlug']);
 Route::post('/admin-dashboard/lowongan/{lowongan:slug}/closeJobs', [AdminDashboardController::class, 'closeJobs']);
+Route::post('/admin-dashboard/lowongan/{lowongan:slug}/activatedJob', [AdminDashboardController::class, 'activatedJob']);
 Route::get('/admin-dashboard/lowongan/{lowongan:slug}/kelola-kandidat', [AdminDashboardController::class, 'show']);
-Route::get('/admin-dashboard/lowongan/detail-pelamar/beban-kerja/{user}', [AdminDashboardController::class, 'workLoad']);
-Route::get('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/{lowongan}', [AdminDashboardController::class, 'instrumenAnalisaBebanKerja']);
-Route::post('/admin-dashboard/lowongan/instrumen-analisis-beban-kerja/{lowongan}', [AdminDashboardController::class, 'instrumentAnalysis']);
+Route::get('/admin-dashboard/lowongan/{lowongan}/detail-pelamar/beban-kerja/{user}', [AdminDashboardController::class, 'workLoad']);
+Route::post('/admin-dashboard/lowongan/detail-pelamar/beban-kerja/{user}', [AdminDashboardController::class, 'sendOffering']);
 
-Route::get('/admin-dashboard/lowongan/detail-pelamar/{user}', [AdminDashboardController::class, 'detailCandidate']);
+Route::get('/admin-dashboard/lowongan/{lowongan:slug}/instrumen-penilaian-beban-kerja/{user}', [AdminDashboardController::class, 'instrumenAnalisaBebanKerja']);
+
+Route::post('/admin-dashboard/lowongan/{lowongan:slug}/instrumen-analisis-beban-kerja/{user}', [AdminDashboardController::class, 'instrumentAnalysis']);
+
+Route::get('/admin-dashboard/lowongan/{lowongan:slug}/detail-pelamar/{user}', [AdminDashboardController::class, 'detailCandidate']);
+Route::get('/admin-dashboard/lowongan/{lowongan:slug}/detail-pelamar/{user}/application-form', [AdminDashboardController::class, 'viewApplicationForms']);
 Route::post('/admin-dashboard/lowongan/{statusLamaran}/changePosition', [AdminDashboardController::class, 'changePosition']);
 Route::get('/admin-dashboard/lowongan/{pelamarLowongan}/assesment', [AdminDashboardController::class, 'assesment']);
 Route::post('/admin-dashboard/lowongan/addScheduleTest', [AdminDashboardController::class, 'addScheduleTest']);
-Route::post('/admin-dashboard/lowongan/detail-pelamar/reference-check', [AdminDashboardController::class, 'referenceCheck']);
+Route::post('/admin-dashboard/lowongan/{lowongan:slug}/detail-pelamar/reference-check', [AdminDashboardController::class, 'referenceCheck']);
 Route::resource('/admin-dashboard/lowongan', AdminDashboardController::class);
 
 

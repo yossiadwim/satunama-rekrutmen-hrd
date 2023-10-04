@@ -8,32 +8,7 @@ use Illuminate\Http\Request;
 
 class ReferensiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function store(Request $request)
     {
 
@@ -55,35 +30,7 @@ class ReferensiController extends Controller
         return redirect('/profil-kandidat/users/' . $user_slug[0])->with('success add reference', 'Berhasil menambah referensi');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Referensi  $referensi
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Referensi $referensi)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Referensi  $referensi
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Referensi $referensi)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Referensi  $referensi
-     * @return \Illuminate\Http\Response
-     */
+    
     public function update(Request $request, Referensi $referensi)
     {
         $user = User::where('id', auth()->user()->id)->get();
@@ -92,7 +39,7 @@ class ReferensiController extends Controller
         $validatedData = $request->validate([
             'nama_referensi' => 'required',
             'alamat_referensi' => 'required',
-            'telepon_referensi' => 'required',
+            'telepon_referensi' => 'nullable',
             'email_referensi' => 'required',
             'hubungan_referensi' => 'nullable',
             'posisi_referensi' => 'nullable',
@@ -105,12 +52,6 @@ class ReferensiController extends Controller
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Referensi  $referensi
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Referensi $referensi)
     {
         $user = User::where('id', auth()->user()->id)->get();

@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
                 ->timezone('Asia/Jakarta')
                 ->runInBackground();
 
-        $schedule->command('close:closeJobOnTheDay')->dailyAt('12.00')
+        $schedule->command('close:closeJobOnTheDay')->dailyAt('24.00')
                 ->timezone('Asia/Jakarta')
                 ->runInBackground();
     }

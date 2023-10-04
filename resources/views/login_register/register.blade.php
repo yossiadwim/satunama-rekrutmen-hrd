@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/login-style.css">
+    <link rel="stylesheet" href="{{ asset('css/loader.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
 </head>
@@ -29,9 +30,9 @@
                                 class="form-control rounded @error('nama_pelamar')
                       is-invalid
                     @enderror"
-                                id="nama_pelamar" placeholder="name@example.com" required
+                                id="nama_pelamar" placeholder="name@example.com" 
                                 value="{{ old('nama_pelamar') }}">
-                            <label for="name_pelamar">Nama</label>
+                            <label for="name_pelamar">Nama Lengkap</label>
                             @error('nama_pelamar')
                                 <div class="invalid-feedback">
                                     {{ $message }}
@@ -41,7 +42,7 @@
                         </div>
                         <div class="form-floating" hidden>
                             <input type="text" class="form-control rounded mt-3" id="slug" name="slug"
-                                value="{{ old('slug') }}" required>
+                                value="{{ old('slug') }}" >
                             <label for="slug">Slug</label>
                         </div>
 
@@ -77,7 +78,7 @@
                                 class="form-control rounded mt-3 @error('password')
                       is-invalid
                     @enderror"
-                                id="password" placeholder="Password" required>
+                                id="password" placeholder="Password" >
                             <label for="password">Password</label>
                             @error('password')
                                 <div class="invalid-feedback">
@@ -86,11 +87,11 @@
                             @enderror
                         </div>
                         <div class="form-floating">
-                            <input type="password" name="confirm_password"
+                            <input type="password" name="password_confirmation"
                                 class="form-control rounded mt-3 @error('confirm_password')
                       is-invalid
                     @enderror"
-                                id="confirm_password" placeholder="Konfirmasi Password" required>
+                                id="password_confirmation" placeholder="Konfirmasi Password" >
                             <label for="password">Konfirmasi Password</label>
                             @error('confirm_password')
                                 <div class="invalid-feedback">
@@ -99,7 +100,8 @@
                             @enderror
                         </div>
                         <div class="d-flex align-items-center justify-content-center">
-                            <button class="btn btn-lg btn-dark btn-bg-custom mt-5 btn" type="submit">Daftar</button>
+                            <button class="btn btn-lg btn-dark btn-bg-custom mt-5 btn" id="button-register"
+                                type="submit">Daftar</button>
 
                         </div>
                     </form>
@@ -112,6 +114,10 @@
                 </main>
             </div>
         </div>
+    </div>
+    <div id="loader" class="loader-wrapper" style="display: none;">
+        <div class="loader"></div>
+        <div class="mx-2 fw-bold text-light">Loading...</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -132,4 +138,17 @@
             .then(response => response.json())
             .then(data => slug.value = data.slug)
     })
+
+    document.getElementById('button-register').addEventListener('click', function() {
+        const loader = document.getElementById('loader');
+
+        // Display the loader
+        loader.style.display = 'flex';
+
+        // Simulate a form submission delay (replace with your actual form submission logic)
+        setTimeout(function() {
+            // Hide the loader when the form submission is complete
+            loader.style.display = 'none';
+        }, 2500); // Simulate a 2-second delay; replace with actual form submission time
+    });
 </script>

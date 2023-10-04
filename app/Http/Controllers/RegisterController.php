@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Pelamar;
-use App\Models\Karyawan;
 use App\Models\UserRole;
+use App\Notifications\RegisterMessage;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 
@@ -21,19 +20,22 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
+
+
         $validated_data_pelamar = $request->validate([
             'nama_pelamar' => 'required|max:255',
             'email' => 'required|email:dns|unique:pelamar',
-
-
         ]);
+
+        $data_notifikasi = [
+            'nama_pelamar' => $request->nama_pelamar
+        ];
 
         $validated_data_user = $request->validate([
             'username' => 'required|max:255',
             'slug' => 'required|max:255',
             'email' => 'required|email:dns|unique:users',
-            'password' => 'required|min:5|max:255',
-
+            'password' => 'required|min:5|max:255|confirmed',
 
         ]);
 
@@ -63,23 +65,30 @@ class RegisterController extends Controller
             //     'id_pelamar' => $validated_data_user['id_pelamar'],
             // ]);
 
+
             $pelamar = Pelamar::create($validated_data_pelamar);
 
-            $validated_data_user['id_pelamar'] = $pelamar->id;
+            if ($pelamar) {
+                $validated_data_user['id_pelamar'] = $pelamar->id;
+                $user = User::create([
+                    'username' => $validated_data_user['username'],
+                    'slug' => $validated_data_user['slug'],
+                    'email' => $validated_data_user['email'],
+                    'password' => $validated_data_user['password'],
+                    'id_pelamar' => $validated_data_user['id_pelamar'],
+                ]);
+                if ($user) {
+                    UserRole::create([
+                        'id_user' => $user->id,
+                        'id_role' => 2
+                    ]);
+                }
+                $pelamar_id = Pelamar::find($user->id_pelamar);
 
-
-            $user = User::create([
-                'username' => $validated_data_user['username'],
-                'slug' => $validated_data_user['slug'],
-                'email' => $validated_data_user['email'],
-                'password' => $validated_data_user['password'],
-                'id_pelamar' => $validated_data_user['id_pelamar'],
-            ]);
-
-            UserRole::create([
-                'id_user' => $user->id,
-                'id_role' => 2
-            ]);
+                if ($pelamar_id) {
+                    $pelamar_id->notify(new RegisterMessage($data_notifikasi));
+                }
+            }
 
             $request->session()->flash('sukses', 'Registrasi Berhasil');
         }

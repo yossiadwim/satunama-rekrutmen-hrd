@@ -2,31 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pelamar extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     // protected $guarded = ['id'];
-    protected $fillable = [
-        'nik',
-        'jenis_kelamin',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'alamat',
-        'telepon_rumah',
-        'telepon_kantor',
-        'suku',
-        'kebangsaan',
-        'id_agama',
-        'tinggi_badan',
-        'berat_badan',
-        'status_kawin',
-        'nama_pasangan',
-    ];
+    // protected $fillable = [
+    //     'nik',
+    //     'jenis_kelamin',
+    //     'tempat_lahir',
+    //     'tanggal_lahir',
+    //     'alamat',
+    //     'telepon_rumah',
+    //     'telepon_kantor',
+    //     'suku',
+    //     'kebangsaan',
+    //     'id_agama',
+    //     'tinggi_badan',
+    //     'berat_badan',
+    //     'status_kawin',
+    //     'nama_pasangan',
+    // ];
+    protected $guarded = ['id'];
     protected $table = 'pelamar';
     public $timestamps = false;
 
@@ -85,7 +87,7 @@ class Pelamar extends Model
         return $this->hasMany(PenguasaanBahasa::class,'id_pelamar','id');
     }
 
-    public function penglamanOrganisasi(){
+    public function pengalamanOrganisasi(){
         return $this->hasMany(PengalamanOrganisasi::class,'id_pelamar','id');
     }
 

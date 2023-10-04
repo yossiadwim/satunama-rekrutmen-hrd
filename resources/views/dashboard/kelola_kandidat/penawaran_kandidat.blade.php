@@ -67,15 +67,22 @@
                                 <td>{{ $penawaran[$i]['pelamar']['jenis_kelamin'] }}</td>
                                 <td>{{ $penawaran[$i]['pelamar']['telepon_rumah'] }}</td>
                                 @if ($penawaran[$i]['pelamar']['pengalaman_kerja'] != null)
-                                    @for ($j = 0; $j < count($penawaran[$i]['pelamar']['pengalaman_kerja']); $j++)
-                                        <td>{{ $penawaran[$i]['pelamar']['pengalaman_kerja'][$j]['posisi'] }}</td>
-                                    @endfor
+                                    <td>
+                                        @for ($j = 0; $j < count($penawaran[$i]['pelamar']['pengalaman_kerja']); $j++)
+                                            {{ $penawaran[$i]['pelamar']['pengalaman_kerja'][$j]['posisi'] }}
+                                            {!! nl2br('<br>') !!}
+                                        @endfor
+                                    </td>
                                 @else
                                     <td>-</td>
                                 @endif
                                 <td>
-                                    <a href="/admin-dashboard/lowongan/detail-pelamar/{{ $penawaran[$i]['pelamar']['user']['slug'] }}"
-                                        class="btn fw-semibold" style="background-color: #90c291; outline-color: #90c291"><i class="bi bi-info-circle-fill"></i> Detail </a>
+                                    <a href="/admin-dashboard/lowongan/{{ $datas[0]->lowongan->slug }}/detail-pelamar/{{ $penawaran[$i]['pelamar']['user']['slug'] }}"
+                                        class="btn btn-success btn-detail fw-semibold text-white"
+                                        id="button-detail-{{ $penawaran[$i]['pelamar']['user']['slug'] }}"
+                                        data-pk-id="{{ $penawaran[$i]['pelamar']['user']['slug'] }}"
+                                       ><i
+                                            class="bi bi-info-circle-fill"></i> Detail </a>
                                 </td>
                             </tr>
                         @endfor

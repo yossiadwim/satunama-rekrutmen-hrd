@@ -9,6 +9,7 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     {{-- <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/admin-dashboard-style.css"> --}}
+    <link rel="stylesheet" href="{{ asset('css/loader.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
@@ -18,6 +19,15 @@
 
 <body style="font-family: Poppins">
     @include('partials.navbar')
+
+    <div class="container mt-5">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin-dashboard/lowongan">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Buat Lowongan</li>
+            </ol>
+        </nav>
+    </div>
 
     <div class="container mt-5 d-flex justify-content-center">
         <h3 class="fw-bold">Buat Lowongan Kerja</h3>
@@ -29,7 +39,7 @@
         @endforeach
     @endif --}}
 
-    <div class="container rounded border border-2 mt-2">
+    <div class="container rounded border border-2 mt-2 mb-5">
         <form method="post" action="/admin-dashboard/lowongan">
             @csrf
             <div class="container mt-5">
@@ -119,13 +129,18 @@
                     <textarea class="ckeditor form-control" name="deskripsi">{{ old('deskripsi') }}</textarea>
                 </div>
                 <div class="mb-5 col-md-12 mt-5 d-flex justify-content-center">
-                    <button class="btn btn-primary border-0 " type="submit">Posting Lowongan</button>
+                    <button class="btn btn-success border-0 " type="submit" id="posting-lowongan">Posting
+                        Lowongan</button>
                 </div>
 
             </div>
         </form>
     </div>
 
+    <div id="loader" class="loader-wrapper" style="display: none;">
+        <div class="loader"></div>
+        <div class="mx-2 fw-bold text-light">Loading...</div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -141,6 +156,7 @@
     });
 </script>
 
+
 <script>
     document.addEventListener('trix-file-accept', function(e) {
         e.preventDefault();
@@ -155,4 +171,18 @@
             .then(response => response.json())
             .then(data => slug.value = data.slug)
     })
+
+    document.getElementById('posting-lowongan').addEventListener('click', function() {
+        const loader = document.getElementById('loader');
+
+        // Display the loader
+        loader.style.display = 'flex';
+
+        // Simulate a form submission delay (replace with your actual form submission logic)
+        setTimeout(function() {
+            // Hide the loader when the form submission is complete
+            loader.style.display = 'none';
+
+        }, 2500); // Simulate a 2-second delay; replace with actual form submission time
+    });
 </script>

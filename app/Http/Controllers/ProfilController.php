@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\User;
 use App\Models\Agama;
 use App\Models\Pelamar;
 use App\Models\Pelatihan;
 use App\Models\Referensi;
 use App\Models\Pendidikan;
-use Brick\Math\BigInteger;
 use App\Models\AnakPelamar;
 use Illuminate\Http\Request;
 use App\Models\KontakDarurat;
@@ -19,9 +19,15 @@ use App\Models\PenguasaanBahasa;
 use App\Models\KemampuanKomputer;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\ApplicationForm;
+use App\Models\Lowongan;
+use App\Models\PelamarLowongan;
+use App\Models\PenawaranPelamar;
 use App\Models\PengalamanOrganisasi;
+use Illuminate\Console\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\VarDumper\VarDumper;
 use Monarobase\CountryList\CountryListFacade;
@@ -58,24 +64,28 @@ class ProfilController extends Controller
     public function show(User $user)
     {
 
-        $pelamar = DB::table('pelamar')->where('id', $user->id_pelamar)->get();
+        $pelamars = User::join('pelamar', 'pelamar.id', 'users.id_pelamar')->where('users.id', auth()->user()->id)->get();
+
         $countries = CountryListFacade::getList('en');
+
+        $pelamar_notif = Pelamar::find(auth()->user()->id_pelamar);
+        $notifikasi = $pelamar_notif->notifications;
 
         return view('profil.profil_main', [
             // 'users' => User::where('id', auth()->user()->id)->get(),
-            'pelamars' => $pelamar,
-            'user' => $user,
+            'pelamars' => $pelamars,
+            'user' => auth()->user(),
             // 'users' => $user,
             'countries' => $countries,
+            'notifikasi' => $notifikasi,
+            'pengalamanKerjaExists' => PengalamanKerja::where('id_pelamar', '=', auth()->user()->id_pelamar)->exists(),
+            'pengalamanKerja' => PengalamanKerja::where('id_pelamar', '=', auth()->user()->id_pelamar)->orderBy('id', 'asc')->get(),
 
-            'pengalamanKerjaExists' => PengalamanKerja::where('id_pelamar', '=', $user->id_pelamar)->exists(),
-            'pengalamanKerja' => PengalamanKerja::where('id_pelamar', '=', $user->id_pelamar)->orderBy('id', 'asc')->get(),
+            'pendidikans' => Pendidikan::where('id_pelamar', '=', auth()->user()->id_pelamar)->orderBy('id_pendidikan', 'asc')->get(),
+            'pendidikanExists' => Pendidikan::where('id_pelamar', '=', auth()->user()->id_pelamar)->exists(),
 
-            'pendidikans' => Pendidikan::where('id_pelamar', '=', $user->id_pelamar)->orderBy('id_pendidikan', 'asc')->get(),
-            'pendidikanExists' => Pendidikan::where('id_pelamar', '=', $user->id_pelamar)->exists(),
-
-            'referensis' => Referensi::where('id_pelamar', '=', $user->id_pelamar)->orderBy('id_referensi', 'asc')->get(),
-            'referensiExists' => Referensi::where('id_pelamar', '=', $user->id_pelamar)->exists(),
+            'referensis' => Referensi::where('id_pelamar', '=', auth()->user()->id_pelamar)->orderBy('id_referensi', 'asc')->get(),
+            'referensiExists' => Referensi::where('id_pelamar', '=', auth()->user()->id_pelamar)->exists(),
 
 
 
@@ -94,18 +104,25 @@ class ProfilController extends Controller
      */
     public function update(Request $request, User $user)
     {
+
         $validatedData = $request->validate([
             'nama_pelamar' => 'required',
-            'email' => 'required',
-            'telepon_rumah' => 'required|string|max:12',
+            'email' => 'nullable',
+            'telepon_rumah' => '|numeric|min_digits:11|max_digits:12|',
             'alamat' => 'required|string',
             'tanggal_lahir' => 'required|string',
             'jenis_kelamin' => 'required',
             'kebangsaan' => 'required'
         ]);
 
-        Pelamar::where('id', $user->id_pelamar)->update($validatedData);
-        return redirect('/profil-kandidat/users/' . $user->slug)->with('success', 'Profil Berhasil Diedit');
+        if ($validatedData) {
+            $query = Pelamar::where('id', auth()->user()->id_pelamar)->update($validatedData);
+            if ($query) {
+                return redirect('/profil-kandidat/users/' . auth()->user()->slug)->with('success', 'Profil Berhasil Diedit');
+            }
+        }
+
+        return back();
     }
 
     /**
@@ -124,28 +141,41 @@ class ProfilController extends Controller
 
         $validatedData = $request->validate($rules);
 
-        Pelamar::where('id', $user->id)->update($validatedData);
+        Pelamar::where('id', $user->id_pelamar)->update($validatedData);
 
         return redirect('/profil-kandidat/users/' . $user->slug)->with('success add description', 'Berhasil mengubah deskripsi');
     }
 
     public function my_application(User $user)
     {
+        $lowonganId = Lowongan::join('pelamar_lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
+            ->join('pelamar', 'pelamar.id', 'pelamar_lowongan.id_pelamar')
+            ->join('users', 'users.id_pelamar', 'pelamar.id')
+            ->where('users.id_pelamar', auth()->user()->id_pelamar)
+            ->get();
 
+        $applicationformId = ApplicationForm::all()->pluck('id_pelamar_lowongan')->toArray();
+        $pelamar = Pelamar::find(auth()->user()->id_pelamar);
+        $notifikasi = $pelamar->notifications;
         return view('lamaran-saya', [
             'title' => 'Lamaran Saya',
-            'user' => $user,
-            'datas' => $user->pelamar->pelamarLowongan->load([
+            'user' => auth()->user(),
+            'notifikasi' => $notifikasi,
+            'datas' => auth()->user()->pelamar->pelamarLowongan->load([
+                'applicationForm',
                 'pelamar',
                 'lowongan.departemen',
                 'dokumenPelamarLowongan.dokumenPelamar',
                 'statusLamaran.status',
                 'activityLog',
-            ])
+            ]),
+            'lowonganId' => $lowonganId,
+            'applicationformId' => $applicationformId
+
         ]);
     }
 
-    public function application_form(User $user)
+    public function application_form(User $user, Lowongan $lowongan)
     {
 
         $hobbies = [
@@ -198,6 +228,9 @@ class ProfilController extends Controller
 
         $countries = CountryListFacade::getList('en');
         $religion = Agama::all();
+        $pelamar = Pelamar::find($user->id_pelamar);
+
+        $notifikasi = $pelamar->notifications;
         return view('application-forms.application_form', [
             'title' => 'Application Form',
             'countries' => $countries,
@@ -208,11 +241,15 @@ class ProfilController extends Controller
             'computer_skills' => $computer_skills,
             'software' => $software,
             'languages' => $languages,
+            'notifikasi' => $notifikasi,
             'datas' => $user->pelamar->pelamarLowongan->load([
+                'applicationForm',
                 'pelamar.user',
                 'pelamar.agama',
                 'lowongan.departemen',
             ]),
+
+            'lowongan' => $lowongan,
             'pengalamanKerjaExists' => PengalamanKerja::where('id_pelamar', '=', $user->id_pelamar)->exists(),
             'pengalamanKerja' => PengalamanKerja::where('id_pelamar', '=', $user->id_pelamar)->orderBy('id', 'asc')->get(),
 
@@ -226,61 +263,50 @@ class ProfilController extends Controller
 
     public function send_application_form(Request $request, User $user)
     {
-        // dd($request);
-
         $validatedData = $request->validate([
-            'nama_pelamar' => 'nullable',
-            'nik' => 'nullable',
-            'jenis_kelamin' => 'nullable',
-            'tempat_lahir' => 'nullable',
-            'tanggal_lahir' => 'nullable',
-            'alamat' => 'nullable',
-            'telepon_rumah' => 'nullable',
-            'telepon_kantor' => 'nullable',
+            'nama_pelamar' => 'required',
+            'nik' => 'required',
+            'ekspetasi_gaji' => 'required',
+            'jenis_kelamin' => 'required',
+            'tempat_lahir' => 'required',
+            'tanggal_lahir' => 'required',
+            'alamat' => 'required',
+            'alamat_tetap' => 'required',
+            'telepon_rumah' => 'required|numeric|min_digits:11|max_digits:12|',
+            'telepon_kantor' => 'required|numeric|min_digits:11|max_digits:12|',
             'suku' => 'nullable',
-            'kebangsaan' => 'nullable',
-            'id_agama' => 'nullable',
-            'tinggi_badan' => 'nullable',
-            'berat_badan' => 'nullable',
-            'status_kawin' => 'nullable',
+            'kebangsaan' => 'required',
+            'id_agama' => 'required',
+            'tinggi_badan' => 'required|numeric',
+            'berat_badan' => 'required|numeric',
+            'status_kawin' => 'required',
             'nama_pasangan' => 'nullable',
-
         ]);
-
         if ($request->hobi) {
             $hobi = implode(', ', $request->hobi);
             $validatedData['hobi'] = $hobi;
         }
-
-
         $formattedCurrency = $request->ekspetasi_gaji; // Example formatted currency string
         $cleanedString = preg_replace('/[^\d]/', '', $formattedCurrency);
         $ekspetasi_gaji = (int) $cleanedString;
         $validatedData['ekspetasi_gaji'] = $ekspetasi_gaji;
-        Pelamar::where('id',$user->pelamar->id)->update($validatedData);
+        Pelamar::where('id', $user->pelamar->id)->update($validatedData);
 
         // data anak
-        if ($request->jumlah_anak != 0 || $request->jumlah_anak != null) {
-            if ($request->nama_anak != null && $request->jenis_kelamin != null && $request->umur_anak != null) {
-                for ($i = 0; $i < (int) $request->jumlah_anak; $i++) {
-                    AnakPelamar::create([
-                        'nama_anak' => $request->nama_anak[$i],
-                        'jenis_kelamin_anak' => $request->jenis_kelamin_anak[$i],
-                        'umur_anak' => $request->umur_anak[$i],
-                        'id_pelamar' => $user->id_pelamar
-                    ]);
-                }
+        if ($request->counter_row_anak != 0 || $request->counter_row_anak != null) {
+            for ($i = 0; $i < (int) $request->counter_row_anak; $i++) {
+                AnakPelamar::create([
+                    'nama_anak' => $request->nama_anak[$i],
+                    'jenis_kelamin_anak' => $request->jenis_kelamin_anak[$i],
+                    'umur_anak' => $request->umur_anak[$i],
+                    'id_pelamar' => $user->id_pelamar
+                ]);
             }
         }
 
         //data keluarga
-        if ($request->jumlah_anggota_keluarga != 0 || $request->jumlah_anggota_keluarga != null) {
-            if (
-                $request->hubungan_keluarga != null && $request->nama_anggota_keluarga != null && $request->jenis_kelamin_anggota_keluarga != null
-                && $request->umur_anggota_keluarga != null && $request->jenjang_pendidikan_anggota_keluarga != null && $request->pekerjaan_anggota_keluarga != null
-                && $request->perusahaan_anggota_keluarga != null
-            ) {
-                for ($i = 0; $i < (int) $request->jumlah_anggota_keluarga; $i++) {
+        if ($request->counter_row_keluarga != 0 || $request->counter_row_keluarga != null) { {
+                for ($i = 0; $i < (int) $request->counter_row_keluarga; $i++) {
                     KeluargaPelamar::create([
                         'hubungan_keluarga' => $request->hubungan_keluarga[$i],
                         'nama_anggota_keluarga' => $request->nama_anggota_keluarga[$i],
@@ -296,41 +322,34 @@ class ProfilController extends Controller
         }
 
         //data pengalaman organisasi
-        if ($request->jumlah_organisasi != null || $request->jumlah_organisasi != 0) {
-            if ($request->nama_organisasi != null && $request->posisi_di_organisasi != null) {
-                for ($i = 0; $i < (int) $request->jumlah_organisasi; $i++) {
-                    PengalamanOrganisasi::create([
-                        'nama_organisasi' => $request->nama_organisasi[$i],
-                        'posisi_di_organisasi' => $request->posisi_di_organisasi[$i],
-                        'id_pelamar' => $user->id_pelamar
+        if ($request->counter_row_organisasi != null || $request->counter_row_organisasi != 0) {
+            for ($i = 0; $i < (int) $request->counter_row_organisasi; $i++) {
+                PengalamanOrganisasi::create([
+                    'nama_organisasi' => $request->nama_organisasi[$i],
+                    'posisi_di_organisasi' => $request->posisi_di_organisasi[$i],
+                    'id_pelamar' => $user->id_pelamar
 
-                    ]);
-                }
+                ]);
             }
         }
 
         //data kontak darurat
-        if ($request->jumlah_kontak_daruarat != null || $request->jumlah_kontak_darurat != 0) {
-            if (
-                $request->nama_kontak != null && $request->hubungan_kontak != null && $request->telepon_kontak != null &&
-                $request->alamat_kontak != null
-            ) {
-                for ($i = 0; $i < (int) $request->jumlah_kontak_darurat; $i++) {
-                    KontakDarurat::create([
-                        'nama_kontak' => $request->nama_kontak[$i],
-                        'hubungan_kontak' => $request->hubungan_kontak[$i],
-                        'telepon_kontak' => $request->telepon_kontak[$i],
-                        'alamat_kontak' => $request->alamat_kontak[$i],
-                        'id_pelamar' => $user->id_pelamar
-                    ]);
-                }
+        if ($request->counter_row_kontak_darurat != null || $request->counter_row_kontak_darurat != 0) {
+            for ($i = 0; $i < (int) $request->counter_row_kontak_darurat; $i++) {
+                KontakDarurat::create([
+                    'nama_kontak' => $request->nama_kontak[$i],
+                    'hubungan_kontak' => $request->hubungan_kontak[$i],
+                    'telepon_kontak' => $request->telepon_kontak[$i],
+                    'alamat_kontak' => $request->alamat_kontak[$i],
+                    'id_pelamar' => $user->id_pelamar
+                ]);
             }
         }
 
         //data riwayat kesehatan
         if ($request->kondisi_kesehatan != null) {
             $kondisi_kesehatan = implode(', ', $request->kondisi_kesehatan);
-            $existingId = KondisiKesehatan::where('id_pelamar', $user->id_pelamar);
+            $existingId = KondisiKesehatan::where('id_pelamar', $user->id_pelamar)->first();
 
             if ($existingId) {
                 $existingId->update([
@@ -345,7 +364,7 @@ class ProfilController extends Controller
         }
 
         if ($request->adakah_penyakit_serius_lainnya != null) {
-            $existingId = KondisiKesehatan::where('id_pelamar', $user->id_pelamar);
+            $existingId = KondisiKesehatan::where('id_pelamar', $user->id_pelamar)->first();
             if ($existingId) {
                 $existingId->update([
                     'adakah_penyakit_serius_lainnya' => $request->adakah_penyakit_serius_lainnya,
@@ -361,10 +380,20 @@ class ProfilController extends Controller
         }
 
         if ($request->apakah_pernah_mengalami_cedera_operasi != null) {
-            KondisiKesehatan::where('id_pelamar', $user->id_pelamar)->update([
-                'adakah_penyakit_serius_lainnya' => $request->adakah_penyakit_serius_lainnya,
-                'nama_penyakit_lainnya' => $request->nama_penyakit_lainnya,
-            ]);
+            $existingId = KondisiKesehatan::where('id_pelamar', $user->id_pelamar)->first();
+
+            if ($existingId) {
+                KondisiKesehatan::where('id_pelamar', $user->id_pelamar)->update([
+                    'apakah_pernah_mengalami_cedera_operasi' => $request->apakah_pernah_mengalami_cedera_operasi,
+                    'nama_cedera_atau_operasi' => $request->nama_cedera_atau_operasi,
+                ]);
+            } else {
+                KondisiKesehatan::where('id_pelamar', $user->id_pelamar)->update([
+                    'apakah_pernah_mengalami_cedera_operasi' => $request->apakah_pernah_mengalami_cedera_operasi,
+                    'nama_cedera_atau_operasi' => $request->nama_cedera_atau_operasi,
+                    'id_pelamar' => $user->id_pelamar
+                ]);
+            }
         }
 
         if ($request->golongan_darah != null) {
@@ -386,8 +415,8 @@ class ProfilController extends Controller
         }
 
         //data riwayat_pendidikan
-        if ($request->jumlah_riwayat_pendidikan != null) {
-            for ($i = 0; $i < (int) $request->jumlah_riwayat_pendidikan; $i++) {
+        if ($request->counter_row_riwayat_pendidikan != null) {
+            for ($i = 0; $i < (int) $request->counter_row_riwayat_pendidikan; $i++) {
                 Pendidikan::create([
                     'jenjang_pendidikan' => $request->jenjang_pendidikan[$i],
                     'nama_institusi' => $request->nama_institusi[$i],
@@ -411,9 +440,11 @@ class ProfilController extends Controller
         }
 
 
+
+
         //data penguasaan bahasa
-        if ($request->jumlah_tingkat_penguasaan_bahasa != null) {
-            for ($i = 0; $i < (int) $request->jumlah_tingkat_penguasaan_bahasa; $i++) {
+        if ($request->counter_row_penguasaan_bahasa != null) {
+            for ($i = 0; $i < (int) $request->counter_row_penguasaan_bahasa; $i++) {
                 PenguasaanBahasa::create([
                     'nama_bahasa' => $request->nama_bahasa[$i],
                     'tingkat_penguasaan' => $request->tingkat_penguasaan[$i],
@@ -423,18 +454,20 @@ class ProfilController extends Controller
         }
 
         //data pengalaman kerja
-        if ($request->jumlah_riwayat_pekerjaan != null) {
+        if ($request->counter_row_riwayat_pekerjaan != null) {
             for ($i = 0; $i < count($request->gaji); $i++) {
                 $request_gaji_pengalaman_kerja = $request->gaji; // Example formatted currency string
                 $gaji_pengalaman_clear = preg_replace('/[^\d]/', '', $request_gaji_pengalaman_kerja);
                 $gaji_pengalaman_clean[] = (int) $gaji_pengalaman_clear[$i];
             }
 
-            for ($i = 0; $i < (int) $request->jumlah_riwayat_pekerjaan; $i++) {
+            for ($i = 0; $i < (int) $request->counter_row_riwayat_pekerjaan; $i++) {
                 PengalamanKerja::create([
                     'nama_perusahaan' => $request->nama_perusahaan[$i],
                     'posisi' => $request->posisi[$i],
                     'periode' => $request->periode[$i],
+                    'email_instansi' => $request->email_instansi[$i],
+                    'telepon' => $request->telepon[$i],
                     'gaji' => $gaji_pengalaman_clean[$i],
                     'alasan_mengundurkan_diri' => $request->alasan_mengundurkan_diri[$i],
                     'id_pelamar' => $user->id_pelamar
@@ -442,9 +475,12 @@ class ProfilController extends Controller
             }
         }
 
+
+
+
         //data referensi
-        if ($request->jumlah_referensi != null) {
-            for ($i = 0; $i < (int) $request->jumlah_referensi + (int) $request->jumlah_referensi_di_satunama; $i++) {
+        if ($request->counter_row_referensi != null) {
+            for ($i = 0; $i < (int) $request->counter_row_referensi + (int) $request->counter_row_referensi_from_satunama; $i++) {
                 Referensi::create([
                     'nama_referensi' => $request->nama_referensi[$i],
                     'alamat_referensi' => $request->alamat_referensi[$i],
@@ -458,8 +494,8 @@ class ProfilController extends Controller
         }
 
         //data pelatihan yang pernah diikuti
-        if ($request->jumlah_pelatihan != null) {
-            for ($i = 0; $i < (int) $request->jumlah_pelatihan; $i++) {
+        if ($request->counter_row_pelatihan != null) {
+            for ($i = 0; $i < (int) $request->counter_row_pelatihan; $i++) {
                 Pelatihan::create([
                     'subjek_pelatihan' => $request->subjek_pelatihan[$i],
                     'tahun_pelatihan' => $request->tahun_pelatihan[$i],
@@ -468,14 +504,29 @@ class ProfilController extends Controller
                 ]);
             }
         }
+
+        $data_application = [
+            'id_pelamar_lowongan' => $request->id_pelamar_lowongan,
+            'status_terkirim' => 'true'
+        ];
+
+        $query = ApplicationForm::create($data_application);
+
+        if ($query) {
+            return redirect('profil-kandidat/users/' . $user->slug . '/lamaran-saya')
+            ->with('success send application form', 'Berhasil Mengirim Application Form');
+        }
     }
 
     public function accountSettings(User $user)
     {
         $countries = CountryListFacade::getList('en');
+        $pelamar = Pelamar::find($user->id_pelamar);
+        $notifikasi = $pelamar->notifications;
         return view('pengaturan_akun.pengaturan-akun', [
             'title' => 'Pengaturan Akun',
             'user' => $user,
+            'notifikasi' => $notifikasi,
             'countries' => $countries,
             'datas' => $user->with('pelamar')->where('users.id', $user->id)->get()
         ]);
@@ -486,11 +537,10 @@ class ProfilController extends Controller
         if ($request->input('ganti_kata_sandi')) {
             if ($request->input('password') === $request->input('konfirmasi_password_baru')) {
                 $data = $request->validate([
-                    'password' => 'required',
-                    'konfirmasi_password_baru' => 'required'
+                    'password' => 'required|min:5',
                 ]);
-
-                User::where('users.id', $user->id)->update($data['password']);
+                $data['password'] = Hash::make($data['password']);
+                User::where('users.id', $user->id)->update($data);
                 return redirect('/profil-kandidat/users/' . $user->slug . '/pengaturan-akun')->with('success change password', 'Berhasil mengganti password');
             } else {
                 return back()->with('failed change password', 'Gagal mengganti password');
@@ -499,26 +549,64 @@ class ProfilController extends Controller
             $pelamar = $user->load('pelamar');
             if ($request->input('email') != $user->email && $request->input('email') != $pelamar->email) {
                 $data = $request->validate([
-                    'email' => 'required|email:dns'
+                    'email' => 'required|email:dns|unique:users,email'
                 ]);
                 User::where('users.id', $user->id)->update($data);
-                Pelamar::where('pelamar.id', $pelamar->id)->update($data);
+                Pelamar::where('pelamar.id', $pelamar->pelamar->id)->update($data);
                 return redirect('/profil-kandidat/users/' . $user->slug . '/pengaturan-akun')->with('success change email', 'Berhasil mengganti email');
             } else {
                 return back()->with('failed change email', 'Gagal mengganti email');
             }
         } elseif ($request->input('ganti_nomor_telepon')) {
-
             $pelamar = $user->load('pelamar');
             if ($request->input('telepon_rumah') !== $pelamar->telepon_rumah) {
-                $data = [
-                    'telepon_rumah' => $request->telepon_rumah
-                ];
-                Pelamar::where('pelamar.id', $pelamar->id)->update($data);
+                $data = $request->validate([
+                    'telepon_rumah' => 'required|numeric|min_digits:11|max_digits:12|unique:pelamar,telepon_rumah'
+                ]);
+                
+                Pelamar::where('pelamar.id', $pelamar->pelamar->id)->update($data);
                 return redirect('/profil-kandidat/users/' . $user->slug . '/pengaturan-akun')->with('success change phone number', 'Berhasil mengganti nomor telepon');
             } elseif ($request->input('telepon_rumah') === $pelamar->telepon_rumah) {
-                return back()->with('faield change phone number', 'Gagal mengganti nomor telepon');
+                return back()->with('failed change phone number', 'Gagal mengganti nomor telepon');
             }
         }
     }
+
+    public function offering(User $user, Lowongan $lowongan)
+    {
+        $user_ = auth()->user();
+        $pelamar_lowongan = $user->join('pelamar','pelamar.id','users.id_pelamar')
+                                ->join('pelamar_lowongan','pelamar_lowongan.id_pelamar','pelamar.id')
+                                ->join('lowongan','pelamar_lowongan.id_lowongan','lowongan.id')
+                                ->where('lowongan.id', $lowongan->id)
+                                ->where('users.id', $user_->id)
+                                ->get()
+                                ;
+
+        $data_penawaran = PenawaranPelamar::where('id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)->get();
+
+        $pelamar = Pelamar::find($user_->id_pelamar);
+        $notifikasi = $pelamar->notifications;
+        $penawaran_pelamar_id = DB::table('penawaran_pelamar')->select(['*'])->pluck('id_pelamar_lowongan')->toArray();
+
+
+        return view('penawaran-pelamar', [
+            'title' => 'Penawaran',
+            'user' => auth()->user(),
+            'lowongan' => $lowongan,
+            'notifikasi' => $notifikasi,
+            'datas' => auth()->user()->pelamar->pelamarLowongan->load([
+                'applicationForm',
+                'pelamar',
+                'lowongan.departemen',
+                'dokumenPelamarLowongan.dokumenPelamar',
+                'statusLamaran.status',
+                'activityLog',
+            ]),
+            'penawaran_pelamar_id' => $penawaran_pelamar_id,
+            'data_penawaran' => $data_penawaran
+        ]);
+    }
+
+    
 }

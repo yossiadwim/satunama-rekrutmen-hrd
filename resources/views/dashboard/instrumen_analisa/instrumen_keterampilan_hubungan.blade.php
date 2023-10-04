@@ -24,7 +24,7 @@
                                 class="accordion-collapse collapse" data-bs-parent="#keterampilan_hubungan">
                                 <div class="accordion-body">
                                     <form
-                                        action="/admin-dashboard/lowongan/instrumen-analisis-beban-kerja/{{ $lowongan->slug }}"
+                                        action="/admin-dashboard/lowongan/{{ $lowongan->slug }}/instrumen-analisis-beban-kerja/{{ $data_pelamar->slug }}"
                                         method="POST">
                                         @csrf
                                         <ul>
@@ -54,8 +54,9 @@
                                         <input type="text" name="id_jenis_analisa"
                                             value="{{ $data->id_jenis_analisa_kriteria }}" hidden>
 
-                                        {{-- <input type="text" name="id_pelamar_lowongan"
-                                            value="{{ $datas[0]->id_pelamar_lowongan }}" hidden> --}}
+                                        <input type="text" name="id_pelamar_lowongan"
+                                            value="{{ $pelamar_lowongan[0]->id_pelamar_lowongan }}" hidden>
+
                                         <input type="text" name="id" value="{{ $lowongan->id }}"
                                             hidden>
 
@@ -63,10 +64,11 @@
                                             value="{{ auth()->user()->id_karyawan }}" hidden>
 
 
-                                        <div class="d-flex justify-content-center">
-
-                                            <button type="submit" class="btn btn-success ">Simpan</button>
-                                        </div>
+                                            <div class="d-flex justify-content-center">
+                                                <button type="submit" class="btn btn-success btn-simpan-analisa"
+                                                    id="simpan-analisa-{{ $data->id_jenis_analisa }}"
+                                                    value="{{ $data->id_jenis_analisa }}">Simpan</button>
+                                            </div>
 
 
                                     </form>

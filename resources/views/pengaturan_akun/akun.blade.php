@@ -45,8 +45,7 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-secondary" name="ganti_kata_sandi"
-                            value="ganti_kata_sandi">
+                        <button type="submit" class="btn btn-success" name="ganti_kata_sandi" id="ganti_kata_sandi" value="ganti_kata_sandi">
                             Ganti kata sandi
                         </button>
                     </div>
@@ -73,8 +72,7 @@
                         </div>
                     </div>
                     <div class="mt-2">
-                        <button type="submit" class="btn btn-secondary" name="ganti_email_baru"
-                            value="ganti_email_baru">
+                        <button type="submit" class="btn btn-success" name="ganti_email_baru" value="ganti_email_baru" id="ganti_email_baru">
                             Ganti Email
                         </button>
                     </div>
@@ -86,4 +84,8 @@
 
 
 
+</div>
+<div id="loader" class="loader-wrapper" style="display: none;">
+    <div class="loader"></div>
+    <div class="mx-2 fw-bold text-light">Loading...</div>
 </div>

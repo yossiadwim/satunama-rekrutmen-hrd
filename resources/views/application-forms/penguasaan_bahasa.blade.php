@@ -6,6 +6,7 @@
             <tr>
                 <th scope="col">Bahasa</th>
                 <th scope="col">Tingkatan Penguasaan</th>
+                <th scope="col"></th>
 
             </tr>
         </thead>
@@ -15,12 +16,7 @@
     </table>
 </div>
 
-<div class="col-2">
-    <div class="form-floating">
-        <input type="number" class="form-control" name="jumlah_tingkat_penguasaan_bahasa"
-            id="jumlah_tingkat_penguasaan_bahasa" placeholder="Jumlah Tingkat Penguatan Bahasa"
-            onchange="addRowTableProficiencyLanguage()" min="0">
-        <label for="jumlah_tingkat_penguasaan_bahasa">Tambah</label>
-    </div>
-
+<div class="col-3 mt-4">
+    <button type="button" class="btn btn-success" id="add-language-row"><i class="fa-solid fa-plus"
+            style="color: #ffffff;"></i> Tambah</button>
 </div>

@@ -1,4 +1,4 @@
-
+{{-- @dd($applicationformId) --}}
 <!doctype html>
 <html lang="en">
 
@@ -10,6 +10,7 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/main-style.css">
+    <link rel="stylesheet" href="{{ asset('css/loader.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <script src="https://kit.fontawesome.com/b3626122b8.js" crossorigin="anonymous"></script>
@@ -19,6 +20,55 @@
 <body style="font-family: Poppins;">
 
     @include('partials.navbar')
+
+    @auth
+        <div class="offcanvas offcanvas-end " data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+            id="notifikasi_user" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">Notifikasi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#belum_dibaca"
+                            type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Belum
+                            Dibaca</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#sudah_dibaca"
+                            type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Sudah
+                            Dibaca</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane mt-2 fade show active" id="belum_dibaca" role="tabpanel" aria-labelledby="home-tab"
+                        tabindex="0">
+                        @foreach ($notifikasi as $notif)
+                            <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-2 fw-bold ">{!! $notif->data['subject'] !!}</h6>
+                                </div>
+                                @if ($notif->type == 'App\Notifications\RegisterMessage')
+                                    <p class="mb-1 fw-bold">Selamat datang {{ $notif->data['nama_pelamar'] }}</p>
+                                @else
+                                    <p class="mb-1">Status lamaran pada {{ $notif->data['nama_lowongan'] }} diperbarui ke
+                                        Tahap
+                                    <p class="fw-bold">{{ $notif->data['status'] }} </p>
+                                    </p>
+                                @endif
+                                <small>{{ $notif->created_at->diffForHumans() }}</small>
+                            </a>
+                            <hr class="dividers">
+                        @endforeach
+                    </div>
+                    <div class="tab-pane fade" id="sudah_dibaca" role="tabpanel" aria-labelledby="profile-tab"
+                        tabindex="0">...</div>
+                </div>
+
+            </div>
+        </div>
+    @endauth
 
     @if (session()->has('success send application form'))
         <div class="container justify-content-center col-8 mt-3">
@@ -30,150 +80,199 @@
     @endif
 
     <div class="container">
-        <div class="row mt-4">
-            <div class="col-9 ">
-                <div class="mt-5 ">
-                    <h5 class="fw-bold">{{ $datas[0]->lowongan->nama_lowongan }}</h5>
-                    <p>Yayasan SATUNAMA - Yogyakarta, Indonesia</p>
-                    <p><span class="badge rounded-pill text-bg-info">Tahap
-                            {{ Str::title($datas[0]->statusLamaran[0]->status->nama_status) }}</span>
-                        @if ($datas[0]->lowongan->closed != true)
-                            - Lowongan Dibuka
-                        @else
-                            - Lowongan Ditutup
-                        @endif
-                    </p>
-                </div>
-                @if ($datas[0]->statusLamaran[0]->status->slug == 'reference-check')
-                    <div class="mt-4">
-                        <a href="/profil-kandidat/users/{{ $user->slug }}/application-form"
-                            style="text-decoration: none; color: blue"><i class="fa-solid fa-up-right-from-square"></i>
-                            Isi Application Form</a>
-                    </div>
-                @endif
-    
-                <div class="accordion accordion-flush mt-5" id="accordionFlushExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed border-bottom border-2 fw-bold" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false"
-                                aria-controls="flush-collapseOne" style="color: #2b8f38">
-                                TRACKING STATUS LAMARAN
-                            </button>
-                        </h2>
-                        <div id="flush-collapseOne" class="accordion-collapse collapse"
-                            data-bs-parent="#accordionFlushExample">
-                            <div class="accordion-body">
-                                <table class="table table-borderless " id="table">
-                                    <tbody>
-                                        @foreach ($datas[0]->activityLog->sortdesc() as $data_activity)
-                                            @if ($loop->first)
-                                                <tr class="table-active fw-bold" style="color: blue">
-                                                    <td> <i class="fa-solid fa-square-full fa-2xs"></i>
-                                                        {{ \Carbon\Carbon::parse($data_activity->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y H:i ') }}
-                                                    </td>
-                                                    <td>Proses lamaran sudah sampai tahap
-                                                        {{ $data_activity->status[0]->nama_status }}</td>
-                                                </tr>
-                                                @continue
-                                            @endif
-                                            <tr>
-                                                <td> <i class="fa-solid fa-square-full fa-2xs"
-                                                        style="color: #c3c1c1;"></i>
-                                                    {{ \Carbon\Carbon::parse($data_activity->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y H:i ') }}
-                                                </td>
-                                                <td>Proses lamaran sudah sampai tahap
-                                                    {{ $data_activity->status[0]->nama_status }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+        <nav class="mt-5" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/lowongan-kerja">Lowongan</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lamaran Saya</li>
+            </ol>
+        </nav>
 
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion accordion-flush mt-4 mb-5" id="accordionFlushExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed border-bottom border-2 fw-bold" type="button"
-                                data-bs-toggle="collapse" data-bs-target="#dokumen" aria-expanded="false"
-                                aria-controls="flush-collapseOne" style="color: #2b8f38">
-                                DOKUMEN
-                            </button>
-                        </h2>
-                        <div id="dokumen" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                            <div class="accordion-body">
-                                <nav>
-                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        @foreach ($datas as $data)
-                                            @foreach ($data->dokumenPelamarLowongan as $dd)
-                                                @if ($dd->id_dokumen == 1)
-                                                    <li class="nav-item" role="presentation">
-                                                        <button class="nav-link active" id="resume-tab"
-                                                            data-bs-toggle="tab"
-                                                            data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
-                                                            type="button" role="tab"
-                                                            aria-selected="true">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
-                                                    </li>
-                                                @else
-                                                    <li class="nav-item" role="presentation">
-                                                        <button class="nav-link " id="resume-tab" data-bs-toggle="tab"
-                                                            data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
-                                                            type="button"
-                                                            role="tab">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
-                                                    </li>
-                                                @endif
-                                            @endforeach
-                                        @endforeach
+        @if (count($datas) == 0)
+            <h3 class="mt-5 text-center fw-bold">Anda belum mendaftar lowongan apapun</h3>
+        @else
+            @foreach ($datas as $data)
+                @foreach ($lowonganId as $lowongan)
+                    @if ($data->lowongan->id == $lowongan->id_lowongan)
+                        <div class="row mt-4">
+                            <div class="col-9 ">
+                                <div class="mt-5 ">
+                                    <h5 class="fw-bold">{{ $data->lowongan->nama_lowongan }}</h5>
+                                    <p>Yayasan SATUNAMA - Yogyakarta, Indonesia</p>
+                                    @if ($data->statusLamaran[0]->status->nama_status == 'ditolak')
+                                        <p><span class="badge rounded-pill text-bg-danger">
+                                                {{ Str::title($data->statusLamaran[0]->status->nama_status) }}</span>
+                                        @else
+                                        <p><span class="badge rounded-pill text-bg-success">Tahap
+                                                {{ Str::title($data->statusLamaran[0]->status->nama_status) }}</span>
+                                    @endif
+                                    @if ($data->lowongan->closed != true)
+                                        - Lowongan Dibuka
+                                    @else
+                                        - Lowongan Ditutup
+                                    @endif
+                                    </p>
+                                </div>
+
+                                @if ($data->statusLamaran[0]->status->slug == 'reference-check')
+                                    @if (in_array($data->id_pelamar_lowongan, $applicationformId))
+                                        <div class="mt-4">
+                                            {{-- <a href="/profil-kandidat/users/{{ $user->slug }}/application-form/{{ $data->lowongan->slug }}"
+                                            style="text-decoration: none; color: blue" class="btn border-0 disabled">
+                                            <i class="fa-solid fa-up-right-from-square"></i>
+                                            Isi Application Form</a> --}}
+                                            <span class="badge text-bg-success"><i class="fa-solid fa-check"
+                                                    style="color: #ffffff;"></i> Sudah
+                                                Mengisi Application Form</span>
+                                        </div>
+                                    @else
+                                        <div class="mt-4">
+                                            <a href="/profil-kandidat/users/{{ $user->slug }}/application-form/{{ $data->lowongan->slug }}"
+                                                style="text-decoration: none; color: blue"
+                                                class="link-application-form"
+                                                id="button-link-application-form-{{ $data->lowongan->slug }}"
+                                                data-pk-id="{{ $data->lowongan->slug }}"
+                                                onclick="getID({{ $data->lowongan->slug }})"><i
+                                                    class="fa-solid fa-up-right-from-square"></i>
+                                                Isi Application Form</a> <span class="badge text-bg-danger"><i
+                                                    class="fa-solid fa-xmark" style="color: #ffffff;"></i> Belum
+                                                Diisi</span>
+                                        </div>
+                                    @endif
+                                @elseif ($data->statusLamaran[0]->status->slug == 'penawaran')
+                                    <a class="btn btn-primary"
+                                        href="/profil-kandidat/users/{{ $user->slug }}/offering/{{ $data->lowongan->slug }}"
+                                        role="button">Buka Penawaran</a>
+                                @endif
+                                <div class="accordion accordion-flush mt-5" id="accordionFlushExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed border-bottom border-2 fw-bold"
+                                                type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#flush-collapseOne-{{ $data->statusLamaran[0]->id_pelamar_lowongan }}"
+                                                aria-expanded="false"
+                                                aria-controls="flush-collapseOne-{{ $data->statusLamaran[0]->id_pelamar_lowongan }}"
+                                                style="color: #2b8f38">
+                                                TRACKING STATUS LAMARAN
+                                            </button>
+                                        </h2>
+                                        <div id="flush-collapseOne-{{ $data->statusLamaran[0]->id_pelamar_lowongan }}"
+                                            class="accordion-collapse collapse"
+                                            data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+                                                <table class="table table-borderless " id="table">
+                                                    <tbody>
+                                                        @foreach ($data->activityLog->sortdesc() as $data_activity)
+                                                            @if ($loop->first)
+                                                                <tr class="table-active fw-bold" style="color: blue">
+                                                                    <td> <i class="fa-solid fa-square-full fa-2xs"></i>
+                                                                        {{ \Carbon\Carbon::parse($data_activity->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y H:i ') }}
+                                                                    </td>
+                                                                    <td>Proses lamaran sudah sampai tahap
+                                                                        {{ $data_activity->status[0]->nama_status }}
+                                                                    </td>
+                                                                </tr>
+                                                                @continue
+                                                            @endif
+                                                            <tr>
+                                                                <td> <i class="fa-solid fa-square-full fa-2xs"
+                                                                        style="color: #c3c1c1;"></i>
+                                                                    {{ \Carbon\Carbon::parse($data_activity->created_at)->locale('id')->settings(['formatFunction' => 'translatedFormat'])->format('l, j F Y H:i ') }}
+                                                                </td>
+                                                                <td>Proses lamaran sudah sampai tahap
+                                                                    {{ $data_activity->status[0]->nama_status }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
-                                </nav>
-                                <div class="tab-content" id="nav-tabContent">
-                                    @foreach ($datas as $data)
-                                        @foreach ($data->dokumenPelamarLowongan as $dd)
-                                            @if ($dd->id_dokumen == 1)
-                                                <div class="tab-pane fade show active"
-                                                    id="tab-pane-seleksi-{{ $dd->id_dokumen }}" role="tabpanel"
-                                                    aria-labelledby="home-tab" tabindex="0">
-                                                    <embed src="{{ asset('storage/' . $dd->dokumenPelamar->dokumen) }}"
-                                                        type="application/pdf" width="100%" height="800px" />
+                                </div>
+                                <div class="accordion accordion-flush mt-4 mb-5" id="accordionFlushExample">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed border-bottom border-2 fw-bold"
+                                                type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#dokumen-{{ $data->id_pelamar_lowongan }}"
+                                                aria-expanded="false" aria-controls="flush-collapseOne"
+                                                style="color: #2b8f38">
+                                                DOKUMEN
+                                            </button>
+                                        </h2>
+                                        <div id="dokumen-{{ $data->id_pelamar_lowongan }}"
+                                            class="accordion-collapse collapse"
+                                            data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+                                                <nav>
+                                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                                        {{-- @foreach ($datas as $data) --}}
+                                                        @foreach ($data->dokumenPelamarLowongan as $dd)
+                                                            @if ($dd->id_pelamar_lowongan == $data->id_pelamar_lowongan)
+                                                                <li class="nav-item" role="presentation">
+                                                                    <button class="nav-link" id="resume-tab"
+                                                                        data-bs-toggle="tab"
+                                                                        data-bs-target="#tab-pane-seleksi-{{ $dd->id_dokumen }}"
+                                                                        type="button" role="tab"
+                                                                        aria-selected="true">{{ \Illuminate\Support\Str::limit($dd->dokumenPelamar->nama, $limit = 30, '...') }}</button>
+                                                                </li>
+                                                            @endif
+                                                        @endforeach
+                                                        {{-- @endforeach --}}
+                                                    </div>
+                                                </nav>
+                                                <div class="tab-content" id="nav-tabContent">
+                                                    @foreach ($data->dokumenPelamarLowongan as $dd)
+                                                        <div class="tab-pane fade show"
+                                                            id="tab-pane-seleksi-{{ $dd->id_dokumen }}"
+                                                            role="tabpanel" aria-labelledby="home-tab"
+                                                            tabindex="0">
+                                                            <embed
+                                                                src="{{ asset('storage/' . $dd->dokumenPelamar->dokumen) }}"
+                                                                type="application/pdf" width="100%"
+                                                                height="800px" />
+                                                        </div>
+                                                    @endforeach
                                                 </div>
-                                            @else
-                                                <div class="tab-pane fade"
-                                                    id="tab-pane-seleksi-{{ $dd->id_dokumen }}" role="tabpanel"
-                                                    aria-labelledby="home-tab" tabindex="0">
-                                                    <embed
-                                                        src="{{ asset('storage/' . $dd->dokumenPelamar->dokumen) }}"
-                                                        type="application/pdf" width="100%" height="800px" />
-                                                </div>
-                                            @endif
-                                        @endforeach
-                                    @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                            </div>
+                            <div class="col-3">
+                                <div class="mt-5">
+                                    <h5 class="fw-bold">Rincian Pekerjaan</h5>
+                                </div>
+                                <div>
+                                    <p><i class="fa-solid fa-building"></i>
+                                        {{ $data->lowongan->departemen->nama_departemen }}
+                                    </p>
+                                    <p><i class="fa-solid fa-hourglass-start"></i>
+                                        {{ $data->lowongan->tipe_lowongan }}
+                                    </p>
+                                    <p><a href="/lowongan-kerja/{{ $data->lowongan->slug }}/detail"
+                                            style="text-decoration: none; color: blue"><i
+                                                class="fa-solid fa-up-right-from-square"></i>
+                                            Lihat detail lowongan</a></p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                    @endif
+                @endforeach
+            @endforeach
 
-            </div>
-            <div class="col-3">
-                <div class="mt-5">
-                    <h5 class="fw-bold">Rincian Pekerjaan</h5>
-                </div>
-                <div>
-                    <p><i class="fa-solid fa-building"></i> {{ $datas[0]->lowongan->departemen->nama_departemen }}
-                    </p>
-                    <p><i class="fa-solid fa-hourglass-start"></i> {{ $datas[0]->lowongan->tipe_lowongan }}</p>
-                    <p><a href="/lowongan-kerja/{{ $datas[0]->lowongan->slug }}/detail"
-                            style="text-decoration: none; color: blue"><i
-                                class="fa-solid fa-up-right-from-square"></i>
-                            Lihat detail lowongan</a></p>
-                </div>
-            </div>
-        </div>
+        @endif
     </div>
 
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+        <div class="mx-2 fw-bold text-light">Loading...</div>
+    </div>
+
+
+    <div id="loader" class="loader-wrapper" style="display: none;">
+        <div class="loader"></div>
+        <div class="mx-2 fw-bold text-light">Loading...</div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
@@ -181,10 +280,5 @@
 </body>
 
 </html>
-<script>
-    document.getElementById('readMore').addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('table-hidden').style.display = 'table-row';
-        this.style.display = 'none';
-    });
-</script>
+
+<script src="{{ asset('js/lamaran-saya.js') }}"></script>

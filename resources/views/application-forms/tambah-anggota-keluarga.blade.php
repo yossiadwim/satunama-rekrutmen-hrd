@@ -101,6 +101,7 @@
             <th scope="col">Pendidikan Terakhir</th>
             <th scope="col">Posisi</th>
             <th scope="col">Perusahaan</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody id="table-body-family">
@@ -109,11 +110,13 @@
 
 </table>
 
-<div class="col-3">
-    <div class="form-floating">
+
+{{-- <div class="form-floating">
         <input type="number" class="form-control" name="jumlah_anggota_keluarga" id="jumlah_anggota_keluarga" placeholder="Jumlah Anggota Keluarga"
             onchange="addRowTableFamily()" min="0">
         <label for="jumlah_anggota_keluarga">Jumlah Anggota Keluarga</label>
-    </div>
-
+    </div> --}}
+<div class="col-3 mt-4">
+    <button type="button" class="btn btn-success" id="add-family-row"><i class="fa-solid fa-plus"
+            style="color: #ffffff;"></i> Tambah</button>
 </div>

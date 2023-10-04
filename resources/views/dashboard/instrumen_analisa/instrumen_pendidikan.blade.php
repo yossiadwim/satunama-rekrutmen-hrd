@@ -24,7 +24,7 @@
                                 data-bs-parent="#pendidikan">
                                 <div class="accordion-body">
                                     <form
-                                        action="/admin-dashboard/lowongan/instrumen-analisis-beban-kerja/{{ $lowongan->slug }}"
+                                        action="/admin-dashboard/lowongan/{{ $lowongan->slug }}/instrumen-analisis-beban-kerja/{{ $data_pelamar->slug }}"
                                         method="POST">
                                         @csrf
                                         <ul>
@@ -49,6 +49,9 @@
                                         <input type="text" name="id_tipe_analisa"
                                             value="{{ $data->id_tipe_analisa }}" hidden>
 
+                                            <input type="text" name="id_pelamar_lowongan"
+                                            value="{{ $pelamar_lowongan[0]->id_pelamar_lowongan }}" hidden>
+
                                         <input type="text" name="id_jenis_analisa"
                                             value="{{ $data->id_jenis_analisa_kriteria }}" hidden>
 
@@ -60,8 +63,9 @@
 
                                         
                                         <div class="d-flex justify-content-center">
-
-                                            <button type="submit" class="btn btn-success ">Simpan</button>
+                                            <button type="submit" class="btn btn-success btn-simpan-analisa"
+                                            id="simpan-analisa-{{ $data->id_jenis_analisa }}"
+                                            value="{{ $data->id_jenis_analisa }}">Simpan</button>
                                         </div>
 
                                         

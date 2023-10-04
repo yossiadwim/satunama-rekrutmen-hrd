@@ -9,6 +9,17 @@ tr[data-href]:hover {
 .nav-decoration{
     text-decoration: underline;
 }
+
+.btn:hover{
+    background-color: #005f00;
+    color: #ffffff;
+}
+
+.nav-link.active{
+    background-color: #008800;
+    color: #ffffff;
+}
+
 /* .nav-color{
     color: black;
 }

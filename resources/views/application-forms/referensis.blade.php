@@ -1,7 +1,7 @@
 @csrf
 
 @if ($referensiExists)
-    <table class="table table-bordered mt-4" id="tableReferensi">
+    <table class="table  mt-4" id="tableReferensi">
         <thead class="text-center">
             <tr>
                 <th scope="col">Nama</th>
@@ -9,6 +9,7 @@
                 <th scope="col">Telepon</th>
                 <th scope="col">Email</th>
                 <th scope="col">Hubungan</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody id="table-body-referensi">
@@ -35,7 +36,7 @@
                                 disabled>
                         </td>
                         <td>
-                            <input type="text" class="form-control" id="email_referensi" name="email_referensi"
+                            <input type="email" class="form-control" id="email_referensi" name="email_referensi"
                                 placeholder="Email"
                                 value="{{ old('email_referensi', $ref->email_referensi) == null ? '' : $ref->email_referensi }}"
                                 disabled>
@@ -52,19 +53,13 @@
 
         </tbody>
         <tbody id="table-body-referensi-2">
-            <tr id="table-row-referensi-2">
 
-            </tr>
         </tbody>
     </table>
 
-    <div class="col-2">
-        <div class="form-floating">
-            <input type="number" class="form-control" name="jumlah_referensi" id="jumlah_referensi"
-                placeholder="Jumlah Referensi" onchange="addRowTableReferences()" min="0">
-            <label for="jumlah_referensi">Tambah</label>
-        </div>
-
+    <div class="col-3 mt-4">
+        <button type="button" class="btn btn-success" id="add-reference-not-satunama-row"><i class="fa-solid fa-plus"
+                style="color: #ffffff;"></i> Tambah</button>
     </div>
 
     <div class="mt-5 mb-5">
@@ -81,6 +76,7 @@
                         <th scope="col">Posisi</th>
                         <th scope="col">Alamat</th>
                         <th scope="col">Hubungan</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody id="table-body-referensi-satunama">
@@ -95,7 +91,7 @@
 
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control" id="email_referensi"
+                                    <input type="email" class="form-control" id="email_referensi"
                                         name="email_referensi" placeholder="Posisi"
                                         value="{{ old('email_referensi', $ref->email_referensi) == null ? '' : $ref->email_referensi }}"
                                         disabled>
@@ -129,19 +125,12 @@
                     @endforeach
                 </tbody>
                 <tbody id="table-body-referensi-satunama-2">
-                    <tr id="table-row-riwayat-pekerjaan-2">
 
-                    </tr>
                 </tbody>
             </table>
-            <div class="col-2">
-                <div class="form-floating">
-                    <input type="number" class="form-control" name="jumlah_referensi_di_satunama"
-                        id="jumlah_referensi_di_satunama" placeholder="Jumlah Referensi"
-                        onchange="addRowTableReferencesinSatunama()" min="0">
-                    <label for="jumlah_referensi_di_satunama">Tambah</label>
-                </div>
-
+            <div class="col-3 mt-4">
+                <button type="button" class="btn btn-success" id="add-reference-from-satunama"><i
+                        class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah</button>
             </div>
         </div>
     </div>
@@ -157,17 +146,12 @@
             </tr>
         </thead>
         <tbody id="table-body-referensi-2">
-            {{-- <tr id="table-row-referensi-2">
 
-        </tr> --}}
         </tbody>
     </table>
-    <div class="col-2">
-        <div class="form-floating">
-            <input type="number" class="form-control" name="jumlah_referensi" id="jumlah_referensi"
-                placeholder="Jumlah Referensi" onchange="addRowTableReferences()" min="0">
-            <label for="jumlah_referensi">Tambah</label>
-        </div>
+    <div class="col-3 mt-4">
+        <button type="button" class="btn btn-success" id="add-reference-not-satunama-row"><i
+                class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah</button>
     </div>
 
     <div class="mt-5 mb-4 mx-2">
@@ -186,19 +170,12 @@
                 </tr>
             </thead>
             <tbody id="table-body-referensi-satunama-2">
-                {{-- <tr id="table-row-riwayat-pekerjaan-2">
 
-                </tr> --}}
             </tbody>
         </table>
     </div>
-    <div class="col-2">
-        <div class="form-floating">
-            <input type="number" class="form-control" name="jumlah_referensi_di_satunama"
-                id="jumlah_referensi_di_satunama" placeholder="Jumlah Referensi"
-                onchange="addRowTableReferencesinSatunama()" min="0">
-            <label for="jumlah_referensi_di_satunama">Tambah</label>
-        </div>
-
+    <div class="col-3 mt-4">
+        <button type="button" class="btn btn-success" id="add-reference-from-satunama"><i class="fa-solid fa-plus"
+                style="color: #ffffff;"></i> Tambah</button>
     </div>
 @endif

@@ -6,10 +6,11 @@
         <tr>
             <th scope="col">Nama Organisasi</th>
             <th scope="col">Posisi</th>
-            
+            <th scope="col"></th>
+
         </tr>
     </thead>
-    <tbody id="table-body-organisasi">
+    <tbody id="tableOrganisasi">
         {{-- <tr id="table-row-organisasi">
             <td >
                 <input type="text" class="form-control" id="nama_organisasi" name="nama_organisasi" placeholder="Nama Organisasi">
@@ -21,11 +22,7 @@
     </tbody>
 </table>
 
-<div class="col-2">
-    <div class="form-floating">
-        <input type="number" class="form-control" name="jumlah_organisasi" id="jumlah_organisasi" placeholder="Jumlah Organisasi"
-            onchange="addRowTableOrganization()" min="0">
-        <label for="jumlah_organisasi">Tambah</label>
-    </div>
-
+<div class="col-3 mt-4">
+    <button type="button" class="btn btn-success" id="add-organization-row"><i class="fa-solid fa-plus"
+            style="color: #ffffff;"></i> Tambah</button>
 </div>

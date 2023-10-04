@@ -3,27 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Agama;
 use App\Models\Status;
+use App\Models\Pelamar;
 use App\Mail\MailNotify;
-use App\Mail\ReferenceCheckToCompany;
 use App\Models\Karyawan;
 use App\Models\Lowongan;
 use App\Models\Departemen;
 use App\Models\Pendidikan;
 use App\Models\ActivityLog;
 use App\Models\TesTertulis;
+use App\Models\TipeAnalisa;
+use App\Models\HasilAnalisa;
+use App\Models\JenisAnalisa;
+use App\Models\KomponenGaji;
 use Illuminate\Http\Request;
 use App\Models\StatusLamaran;
+use App\Models\ApplicationForm;
 use App\Models\PelamarLowongan;
 use App\Models\PengalamanKerja;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\ReferenceCheckToCompany;
 use App\Mail\ReferenceCheckToIndividu;
-use App\Models\HasilAnalisa;
-use App\Models\JenisAnalisa;
-use App\Models\KomponenGaji;
-use App\Models\TipeAnalisa;
+use App\Models\AnakPelamar;
+use App\Models\KeluargaPelamar;
+use App\Models\KemampuanKomputer;
+use App\Models\KondisiKesehatan;
+use App\Models\KontakDarurat;
+use App\Models\Pelatihan;
+use App\Models\PenawaranPelamar;
+use App\Models\PengalamanOrganisasi;
+use App\Models\PenguasaanBahasa;
+use App\Models\Referensi;
+use Monarobase\CountryList\CountryListFacade;
+use App\Notifications\ApplicationStatusChange;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Cviebrock\EloquentSluggable\Services\SlugService;
@@ -105,6 +120,7 @@ class AdminDashboardController extends Controller
 
         //Data Review
         $review_datas = Lowongan::find($lowongan->id)->pelamarLowongan()->with([
+            'lowongan',
             'pelamar' => [
                 'pendidikan',
                 'pengalamanKerja',
@@ -222,6 +238,25 @@ class AdminDashboardController extends Controller
             'activityLog',
         ])->get()->toArray();
 
+        $ditolak_datas = Lowongan::find($lowongan->id)->pelamarLowongan()->with([
+            'pelamar' => [
+                'pendidikan',
+                'pengalamanKerja',
+                'referensi',
+                'user',
+
+            ],
+            'dokumenPelamarLowongan' => [
+                'dokumenPelamar',
+            ],
+            'statusLamaran' => [
+                'status' => function ($query) {
+                    $query->where('id', 7);
+                }
+            ],
+            'activityLog',
+        ])->get()->toArray();
+
 
 
         $review_data = [];
@@ -266,6 +301,13 @@ class AdminDashboardController extends Controller
             }
         }
 
+        $ditolak_data = [];
+        for ($i = 0; $i < count($ditolak_datas); $i++) {
+            if ($ditolak_datas[$i]['status_lamaran'][0]['status'] != null) {
+                $ditolak_data[] = $ditolak_datas[$i];
+            }
+        }
+
         // dd($penawaran_data);
 
         return view('dashboard.kelola_kandidat', [
@@ -274,6 +316,7 @@ class AdminDashboardController extends Controller
             'arrPendidikanId' => $arrPendidikanId,
 
             'datas' =>  $lowongan->pelamarLowongan->load([
+                'lowongan',
                 'pelamar.user',
                 'pelamar.pendidikan',
                 'pelamar.pengalamanKerja',
@@ -290,6 +333,7 @@ class AdminDashboardController extends Controller
             'tes' => $tes_data,
             'penawaran' => $penawaran_data,
             'direkrut' => $direkrut_data,
+            'ditolak' => $ditolak_data,
             'user' => Auth::user(),
 
         ]);
@@ -348,23 +392,35 @@ class AdminDashboardController extends Controller
 
     public function closeJobs(Request $request, Lowongan $lowongan)
     {
-
-        $rules = [
-            'closed' => 'required',
-            'tanggal' => 'required|date',
+        $data = [
+            'closed' => $request->closed,
+            'tanggal_tutup' => $request->tanggal_tutup
         ];
 
-        $validatedData = $request->validate($rules);
-
-        Lowongan::where('id', $lowongan->id)->update($validatedData);
+        Lowongan::where('id', $lowongan->id)->update($data);
 
         return redirect('/admin-dashboard/lowongan')->with('success closed', 'Lowongan Berhasil Ditutup');
     }
 
-    public function changePosition(Request $request, StatusLamaran $statusLamaran)
+    public function activatedJob(Request $request, Lowongan $lowongan)
     {
 
-        // dd($request); 
+        // dd($lowongan);
+        $validatedData = $request->validate([
+            'tanggal_tutup' => 'required|date',
+            'closed' => 'required',
+        ]);
+
+        $query =  Lowongan::where('id', $lowongan->id)->update($validatedData);
+        if ($query) {
+            return redirect('/admin-dashboard/lowongan')->with('success activated', 'Lowongan Berhasil Dibuka Kembali');
+        }
+
+        return redirect('/admin-dashboard/lowongan')->with('error activated', 'Lowongan Gagal Dibuka Kembali');
+    }
+
+    public function changePosition(Request $request, StatusLamaran $statusLamaran)
+    {
 
         $validatedData = $request->validate([
             'tanggal' => 'required',
@@ -372,69 +428,89 @@ class AdminDashboardController extends Controller
             'id_status' => 'required'
         ]);
 
-        $status_lamaran = StatusLamaran::where('id_status_lamaran', $statusLamaran->id_status_lamaran)->update($validatedData);
+        $statusLamaran->where('id_status_lamaran', $statusLamaran->id_status_lamaran)->update($validatedData);
 
         $data_activity = [
             'id_pelamar_lowongan' => $request->id_pelamar_lowongan,
             'id_status' => $request->id_status
         ];
 
-        ActivityLog::create($data_activity);
-
-        $data_email = [
-            'subject' => 'Perubahan Status Lamaran',
-            'email' => $request->email,
-            'status' => $request->status_kandidat,
-            'nama_pelamar' => $request->nama_pelamar
-        ];
-
-        Mail::to($data_email['email'])->send(new MailNotify($data_email));
-
-        $slug_lowongan = PelamarLowongan::join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
-            ->select(DB::raw('slug'))
+        $lowongan = PelamarLowongan::join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
+            ->where('pelamar_lowongan.id_pelamar_lowongan', $request->id_pelamar_lowongan)
+            ->select(DB::raw('nama_lowongan,slug,tanggal_melamar'))
             ->get();
-
 
 
         $slug_user = User::join('pelamar', 'users.id_pelamar', 'pelamar.id')
             ->join('pelamar_lowongan', 'pelamar.id', 'pelamar_lowongan.id_pelamar')
             ->where('pelamar_lowongan.id_pelamar_lowongan', '=', $request->id_pelamar_lowongan)
-            ->select('users.slug')
+            ->select('users.slug', 'users.id_pelamar', 'users.id')
             ->get();
 
-        return redirect('/admin-dashboard/lowongan/detail-pelamar/' . $slug_user[0]->slug)->with('success change position', 'Berhasil Mengubah Posisi Kandidat');
+        $data_email = [
+            'subject' => 'YAYASAN SATUNAMA - Pemberitahuan Pergantian Status Lamaran',
+            'email' => $request->email,
+            'status' => $request->status_kandidat,
+            'nama_pelamar' => $request->nama_pelamar,
+            'nama_lowongan' => $lowongan[0]->nama_lowongan,
+            'tanggal_melamar' => $lowongan[0]->tanggal_melamar,
+            'nama_karyawan' => $request->nama_karyawan
+
+        ];
+
+        $data_notifikasi = [
+            'subject' => 'Pemberitahuan Pergantian Status Lamaran',
+            'status' => $request->status_kandidat,
+            'nama_pelamar' => $request->nama_pelamar,
+            'nama_lowongan' => $lowongan[0]->nama_lowongan,
+            'tanggal_melamar' => $lowongan[0]->tanggal_melamar,
+            'nama_karyawan' => $request->nama_karyawan,
+            'id_user' => $slug_user[0]->id,
+        ];
+
+
+        Mail::to($data_email['email'])->send(new MailNotify($data_email));
+        ActivityLog::create($data_activity);
+
+        if ($request->status_kandidat == 'penawaran') {
+            PenawaranPelamar::create(['id_pelamar_lowongan' => $request->id_pelamar_lowongan]);
+        }
+
+        $pelamar = Pelamar::find($slug_user[0]->id_pelamar);
+        $pelamar->notify(new ApplicationStatusChange($data_notifikasi));
+
+        return redirect('/admin-dashboard/lowongan/' . $lowongan[0]->slug . '/detail-pelamar/' . $slug_user[0]->slug)->with('success change position', 'Berhasil Mengubah Posisi Kandidat');
     }
 
-    public function addScheduleTest(Request $request)
+    // public function addScheduleTest(Request $request)
+    // {
+
+    //     $validatedData = $request->validate([
+    //         'tanggal_tes' => 'required',
+    //         'waktu_mulai' => 'required',
+    //         'waktu_selesai' => 'required',
+    //         'nama_pelamar' => 'required'
+
+    //     ]);
+
+    //     $result = PelamarLowongan::join('pelamar', 'pelamar_lowongan.id_pelamar', 'pelamar.id')
+    //         ->select(DB::raw('id_pelamar_lowongan'))
+    //         ->where('pelamar.nama_pelamar', $request->nama_pelamar)
+    //         ->get();
+
+    //     $slug_lowongan = PelamarLowongan::join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
+    //         ->select(DB::raw('slug'))
+    //         ->get();
+
+    //     $validatedData['id_pelamar_lowongan'] = $result[0]->id_pelamar_lowongan;
+    //     TesTertulis::create($validatedData);
+
+    //     return redirect('/admin-dashboard/lowongan/' . $slug_lowongan[0]->slug . '/kelola-kandidat')->with('success add schedule', 'Berhasil Menambahkan Data Jadwal');
+    // }
+
+
+    public function referenceCheck(Request $request, Lowongan $lowongan)
     {
-
-        $validatedData = $request->validate([
-            'tanggal_tes' => 'required',
-            'waktu_mulai' => 'required',
-            'waktu_selesai' => 'required',
-            'nama_pelamar' => 'required'
-
-        ]);
-
-        $result = PelamarLowongan::join('pelamar', 'pelamar_lowongan.id_pelamar', 'pelamar.id')
-            ->select(DB::raw('id_pelamar_lowongan'))
-            ->where('pelamar.nama_pelamar', $request->nama_pelamar)
-            ->get();
-
-        $slug_lowongan = PelamarLowongan::join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
-            ->select(DB::raw('slug'))
-            ->get();
-
-        $validatedData['id_pelamar_lowongan'] = $result[0]->id_pelamar_lowongan;
-        TesTertulis::create($validatedData);
-
-        return redirect('/admin-dashboard/lowongan/' . $slug_lowongan[0]->slug . '/kelola-kandidat')->with('success add schedule', 'Berhasil Menambahkan Data Jadwal');
-    }
-
-
-    public function referenceCheck(Request $request)
-    {
-
         $data_email_reference_check_to_individu = [
             'nama_pelamar' => $request->nama_pelamar,
             'nama_referensi' => $request->nama_referensi,
@@ -443,7 +519,6 @@ class AdminDashboardController extends Controller
             'nama_karyawan' => $request->nama_karyawan,
             'email_karyawan' => $request->email_karyawan
         ];
-
         $data_email_reference_check_to_company = [
             'nama_pelamar' => $request->nama_pelamar,
             'nama_perusahaan' => $request->nama_perusahaan,
@@ -453,101 +528,140 @@ class AdminDashboardController extends Controller
             'nama_karyawan' => $request->nama_karyawan,
             'email_karyawan' => $request->email_karyawan
         ];
-
         if ($request->nama_perusahaan) {
             Mail::to($data_email_reference_check_to_company['email_referensi'])->send(new ReferenceCheckToCompany($data_email_reference_check_to_company));
         } else {
             Mail::to($data_email_reference_check_to_individu['email_referensi'])->send(new ReferenceCheckToIndividu($data_email_reference_check_to_individu));
         }
 
-
         $slug_user = User::join('pelamar', 'users.id_pelamar', 'pelamar.id')
             ->where('pelamar.nama_pelamar', '=', $request->nama_pelamar)
             ->select('users.slug')
             ->get();
 
-        return redirect('/admin-dashboard/lowongan/detail-pelamar/' . $slug_user[0]->slug)->with('success send refererence check', 'Berhasil Mengirim Email Reference Check');
+        return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/detail-pelamar/' . $slug_user[0]->slug)->with('success send refererence check', 'Berhasil Mengirim Email Reference Check');
     }
 
-    public function workLoad(User $user)
+    public function workLoad(Lowongan $lowongan, User $user)
     {
-        $total_poin = HasilAnalisa::join('jenis_analisa_kriteria', 'jenis_analisa_kriteria.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
-            ->selectRaw('SUM(hasil_analisa.poin) as total_poin')
-            ->where('hasil_analisa.id_lowongan', $user->pelamar->pelamarLowongan[0]->lowongan->id)
+
+        $pelamar_lowongan = $user->join('pelamar', 'pelamar.id', 'users.id_pelamar')
+            ->join('pelamar_lowongan', 'pelamar_lowongan.id_pelamar', 'pelamar.id')
+            ->join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
+            ->where('lowongan.id', $lowongan->id)
+            ->where('users.id', $user->id)
             ->get();
 
-        $lowonganId = $user->pelamar->pelamarLowongan[0]->lowongan->id;
+        $total_poin = HasilAnalisa::join('jenis_analisa_kriteria', 'jenis_analisa_kriteria.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
+            ->selectRaw('SUM(hasil_analisa.poin) as total_poin')
+            ->where('hasil_analisa.id_pelamar_lowongan',  $pelamar_lowongan[0]->id_pelamar_lowongan)
+            ->get();
 
-        // DB::enableQueryLog();
         $gaji = KomponenGaji::whereRaw(
-            '(SELECT SUM(poin) FROM hasil_analisa WHERE hasil_analisa.id_lowongan = ?) BETWEEN komponen_gaji.bobot_minimal AND komponen_gaji.bobot_maksimal order by komponen_gaji.id_komponen_gaji DESC',
-            [$lowonganId]
+            '(SELECT SUM(poin) FROM hasil_analisa WHERE hasil_analisa.id_pelamar_lowongan = ?) 
+                BETWEEN komponen_gaji.bobot_minimal AND komponen_gaji.bobot_maksimal order by komponen_gaji.id_komponen_gaji DESC',
+            [$pelamar_lowongan[0]->id_pelamar_lowongan]
         )->get();
-        // dd(DB::getQueryLog());
+
+        $hasil_analisa = HasilAnalisa::where('id_pelamar_lowongan',  $pelamar_lowongan[0]->id_pelamar_lowongan)->get();
+        $data_penawaran = PenawaranPelamar::where('id_pelamar_lowongan',   $pelamar_lowongan[0]->id_pelamar_lowongan)->get();
+        $data_penawaran_exist = PenawaranPelamar::where('id_pelamar_lowongan',  $pelamar_lowongan[0]->id_pelamar_lowongan)->exists();
+
+        $penawaran_pelamar_id = DB::table('penawaran_pelamar')->select(['*'])->pluck('id_pelamar_lowongan')->toArray();
 
         return view('dashboard.kelola_kandidat.bobot_kerja_kandidat', [
             'title' => 'Bobot Kerja',
             'user' => $user,
             'data_lowongan' => $user->pelamar->pelamarLowongan->load(
                 'lowongan',
-                'pelamar'
+                'pelamar',
+                'statusLamaran.status'
             ),
-            'hasil_analisa' => HasilAnalisa::where('id_lowongan', $user->pelamar->pelamarLowongan[0]->lowongan->id)->get(),
+            'hasil_analisa' => $hasil_analisa,
             'poin' => $total_poin,
-            'gaji' => $gaji
+            'gaji' => $gaji,
+            'lowongan' => $lowongan,
+            'penawaran_pelamar_id' => $penawaran_pelamar_id,
+            'data_penawaran' => $data_penawaran,
+            'data_penawaran_exist' => $data_penawaran_exist
         ]);
     }
 
 
-    public function detailCandidate(User $user)
+    public function detailCandidate(Lowongan $lowongan, User $user)
     {
-
         $arrPengalamanId = PengalamanKerja::all()->pluck('id_pelamar')->toArray();
         $arrPendidikanId = Pendidikan::all()->pluck('id_pelamar')->toArray();
         $pelamar_lowongan = PelamarLowongan::join('pelamar', 'pelamar_lowongan.id_pelamar', 'pelamar.id')
+            ->join('lowongan', 'lowongan.id', 'pelamar_lowongan.id_lowongan')
             ->join('users', 'users.id_pelamar', 'pelamar.id')
             ->select('pelamar_lowongan.id_pelamar_lowongan')
             ->where('users.id', $user->id)
+            ->where('lowongan.id', $lowongan->id)
             ->get();
+
+
+        $data_hasil_analisa = HasilAnalisa::join('jenis_analisa_kriteria', 'jenis_analisa_kriteria.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
+            ->where('hasil_analisa.id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)
+            ->get();
+
+
+        $hasil_analisa_exists = HasilAnalisa::join('jenis_analisa', 'jenis_analisa.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
+            ->join('tipe_analisa', 'tipe_analisa.id_tipe_analisa', 'jenis_analisa.id_tipe_analisa')
+            ->select('tipe_analisa.id_tipe_analisa')
+            ->where('hasil_analisa.id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)
+            ->get();
+
+        $applicationformId = ApplicationForm::all()->pluck('id_pelamar_lowongan')->toArray();
+        $status = Status::select('status.id', 'status.nama_status')->get();
 
         $current_status_lamaran = StatusLamaran::where('id_pelamar_lowongan', '=', $pelamar_lowongan[0]->id_pelamar_lowongan)
             ->select('status_lamaran.id_status')
             ->get();
 
-        $status = Status::select('status.nama_status')->get();
-
         $current_status = Status::where('id', '=', $current_status_lamaran[0]->id_status)
             ->select('status.nama_status')
             ->get();
+
 
         $search_status = $current_status[0]->nama_status;
         $index_current_status = $status->search(function ($stat) use ($search_status) {
             return $stat->nama_status === $search_status;
         });
 
+
         if ($index_current_status !== false) {
-
-            $index_next_status = $index_current_status + 1;
-
-            if ($status->take(7)->has($index_next_status)) {
-                $next_status = $status->get($index_next_status);
-                $data_next_status = Status::where('nama_status', $next_status->nama_status)->get();
+            if ($index_current_status == 6) {
+                $get_data_current_status = $status->get($index_current_status);
+                $data_next_status = Status::where('nama_status', $get_data_current_status->nama_status)->get();
             } else {
-                echo "No more status after the current status";
+                $index_next_status = $index_current_status + 1;
+                if ($status->has($index_current_status)) {
+                    $next_status = $status->get($index_next_status);
+                    // $data_next_status = Status::where('nama_status', $next_status->nama_status)->get();
+                    $data_next_status = Status::where('nama_status', $next_status->nama_status)->get();
+                }
             }
-        } else {
-            echo "not found";
         }
+
 
         return view('dashboard.detail_kandidat', [
             'arrPengalamanId' => $arrPengalamanId,
             'arrPendidikanId' => $arrPendidikanId,
+            'applicationFormId' => $applicationformId,
             'title' => 'Detail Kandidat',
             'status' => Status::all(),
-            'karyawan_login' => Auth::user(),
-            'data_karyawan' => Karyawan::where('id_karyawan', Auth::user()->id_karyawan)->get(),
+            'data_status_ditolak' => Status::orderBy('status.id', 'desc')->first(),
             'data_next_status' => $data_next_status,
+            'lowongan' => $lowongan,
+            'data_hasil_analisa' => $data_hasil_analisa,
+            'tipe_analisa' => TipeAnalisa::all()->sortBy('id_tipe_analisa'),
+            'data_penawaran' => PenawaranPelamar::where('id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)->get(),
+            'data_penawaran_exist' => PenawaranPelamar::where('id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)->exists(),
+            'data_hasil_analisa' => $data_hasil_analisa,
+            'hasil_analisa_exists' => $hasil_analisa_exists,
             'datas' => $user->pelamar->pelamarLowongan->load(
+                'lowongan',
                 'pelamar.user',
                 'pelamar.pendidikan',
                 'pelamar.pengalamanKerja',
@@ -563,8 +677,15 @@ class AdminDashboardController extends Controller
         ]);
     }
 
-    public function instrumenAnalisaBebanKerja(Lowongan $lowongan, JenisAnalisa $jenis_analisa)
+    public function instrumenAnalisaBebanKerja(Lowongan $lowongan, User $user, JenisAnalisa $jenis_analisa)
     {
+        $pelamar_lowongan = $user->join('pelamar', 'pelamar.id', 'users.id_pelamar')
+            ->join('pelamar_lowongan', 'pelamar_lowongan.id_pelamar', 'pelamar.id')
+            ->join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
+            ->where('lowongan.id', $lowongan->id)
+            ->where('users.id', $user->id)
+            ->get();
+
         $analisa_pendidikan = $jenis_analisa->bebanIndeksPendidikan()->get();
 
         $analisa_pengalaman = $jenis_analisa->bebanIndeksPengalaman()->get();
@@ -584,18 +705,23 @@ class AdminDashboardController extends Controller
         $analisa_signifikansi_area_dampak = $jenis_analisa->bebanIndeksSignifikansiAreaDampak()->get();
 
         $data_hasil_analisa = HasilAnalisa::join('jenis_analisa_kriteria', 'jenis_analisa_kriteria.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
-            ->where('hasil_analisa.id_lowongan', $lowongan->id)
+            ->where('hasil_analisa.id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)
             ->get();
+
+        $data_hasil_analisa_exists = HasilAnalisa::join('jenis_analisa_kriteria', 'jenis_analisa_kriteria.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
+            ->where('hasil_analisa.id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)
+            ->exists();
+
 
         $total_poin = HasilAnalisa::join('jenis_analisa_kriteria', 'jenis_analisa_kriteria.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
             ->selectRaw('SUM(hasil_analisa.poin) as total_poin')
-            ->where('hasil_analisa.id_lowongan', $lowongan->id)
+            ->where('hasil_analisa.id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)
             ->get();
 
         $hasil_analisa_exists = HasilAnalisa::join('jenis_analisa', 'jenis_analisa.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
             ->join('tipe_analisa', 'tipe_analisa.id_tipe_analisa', 'jenis_analisa.id_tipe_analisa')
             ->select('tipe_analisa.id_tipe_analisa')
-            ->where('hasil_analisa.id_lowongan', $lowongan->id)
+            ->where('hasil_analisa.id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)
             ->get();
 
         return view('dashboard.instrumen_analisa_beban_kerja', [
@@ -603,6 +729,7 @@ class AdminDashboardController extends Controller
             'lowongan' => $lowongan,
             'tipe_analisa' => TipeAnalisa::all()->sortBy('id_tipe_analisa'),
             'data_hasil_analisa' => $data_hasil_analisa,
+            'data_hasil_analisa_exists' => $data_hasil_analisa_exists,
             'total_poin' => $total_poin,
             'hasil_analisa_exists' => $hasil_analisa_exists,
             'analisa_pendidikan' => $analisa_pendidikan,
@@ -614,6 +741,9 @@ class AdminDashboardController extends Controller
             'analisa_tingkatan_kebebasan_bertindak' => $analisa_tingkatan_kebebasan_bertindak,
             'analisa_sikap_dan_besaran_dampak' => $analisa_sikap_dan_besaran_dampak,
             'analisa_signifikansi_area_dampak' => $analisa_signifikansi_area_dampak,
+            'data_pelamar' => $user,
+            'pelamar_lowongan' => $pelamar_lowongan,
+
         ]);
     }
 
@@ -624,11 +754,13 @@ class AdminDashboardController extends Controller
         $data_hasil_analisa = [
             'id_jenis_analisa' => $request->id_jenis_analisa,
             'id_lowongan' => $request->id,
+            'id_pelamar_lowongan' => $request->id_pelamar_lowongan,
             'id_karyawan' => $request->id_karyawan,
         ];
 
         $data_update_analisa = [
             'id_jenis_analisa' => $request->id_jenis_analisa,
+            'id_pelamar_lowongan' => $request->id_pelamar_lowongan,
         ];
 
         $poin = $request->bobot * $request->indeks;
@@ -637,7 +769,7 @@ class AdminDashboardController extends Controller
 
         if ($data_hasil_analisa_exists) {
             $query = HasilAnalisa::where('hasil_analisa.id_jenis_analisa', $data[0]->id_jenis_analisa)
-                ->where('hasil_analisa.id_lowongan', $request->id)
+                ->where('hasil_analisa.id_pelamar_lowongan', $request->id_pelamar_lowongan)
                 ->update($data_update_analisa);
             return true;
         }
@@ -648,64 +780,152 @@ class AdminDashboardController extends Controller
         }
     }
 
-    public function instrumentAnalysis(Lowongan $lowongan, Request $request)
-    {
 
+    public function instrumentAnalysis(Lowongan $lowongan, User $user, Request $request)
+    {
         $data_hasil_analisa_exists = HasilAnalisa::join('jenis_analisa', 'jenis_analisa.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
             ->join('tipe_analisa', 'jenis_analisa.id_tipe_analisa', 'tipe_analisa.id_tipe_analisa')
-            ->where('hasil_analisa.id_lowongan', $request->id)
+            ->where('hasil_analisa.id_pelamar_lowongan', $request->id_pelamar_lowongan)
             ->where('tipe_analisa.id_tipe_analisa', $request->id_tipe_analisa)
             ->exists();
 
         $data = HasilAnalisa::join('jenis_analisa', 'jenis_analisa.id_jenis_analisa', 'hasil_analisa.id_jenis_analisa')
             ->join('tipe_analisa', 'jenis_analisa.id_tipe_analisa', 'tipe_analisa.id_tipe_analisa')
-            ->where('hasil_analisa.id_lowongan', $request->id)
+            ->where('hasil_analisa.id_pelamar_lowongan', $request->id_pelamar_lowongan)
             ->where('tipe_analisa.id_tipe_analisa', $request->id_tipe_analisa)
             ->get();
-
-
-
         if ($request->slug_analisa == 'pendidikan') {
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'pengalaman') {
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'keterampilan-hubungan-dengan-pihak-lain') {
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'manajemen') {
 
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'tantangan-berpikir') {
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'lingkungan-berpikir') {
 
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'tingkatan-kebebasan-bertindak') {
 
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'sikap-dan-besaran-dampak') {
 
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
         } else if ($request->slug_analisa == 'signifikansi-area-dampak') {
 
             if ($this->insertUpdateAnalisa($request, $data_hasil_analisa_exists, $data)) {
-                return redirect('/admin-dashboard/lowongan/instrumen-penilaian-beban-kerja/' . $lowongan->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
+                return redirect('/admin-dashboard/lowongan/' . $lowongan->slug . '/instrumen-penilaian-beban-kerja/' . $user->slug)->with('success add education analysis', 'Berhasil Memasukkan Data');
             }
+        }
+    }
+
+    public function viewApplicationForms(Lowongan $lowongan, User $user)
+    {
+        $countries = CountryListFacade::getList('en');
+
+        $anakId = AnakPelamar::all()->pluck('id_pelamar')->toArray();
+        $keluargaId = KeluargaPelamar::all()->pluck('id_pelamar')->toArray();
+        $kemampuanKomputerId = KemampuanKomputer::all()->pluck('id_pelamar')->toArray();
+        $kondisiKesehatanId = KondisiKesehatan::all()->pluck('id_pelamar')->toArray();
+        $kontakDaruratId = KontakDarurat::all()->pluck('id_pelamar')->toArray();
+        $pengalamanOrgId = PengalamanOrganisasi::all()->pluck('id_pelamar')->toArray();
+        $penguasaanBahasaId = PenguasaanBahasa::all()->pluck('id_pelamar')->toArray();
+        $pelatihanId = Pelatihan::all()->pluck('id_pelamar')->toArray();
+        $pendidikanId = Pendidikan::all()->pluck('id_pelamar')->toArray();
+        $pengalamanKerjaId = PengalamanKerja::all()->pluck('id_pelamar')->toArray();
+        $referensiId = Referensi::all()->pluck('id_pelamar')->toArray();
+
+
+        return view('dashboard.application_form', [
+            'title' => 'Application Form',
+            'user' => $user,
+            'lowongan' => $lowongan,
+            'anakId' => $anakId,
+            'keluargaId' => $keluargaId,
+            'kemampuanKomputerId' => $kemampuanKomputerId,
+            'kondisiKesehatanId' => $kondisiKesehatanId,
+            'kontakDaruratId' => $kontakDaruratId,
+            'pengalamanOrgId' => $pengalamanOrgId,
+            'penguasaanBahasaId' => $penguasaanBahasaId,
+            'pelatihanId' => $pelatihanId,
+            'pendidikanId' => $pendidikanId,
+            'pengalamanKerjaId' => $pengalamanKerjaId,
+            'referensiId' => $referensiId,
+            'datas' => $user->pelamar->pelamarLowongan->load(
+                'lowongan',
+                'pelamar.user',
+                'pelamar.pendidikan',
+                'pelamar.pengalamanKerja',
+                'pelamar.referensi',
+                'pelamar.pelatihan',
+                'pelamar.kondisiKesehatan',
+                'pelamar.kemampuanKomputer',
+                'pelamar.keluargaPelamar',
+                'pelamar.anakPelamar',
+                'pelamar.kontakDarurat',
+                'pelamar.pengalamanOrganisasi',
+                'statusLamaran.status',
+
+            ),
+            'countries' => $countries,
+            'religions' => Agama::all()
+        ]);
+    }
+
+    public function sendOffering(Request $request, User $user)
+    {
+
+        $pelamar_lowongan = $user->join('pelamar', 'pelamar.id', 'users.id_pelamar')
+            ->join('pelamar_lowongan', 'pelamar_lowongan.id_pelamar', 'pelamar.id')
+            ->join('lowongan', 'pelamar_lowongan.id_lowongan', 'lowongan.id')
+            ->where('lowongan.id', $request->id_lowongan)
+            ->where('users.id', $user->id)
+            ->get();
+
+
+        $data_penawaran = [
+            'kisaran_gaji' => $request->kisaran_gaji,
+            'sudah_terkirim' => $request->sudah_terkirim
+        ];
+
+        if ($request->gaji_final != null) {
+            $formattedCurrency = $request->gaji_final; // Example formatted currency string
+            $cleanedString = preg_replace('/[^\d]/', '', $formattedCurrency);
+            $gaji_final = (int) $cleanedString;
+            $data_penawaran['gaji_final'] = $gaji_final;
+        }
+
+        if ($request->status_penawaran != null) {
+            $data_penawaran['status_penawaran'] = $request->status_penawaran;
+        }
+
+        $existingId = PenawaranPelamar::where('id_pelamar_lowongan', $pelamar_lowongan[0]->id_pelamar_lowongan)->first();
+
+        if ($existingId) {
+            $existingId->update($data_penawaran);
+            return back();
+        } else {
+            $existingId->create($data_penawaran);
+            return back();
         }
     }
 }

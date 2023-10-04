@@ -9,15 +9,24 @@
                     <div class="row">
                         <div class="col-5">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="nomor_telepon_baru"
+                                <input type="text" class="form-control 
+                                @error('telepon_rumah')
+                                    is-invalid
+                                @enderror" id="nomor_telepon_baru"
                                     placeholder="Nomor Telepon" name="telepon_rumah"
                                     oninput="validatePasswordConfirmation()" maxlength="12">
+                                @error('telepon_rumah')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                                 <label for="floatingPassword">Masukkan nomor telepon baru</label>
                             </div>
                         </div>
                     </div>
                     <div class="mt-4">
-                        <button type="submit" class="btn btn-secondary" name="ganti_nomor_telepon" value="ganti_nomor_telepon">
+                        <button type="submit" class="btn btn-success" name="ganti_nomor_telepon" id="ganti_nomor_telepon"
+                            value="ganti_nomor_telepon">
                             Ubah Nomor Telepon
                         </button>
                     </div>
